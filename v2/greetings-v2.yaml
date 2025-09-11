@@ -1,0 +1,190 @@
+openapi: 3.0.3
+info:
+  title: Greetings API v2 
+  version: 2.0.0
+  description: |
+    This is version 2 of the Greetings API.
+    It supports reading existing greetings and creating new ones.
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+servers:
+  - url: https://api.yourdomain.com/v2
+    description: Production server (v2)
+  - url: https://staging.yourdomain.com/v2
+    description: Staging server
+security:
+  - api_key: []
+paths:
+  /hello:
+    get:
+      summary: Returns a greeting
+      operationId: getGreeting
+      security:
+        - api_key: []
+      parameters:
+        - name: name
+          in: query
+          required: false
+          description: Name of the person to greet
+          schema:
+            type: string
+            example: Ezinne
+        - name: lang
+          in: query
+          required: false
+          description: Language of the greeting (default is English)
+          schema:
+            type: string
+            enum: [en, fr, es, ig]
+            example: en
+      responses:
+        '200':
+          description: Greeting response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: "Hello, Ezinne!"
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Invalid query parameter."
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Missing or invalid API key"
+    post:
+      summary: Create a greeting
+      operationId: createGreeting
+      security:
+        - api_key: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Ezinne
+                lang:
+                  type: string
+                  enum: [en, fr, es, ig]
+                  example: en
+      responses:
+        '201':
+          description: Greeting created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: "123"
+                  message:
+                    type: string
+                    example: "Hello, Ezinne!"
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Invalid request payload."
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Missing or invalid API key."
+  /hello/{id}:
+    get:
+      summary: Retrieve a saved greeting by ID
+      operationId: getGreetingById
+      security:
+        - api_key: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the greeting
+          schema:
+            type: string
+            example: "123"
+      responses:
+        '200':
+          description: Greeting found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  message:
+                    type: string
+              example:
+                id: "123"
+                message: "Bonjour, Ezinne!"
+        '400':
+          description: Invalid ID supplied
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Invalid ID format."
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Missing or invalid API key."
+        '404':
+          description: Greeting not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Greeting not found."
+components:
+  securitySchemes:
+    api_key:
+      type: apiKey
+      name: Authorization
+      in: header

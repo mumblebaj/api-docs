@@ -1,0 +1,236 @@
+openapi: 3.0.3
+info:
+  title: Greetings API 
+  version: 3.0.0
+  description: API with greeting plus Create, Read, and Update endpoints
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+servers:
+  - url: https://api.yourdomain.com/v3
+    description: Production server (v3)
+  - url: https://staging.yourdomain.com/v3
+    description: Staging server
+security:
+  - api_key: []
+paths:
+  /hello:
+    get:
+      summary: Returns a greeting
+      operationId: getGreeting
+      security:
+        - api_key: []
+      parameters:
+        - name: name
+          in: query
+          schema:
+            type: string
+        - name: lang
+          in: query
+          schema:
+            type: string
+            enum: [en, fr, es, ig]
+      responses:
+        '200':
+          description: Greeting response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '400':
+          description: Invalid query parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Invalid query parameter"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Missing or invalid API key"
+    post:
+      summary: Create a greeting
+      operationId: createGreeting
+      security:
+        - api_key: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                lang:
+                  type: string
+                  enum: [en, fr, es, ig]
+      responses:
+        '201':
+          description: Greeting created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  message:
+                    type: string
+        '400':
+          description: Invalid request body
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Invalid request payload"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Missing or invalid API key"
+  /hello/{id}:
+    get:
+      summary: Retrieve a saved greeting by ID
+      operationId: getGreetingById
+      security:
+        - api_key: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Greeting found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  message:
+                    type: string
+        '400':
+          description: Invalid ID supplied
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Invalid ID format"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Missing or invalid API key"
+        '404':
+          description: Greeting not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Greeting not found"
+    put:
+      summary: Update a greeting
+      operationId: updateGreeting
+      security:
+        - api_key: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                lang:
+                  type: string
+                  enum: [en, fr, es, ig]
+      responses:
+        '200':
+          description: Greeting updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  message:
+                    type: string
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Invalid request body"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Missing or invalid API key"
+        '404':
+          description: Greeting not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Greeting not found."
+components:
+  securitySchemes:
+    api_key:
+      type: apiKey
+      name: Authorization
+      in: header
