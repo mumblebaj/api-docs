@@ -10,6 +10,7 @@ on:
       - 'spec/v1/greetings-v1.yaml'
       - 'spec/v2/greetings-v2.yaml'
       - 'spec/v3/greetings-v3.yaml'
+      - 'spec/gCCT/gCCT.yaml'
 
 jobs:
   build-and-deploy:
@@ -35,7 +36,12 @@ jobs:
         run: mkdir -p public/v2 && cp spec/v2/greetings-v2.yaml public/v2/
 
       - name: Copy v3 spec
-        run: mkdir -p public/v3 && cp spec/v3/greetings-v3.yaml public/v3/
+        run: mkdir -p public/v3 && cp spec/v3/greetings-v3.yaml public/v3/      
+        
+      - name: Copy gCCT spec
+        run: mkdir -p public/gCCT && cp spec/gCCT/gCCT.yaml public/gCCT/
+
+
 
       # 4. Copy landing page into public
       - name: Copy landing page
