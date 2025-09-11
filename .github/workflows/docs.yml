@@ -3,7 +3,8 @@ name: Build and Deploy API Documentation
 
 on:
   push:
-    branches: [ main ]
+    branches: 
+      - main
     paths:
       - 'docs/index.html'
       - 'spec/v1/greetings-v1.yaml'
