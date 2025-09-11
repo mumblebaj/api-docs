@@ -1,0 +1,61 @@
+openapi: 3.0.3
+info:
+  title: Greetings API
+  version: 1.0.0
+  description: This is a greetings API demonstrating a simple greeting endpoint with query parameters and multilingual support.
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+servers:
+  - url: https://api.yourdomain.com/v1
+    description: Production server(v1)
+  - url: https://staging.yourdomain.com/v1
+    description: Staging server(v1)
+security:
+  - api_key: []
+paths:
+  /hello:
+    get:
+      summary: Returns a greeting
+      operationId: getGreeting
+      parameters:
+        - name: name
+          in: query
+          required: false
+          description: Name of the person to greet
+          schema:
+            type: string
+            example: Ezinne
+        - name: lang
+          in: query
+          required: false
+          description: Language of the greeting (default is English)
+          schema:
+            type: string
+            enum: [en, fr, es, ig]
+            example: en
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              examples:
+                english:
+                  value: { message: "Hello, Ezinne!" }
+                french:
+                  value: { message: "Bonjour, Ezinne!" }
+                spanish:
+                  value: { message: "¡Hola, Ezinne!" }
+                igbo:
+                  value: { message: "Ndeewo, Ezinne!" }
+components:
+  securitySchemes:
+    api_key:
+      type: apiKey
+      name: Authorization
+      in: header
