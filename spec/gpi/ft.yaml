@@ -1,7 +1,7 @@
 openapi: 3.0.2
 info:
-  title: gpi API Payment Status CCT
-  description: "About this document \n\n These technical specifications provide information about how to use APIs to access and update the Payment transaction information, it also gives the necessary information to assess the business API..\n\nThis document is for the following audience:\n\n* Business analysts to understand the functionality of the API\n\n* Business architects to understand the functionality of the API and how to integrate the use of the API within their organisation\n\n* Software developers of applications using the API to assess the complexity of the API\n\n*v6.0.0 Release Notes*\n\n* Instruction Identification field definition updated\n* Payment Scenario field definition updated\n* ExternalPaymentStatusReason3Code replaced by TrackerPaymentStatusReason3Code\n* All interations of OneOf were corrected\n* Return scenario examples added\n* FinancialInstitutionIdentification11Choice renamed into FinancialInstitutionIdentification12Choice"
+  title: gpi API Payment Status Universal Confirmation
+  description: "About this document \n\n These technical specifications provide information about how to use APIs to access and update the Payment transaction information, it also gives the necessary information to assess the business API..\n\nThis document is for the following audience:\n\n* Business analysts to understand the functionality of the API\n\n* Business architects to understand the functionality of the API and how to integrate the use of the API within their organisation\n\n* Software developers of applications using the API to assess the complexity of the API\n\n*v6.0.0 Release Notes*\n\n* Updated field definition Instruction Identification\n* New element Payment Scenario (PaymentScenario6Code) with codes CCTR and RCCT\n* ExternalPaymentStatusReason3Code and ExternalPaymentStatusReason5Code replaced by TrackerPaymentStatusReason3Code and TrackerPaymentStatusReason5Code respectively\n* All interations of OneOf were corrected\n* FinancialInstitutionIdentification11Choice renamed into FinancialInstitutionIdentification12Choice\n* Charges8 renamed to Charges15\n* Return scenario examples added"
   contact:
     name: Standards & Developer Hub
     url: https://developer.swift.com
@@ -12,15 +12,18 @@ info:
   version: 6.0.0
 servers:
   - description: Test environment
-    url: https://api-test.swiftnet.sipn.swift.com/swift-apitracker-gcct-pilot/v6
+    url: https://api-test.swiftnet.sipn.swift.com/swift-apitracker-uc-cct-pilot/v6
   - description: Production environment
-    url: https://api.swiftnet.sipn.swift.com/swift-apitracker-gcct/v6
+    url: https://api.swiftnet.sipn.swift.com/swift-apitracker-uc-cct/v6
   - description: Sandbox environment
-    url: https://sandbox.swift.com/swift-apitracker-gcct/v6  
+    url: https://sandbox.swift.com/swift-apitracker-uc-cct/v6
 tags:
-- name: Status Confirmations
-  description:  |
-      Payment Transactions - Updating the Status of a gCCT Payment Transaction
+  - name: Status Confirmations
+    description: |
+      Payment Transactions - Updating the Status of a Payment Transaction
+      
+      Purpose of the API
+      * This API is a status confirmation update to inform the Tracker about the updated status of a given UC payment.
 paths:
   /payments/{uetr}/status:
     put:
@@ -36,29 +39,25 @@ paths:
         schema:
           $ref: '#/components/schemas/UUIDv4Identifier'
         required: true
-        example: 97ed4827-7b6f-4491-a06f-b548d5a7512d
+        example: 97ed4827-7b6f-4491-a06f-b548d5a7512d 
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PaymentStatusRequest9'   
+              $ref: '#/components/schemas/PaymentStatusRequest12'
             examples:
-              ACCC_partial_confirmation: 
-                $ref: '#/components/examples/ACCC_partial_confirmation'
-              ACSP_G000_charge_agent_NOTPROVIDED: 
-                $ref: '#/components/examples/ACSP_G000_charge_agent_NOTPROVIDED'
-              ACSP_G000_regular: 
-                $ref: '#/components/examples/ACSP_G000_regular'
-              ACSP_G000_with_clearingsystemmemberidentification: 
-                $ref: '#/components/examples/ACSP_G000_with_clearingsystemmemberidentification'  
-              ACCC_return_transaction: 
-                $ref: '#/components/examples/ACCC_return_transaction'
-              ACSP_G000_return_regular: 
-                $ref: '#/components/examples/ACSP_G000_return_regular'
-              ACSP_G000_with_FX: 
-                $ref: '#/components/examples/ACSP_G000_with_FX'                
-                
-                
+              ACCC:
+                $ref: '#/components/examples/ACCC'
+              RJCT_AC04:
+                $ref: '#/components/examples/RJCT_AC04'
+              ACSP_G002:
+                $ref: '#/components/examples/ACSP_G002'
+              ACSP_G001:
+                $ref: '#/components/examples/ACSP_G001'
+              ACCC_return:
+                $ref: '#/components/examples/ACCC_return'
+              ACSP_G001_return:
+                $ref: '#/components/examples/ACSP_G001_return'
       responses:
         '200':
           $ref: '#/components/responses/200-PaymentStatus'
@@ -153,13 +152,6 @@ components:
             $ref: '#/components/schemas/Max140Text'
         required:
         - name
-    BusinessService12Code:
-      type: string
-      description: |-
-        Specifies the Service Level agreed between the two MessagingEndpoints under which rules this Business Message is exchanged.
-        *`G001`-Indicates the gpi Customer Credit Transfer (CCT) service.
-      enum:
-      - G001
     ChargeBearerType3Code:
       type: string
       description: |-
@@ -264,6 +256,19 @@ components:
       - BE05
       - AM09
       - RUTA
+    TrackerPaymentStatusReason5Code:
+      type: string
+      description: |-
+        Provides the reason for a payment status.
+        *`G001`-The Status Originator transferred the Credit Transfer to the next Agent or to a Market Infrastructure where the transaction’s service obligations may no longer be guaranteed.
+        *`G002`-The transaction processing cannot be completed the same day.
+        *`G003`-In an FI to FI Customer Credit Transfer: Credit to creditor's account is pending receipt of required documents. The Status Originator has requested creditor to provide additional documentation.
+        *`G004`-Credit to the creditor's account is pending as status Originator is waiting for funds provided via a cover.
+      enum:
+      - G001
+      - G002
+      - G003
+      - G004
     FinancialInstitutionIdentification12Choice:
       type: object
       description: Specifies the details to identify a financial institution.
@@ -300,21 +305,76 @@ components:
       enum:
       - CCTR
       - RCCT
-    PaymentStatusReason10Code:
-      type: string
-      description: |-
-        Provides the reason for a payment status.
-        *`G000`-The Status Originator transferred the Credit Transfer to the next Agent or to a Market Infrastructure maintaining the transaction’s service obligations.
-        *`G001`-The Status Originator transferred the Credit Transfer to the next Agent or to a Market Infrastructure where the transaction’s service obligations may no longer be guaranteed.
-        *`G002`-The transaction processing cannot be completed the same day.
-        *`G003`-In an FI to FI Customer Credit Transfer: Credit to creditor's account is pending receipt of required documents. The Status Originator has requested creditor to provide additional documentation.
-        *`G004`-Credit to the creditor's account is pending as status Originator is waiting for funds provided via a cover.
-      enum:
-      - G000
-      - G001
-      - G002
-      - G003
-      - G004
+    PaymentStatusRequest12:
+      type: object
+      description: PaymentStatusRequest
+      additionalProperties: false
+      properties:
+        from:
+          #  "Specifies the sending MessagingEndpoint that has created this Business Message for the receiving MessagingEndpoint that will process this Business Message.  Note:\tThe sending MessagingEndpoint might be different from the sending address potentially contained in the transport header (as defined in the transport layer)."
+          $ref: '#/components/schemas/BICFIDec2014Identifier'
+        transaction_status:
+          #  Provides detailed information on the transaction status to be updated in the tracker.
+          $ref: '#/components/schemas/TransactionIndividualStatus5Code'
+        transaction_status_date:
+          #  Date for the status.    Date Time must be expressed as UTC/Zulu time (YYYY-MM-DDThh:mm:ss.sssZ) or local time with UTC offset (YYYY-MM-DDThh:mm:ss.sss+/-hh:mm). Local time is not allowed.
+          $ref: '#/components/schemas/ISONoLocalDateTime'
+        transaction_status_reason:
+          #  Provides detailed information on the status reason.
+          $ref: '#/components/schemas/TrackerPaymentStatusReason5Code'
+        reject_return_reason:
+          #  Provides detailed information on the reject/return reason.
+          $ref: '#/components/schemas/TrackerPaymentStatusReason3Code'
+        tracker_informing_party:
+          #  Identifies the party that issues the status.
+          $ref: '#/components/schemas/BICFIDec2014Identifier'
+        instruction_identification:
+          #  'Unique identification, as assigned by an instructing party for an instructed party, to unambiguously identify the instruction.  Usage: The instruction identification is a point to point reference that can be used between the instructing party and the instructed party to refer to the individual instruction. It can be included in several messages related to the instruction.  When payment scenario is CCTR, for all statuses, except ACSP/G000 and ACSP/G001: Must contain content of F20 of received MT 103 or Instruction Identification of the received pacs.008. If received message is a message not on SWIFT, must contain equivalent of Instruction Identification of the received message not on SWIFT. For statuses ACSP/G000 and ACSP/G001, must contain (equivalent of) Instruction Identification of sent message not on SWIFT (not validated)  When payment scenario is RCCT, for all statuses, except ACSP/G000 and ACSP/G001, should contain the original instruction identification of the return leg received, when available, otherwise must contain an Instruction Id assigned by the sender of the status update. For statuses ACSP/G000 and ACSP/G001, should contain the original instruction identification of the return leg sent, when available, otherwise must contain an Instruction Id assigned by the sender of the status update.'
+          $ref: '#/components/schemas/RestrictedFINXMax35Text'
+        payment_scenario:
+          #  Indicates if the status update that is provided to the tracker is related to a forward payment or a return payment.  For an update on a forward payment, use CCTR. For an update on a return payment, use RCCT.
+          $ref: '#/components/schemas/PaymentScenario6Code'
+        settlement_method:
+          #  Method used to settle the (batch of) payment instructions.
+          $ref: '#/components/schemas/SettlementMethod1Code'
+        clearing_system:
+          #  Specification of a pre-agreed offering between clearing agents or the channel through which the payment instruction is processed.
+          $ref: '#/components/schemas/ExternalCashClearingSystem1Code'
+        instructed_agent:
+          #  Agent that is instructed by the previous party in the chain to carry out the (set of) instruction(s).
+          $ref: '#/components/schemas/FinancialInstitutionIdentification12Choice'
+        interbank_settlement_amount:
+          #  Amount of money moved between the instructing agent and the instructed agent.
+          $ref: '#/components/schemas/ActiveCurrencyAndAmount'
+        source_currency:
+          #  Specifies the currency from which an amount is to be converted in a currency conversion
+          $ref: '#/components/schemas/ActiveCurrencyCode'
+        target_currency:
+          #  Specifies the currency into which an amount is to be converted in a currency conversion
+          $ref: '#/components/schemas/ActiveCurrencyCode'
+        exchange_rate:
+          #  'Specifies the factor used to convert an amount from one currency into another. This reflects the price at which one currency was bought with another currenty.   Usage: ExchangeRate expresses the ratio between UnitCurrency and QuotedCurrency (ExchangeRate = UnitCurrency/QuotedCurrency).'
+          $ref: '#/components/schemas/BaseOneRate'
+        charge_bearer:
+          #  Specifies which party/parties will bear the charges associated with the processing of the payment transaction.
+          $ref: '#/components/schemas/ChargeBearerType3Code'
+        charges_information:
+          type: array
+          #  Provides information on the charges to be paid by the charge bearer(s) related to the payment transaction.
+          items:
+            $ref: '#/components/schemas/Charges15'
+        confirmed_date:
+          #  Specifies the date and time at which the funds are available,  as reported in the ACCC status update.  Date Time must be expressed as UTC/Zulu time (YYYY-MM-DDThh:mm:ss.sssZ) or local time with UTC offset (YYYY-MM-DDThh:mm:ss.sss+/-hh:mm). Local time is not allowed.
+          $ref: '#/components/schemas/ISONoLocalDateTime'
+        confirmed_amount:
+          #  'Specifies the amount confirmed by the Tracker Informing Party for the ACCC status. '
+          $ref: '#/components/schemas/ActiveCurrencyAndAmount'
+      required:
+      - from
+      - transaction_status
+      - tracker_informing_party
+      - instruction_identification
+      - payment_scenario
     RestrictedFINXMax28Text:
       type: string
       description: 'Specifies a character string with a maximum length of 35 characters limited to character set X, that is, a-z A-Z / - ? : ( ) . , ‘ + .'
@@ -347,90 +407,10 @@ components:
       - RJCT
       - ACSP
       - ACCC
-    PaymentStatusRequest9:
-      type: object
-      description: Contains the parameters that allow to update an existing payment.
-      additionalProperties: false
-      properties:
-        from:
-          #  "Specifies the sending MessagingEndpoint that has created this Business Message for the receiving MessagingEndpoint that will process this Business Message.  Note:\tThe sending MessagingEndpoint might be different from the sending address potentially contained in the transport header (as defined in the transport layer)."
-          $ref: '#/components/schemas/BICFIDec2014Identifier'
-        transaction_status:
-          #  Provides detailed information on the transaction status to be updated in the tracker.
-          $ref: '#/components/schemas/TransactionIndividualStatus5Code'
-        transaction_status_date:
-          #  Date for the status.    Date Time must be expressed as UTC/Zulu time (YYYY-MM-DDThh:mm:ss.sssZ) or local time with UTC offset (YYYY-MM-DDThh:mm:ss.sss+/-hh:mm). Local time is not allowed.
-          $ref: '#/components/schemas/ISONoLocalDateTime'
-        transaction_status_reason:
-          #  Provides detailed information on the status reason.
-          $ref: '#/components/schemas/PaymentStatusReason10Code'
-        reject_return_reason:
-          #  Provides detailed information on the reject/return reason.
-          $ref: '#/components/schemas/TrackerPaymentStatusReason3Code'
-        tracker_informing_party:
-          #  Identifies the party that issues the status.
-          $ref: '#/components/schemas/BICFIDec2014Identifier'
-        instruction_identification:
-          #  'Unique identification, as assigned by an instructing party for an instructed party, to unambiguously identify the instruction.  Usage: The instruction identification is a point to point reference that can be used between the instructing party and the instructed party to refer to the individual instruction. It can be included in several messages related to the instruction.  When payment scenario is CCTR, for all statuses, except ACSP/G000 and ACSP/G001: Must contain content of F20 of received MT 103 or Instruction Identification of the received pacs.008. If received message is a message not on SWIFT, must contain equivalent of Instruction Identification of the received message not on SWIFT. For statuses ACSP/G000 and ACSP/G001, must contain (equivalent of) Instruction Identification of sent message not on SWIFT (not validated)  When payment scenario is RCCT, for all statuses, except ACSP/G000 and ACSP/G001, should contain the original instruction identification of the return leg received, when available, otherwise must contain an Instruction Id assigned by the sender of the status update. For statuses ACSP/G000 and ACSP/G001, should contain the original instruction identification of the return leg sent, when available, otherwise must contain an Instruction Id assigned by the sender of the status update.'
-          $ref: '#/components/schemas/RestrictedFINXMax35Text'
-        service_level:
-          #  Agreement under which or rules under which the transaction should be processed.
-          $ref: '#/components/schemas/BusinessService12Code'
-        payment_scenario:
-          #  Indicates if the status update that is provided to the tracker is related to a forward payment or a return payment.
-          $ref: '#/components/schemas/PaymentScenario6Code'
-        settlement_method:
-          #  Method used to settle the (batch of) payment instructions.
-          $ref: '#/components/schemas/SettlementMethod1Code'
-        clearing_system:
-          #  Specification of a pre-agreed offering between clearing agents or the channel through which the payment instruction is processed.
-          $ref: '#/components/schemas/ExternalCashClearingSystem1Code'
-        instructed_agent:
-          #  Agent that is instructed by the previous party in the chain (TrackerInformingParty) to carry out the (set of) instruction(s).
-          $ref: '#/components/schemas/FinancialInstitutionIdentification12Choice'
-        interbank_settlement_amount:
-          #  Amount of money moved between the instructing agent and the instructed agent.
-          $ref: '#/components/schemas/ActiveCurrencyAndAmount'
-        source_currency:
-          #  Specifies the currency from which an amount is to be converted in a currency conversion
-          $ref: '#/components/schemas/ActiveCurrencyCode'
-        target_currency:
-          #  Specifies the currency into which an amount is to be converted in a currency conversion
-          $ref: '#/components/schemas/ActiveCurrencyCode'
-        exchange_rate:
-          #  'Specifies the factor used to convert an amount from one currency into another. This reflects the price at which one currency was bought with another currenty.   Usage: ExchangeRate expresses the ratio between UnitCurrency and QuotedCurrency (ExchangeRate = UnitCurrency/QuotedCurrency).'
-          $ref: '#/components/schemas/BaseOneRate'
-        charge_bearer:
-          #  Specifies which party/parties will bear the charges associated with the processing of the payment transaction.
-          $ref: '#/components/schemas/ChargeBearerType3Code'
-        charges_information:
-          type: array
-          #  Provides information on the charges to be paid by the charge bearer(s) related to the payment transaction.
-          items:
-            $ref: '#/components/schemas/Charges15'
-        confirmed_date:
-          #  Specifies the date and time at which the funds are available,  as reported in the ACCC status update.  Date Time must be expressed as UTC/Zulu time (YYYY-MM-DDThh:mm:ss.sssZ) or local time with UTC offset (YYYY-MM-DDThh:mm:ss.sss+/-hh:mm). Local time is not allowed.
-          $ref: '#/components/schemas/ISONoLocalDateTime'
-        confirmed_amount:
-          #  'Specifies the amount confirmed by the Tracker Informing Party for the ACCC status. '
-          $ref: '#/components/schemas/ActiveCurrencyAndAmount'
-        remaining_to_be_confirmed_amount:
-          #  Amount of money remaining to be confirmed.
-          $ref: '#/components/schemas/ActiveCurrencyAndAmount'
-        previously_confirmed_amount:
-          #  Amount of money previously credited to the creditor and confirmed to the tracking system by the agent.
-          $ref: '#/components/schemas/ActiveCurrencyAndAmount'
-      required:
-      - from
-      - transaction_status
-      - tracker_informing_party
-      - instruction_identification
-      - service_level
-      - payment_scenario
     UUIDv4Identifier:
       type: string
       description: Universally Unique IDentifier (UUID) version 4, as described in IETC RFC 4122 "Universally Unique IDentifier (UUID) URN Namespace".
-      pattern: ^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$      
+      pattern: ^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$
   responses:
     '400-BadRequest':
       description: Bad Request
@@ -506,7 +486,7 @@ components:
           schema: 
             $ref: '#/components/schemas/ErrorMessage'
           examples:
-            payload_too_large:
+            too_many_requests:
               value:
                 severity: Transient
                 code: SwAP507
@@ -535,189 +515,103 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorMessage'
-    'default':
-      description: 'Internal Server Error'
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorMessage'
-          examples:
-            service_internal_error:
-              value:
-                severity: Transient
-                code: Sw.gpi.InternalError
-                text: Internal error
+    # 'default' component removed (was unused)
     '200-PaymentStatus':
       description: Status Confirmation Response
   examples:
-    ACCC_partial_confirmation:
-      summary: Request to update the status of the transaction to ACCC with partial confirmation.
+    ACCC:
+      summary: Request to update the status of a transaction to ACCC
       value:
-        from: BICCXXXXXXX
+        from: SNFSUS33XXX
         transaction_status: ACCC
-        tracker_informing_party: BICCXXXXXXX
-        instruction_identification: "789"
-        service_level: G001
+        tracker_informing_party: SNFSUS33XXX
+        instruction_identification: ABC123
         payment_scenario: CCTR
-        charges_information:
-        - amount:
-            currency: IDR
-            amount: '10'
-          agent:
-            bicfi: BICCXXXXXXX
-        confirmed_date: '2021-11-25T14:33:00.000Z'
+        confirmed_date: '2021-03-08T15:12:00.000Z'
         confirmed_amount:
-          currency: IDR
-          amount: '500'
-        remaining_to_be_confirmed_amount:
-          currency: IDR
-          amount: '490'
-    ACSP_G000_charge_agent_NOTPROVIDED:
-      summary: Request to update the status of the transaction to ACSP/G000 where charges information includes Agent with fixed code NOTPROVIDED.
-      value:
-        from: SWHQBEBBXXX
-        transaction_status: ACSP
-        transaction_status_date: '2021-11-25T14:33:00.000Z'
-        transaction_status_reason: G000
-        tracker_informing_party: SWHQBEBBXXX
-        instruction_identification: "123"
-        service_level: G001
-        payment_scenario: CCTR
-        settlement_method: INGA
-        instructed_agent:
-          bicfi: SWHQBEBBXXX
-        interbank_settlement_amount:
-          currency: USD
-          amount: '970'
-        charge_bearer: CRED
-        charges_information:
-        - amount:
-            currency: USD
-            amount: '10'
-          agent:
-            name: NOTPROVIDED
-        - amount:
-            currency: USD
-            amount: '20'
-          agent:
-            bicfi: SWHQBEBBXXX
-    ACSP_G000_regular:
-      summary: Request to update the status of the transaction to ACSP/G000.
-      value:
-        from: BICAXXXXXXX
-        transaction_status: ACSP
-        transaction_status_date: '2021-11-25T14:33:00.000Z'
-        transaction_status_reason: G000
-        tracker_informing_party: BICAXXXXXXX
-        instruction_identification: " 123"
-        service_level: G001
-        payment_scenario: CCTR
-        settlement_method: INDA
-        instructed_agent:
-          bicfi: SWHQBEBB
-        interbank_settlement_amount:
+          amount: '10010.01'
           currency: EUR
-          amount: '990'
-        charge_bearer: CRED
-        charges_information:
-        - amount:
-            currency: EUR
-            amount: '10'
-          agent:
-            bicfi: BICAXXXXXXX
-    ACSP_G000_with_clearingsystemmemberidentification:
-      summary: Request to update the status of the transaction to ACSP/G000 identifying the instructed agent with a clearing system member identification.
+    RJCT_AC04:
+      summary: Request to update the status of a transaction to RJCT/AC04
       value:
-        from: SWHQBEBBXXX
+        from: SNFSUS33XXX
+        transaction_status_date: '2021-03-08T15:12:00.000Z'
+        transaction_status: RJCT
+        reject_return_reason: AC04
+        tracker_informing_party: SNFSUS33XXX
+        instruction_identification: ABC123
+        payment_scenario: CCTR
+    ACSP_G002:
+      summary: Request to update the status of a transaction to ACSP/G002
+      value:
+        from: SNFSUS33XXX
         transaction_status: ACSP
-        transaction_status_date: '2021-11-25T14:50:00.000Z'
-        transaction_status_reason: G000
-        tracker_informing_party: SWHQBEBBXXX
-        instruction_identification: "567"
-        service_level: G001
+        transaction_status_reason: G002
+        tracker_informing_party: SNFSUS33XXX
+        instruction_identification: ABC123
+        payment_scenario: CCTR
+    ACSP_G001:
+      summary: Request to update the status of a transaction to ACSP/G001
+      value:
+        from: SNFSUS33XXX
+        transaction_status: ACSP
+        transaction_status_date: '2021-03-08T15:12:00.000Z'
+        transaction_status_reason: G001
+        tracker_informing_party: SNFSUS33XXX
+        instruction_identification: ABC123
         payment_scenario: CCTR
         settlement_method: CLRG
-        clearing_system: FDW
+        clearing_system: EBA
         instructed_agent:
-          clearing_system_member_identification:
-            clearing_system_identification: USABA
-            member_identification: "'123456789'"
+          bicfi: SNFSNL33XXX
         interbank_settlement_amount:
-          currency: USD
-          amount: '1000'
-        charge_bearer: SHAR
-    ACSP_G000_return_regular:
-      summary: Request to update the status of the transaction to ACSP/G000 on a return transaction.
-      value:
-        from: BICAXXXXXXX
-        transaction_status: ACSP
-        transaction_status_date: '2021-11-25T14:33:00.000Z'
-        transaction_status_reason: G000
-        tracker_informing_party: BICAXXXXXXX
-        instruction_identification: " 123"
-        service_level: G001
-        payment_scenario: RCCT
-        settlement_method: INDA
-        instructed_agent:
-          bicfi: SWHQBEBB
-        interbank_settlement_amount:
+          amount: '9990.01'
           currency: EUR
-          amount: '990'
         charge_bearer: CRED
         charges_information:
         - amount:
+            amount: '10.0'
             currency: EUR
-            amount: '10'
           agent:
-            bicfi: BICAXXXXXXX
-    ACCC_return_transaction:
-      summary: Request to update the status of the transaction to ACCC for a return transaction.
+            bicfi: SNFSUS33XXX
+    # ACSP_G001_FX example removed (was unused)
+            
+    ACCC_return:
+      summary: Request to update the status of a transaction to ACCC for a return transaction
       value:
-        from: BICCXXXXXXX
+        from: SNFSUS33XXX
         transaction_status: ACCC
-        tracker_informing_party: BICCXXXXXXX
-        instruction_identification: "789"
-        service_level: G001
-        payment_scenario: RCCT
-        charges_information:
-        - amount:
-            currency: IDR
-            amount: '10'
-          agent:
-            bicfi: BICCXXXXXXX
-        confirmed_date: '2021-11-25T14:33:00.000Z'
-        confirmed_amount:
-          currency: IDR
-          amount: '990'
-    ACSP_G000_with_FX:
-      summary: Request to update the status of the transaction with indication of FX.
-      value:  
-        from: BANKBBICXXX
-        transaction_status: ACSP
-        transaction_status_date: '2021-11-25T14:33:00.000Z'
-        transaction_status_reason: G000
-        tracker_informing_party: BANKBBICXXX
+        tracker_informing_party: SNFSUS33XXX
         instruction_identification: ABC123
-        service_level: G001
-        payment_scenario: CCTR
-        settlement_method: INDA
-        instructed_agent:
-          bicfi: BANKCBICXXX
-        interbank_settlement_amount:
+        payment_scenario: RCCT
+        confirmed_date: '2021-03-08T15:12:00.000Z'
+        confirmed_amount:
+          amount: '10010.01'
           currency: EUR
-          amount: '1000'
-        source_currency: USD
-        target_currency: EUR
-        exchange_rate: '1.01'
+    ACSP_G001_return:
+      summary: Request to update the status of a transaction to ACSP/G001 for a return transaction
+      value:
+        from: SNFSUS33XXX
+        transaction_status: ACSP
+        transaction_status_date: '2021-03-08T15:12:00.000Z'
+        transaction_status_reason: G001
+        tracker_informing_party: SNFSUS33XXX
+        instruction_identification: ABC123
+        payment_scenario: RCCT
+        settlement_method: CLRG
+        clearing_system: EBA
+        instructed_agent:
+          bicfi: SNFSNL33XXX
+        interbank_settlement_amount:
+          amount: '9990.01'
+          currency: EUR
         charge_bearer: CRED
         charges_information:
-          - amount:
-              currency: EUR
-              amount: '10'
-            agent:
-              bicfi: BANKBBICXXX
-
-  
+        - amount:
+            amount: '10.0'
+            currency: EUR
+          agent:
+            bicfi: SNFSUS33XXX
   securitySchemes:
     oauthBearerToken:
       type: http
