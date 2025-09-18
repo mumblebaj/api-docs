@@ -4,27 +4,81 @@
     <title>API Documentation</title>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <style>
-      body { font-family: Arial, sans-serif; margin: 0; }
+      :root { color-scheme: light dark; }
+
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        background: #fff;
+        color: #000;
+      }
+
       header {
-        background: #2c3e50; color: white; padding: 1rem;
-        display: flex; justify-content: space-between; align-items: center; gap: 1rem;
-        flex-wrap: wrap;
+        padding: 1rem;
+        display: flex; justify-content: space-between;
+        align-items: center; gap: 1rem; flex-wrap: wrap;
       }
-      .controls { display: flex; align-items: center; gap: 0.75rem; }
-      select, button, label[for="file-input"] {
-        padding: 0.45rem 0.6rem; font-size: 1rem; border-radius: 6px; border: 0;
+
+      .controls { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+
+      select, label[for="file-input"] {
+        padding: 0.45rem 0.6rem;
+        font-size: 1rem;
+        border-radius: 6px;
+        border: 1px solid #ccc;
       }
+
       label[for="file-input"] {
-        background: #ecf0f1; color: #2c3e50; cursor: pointer;
+        cursor: pointer;
       }
+
       #dropzone {
-        border: 2px dashed #bbb; border-radius: 8px; margin: 1rem;
-        padding: 0.75rem; text-align: center; font-size: 0.95rem; color: #555;
+        border: 2px dashed #bbb;
+        border-radius: 8px;
+        margin: 1rem;
+        padding: 0.75rem;
+        text-align: center;
+        font-size: 0.95rem;
+        color: #555;
+        transition: border-color 0.2s, color 0.2s;
       }
-      #dropzone.dragover { border-color: #2c3e50; color: #2c3e50; }
+
+      #dropzone.dragover {
+        border-color: #007acc;
+        color: #007acc;
+      }
+
       #redoc-container { min-height: calc(100vh - 140px); }
-      .hint { font-size: 0.85rem; color: #888; margin: 0 1rem 1rem; }
+
+      .hint { font-size: 0.85rem; color: #666; margin: 0 1rem 1rem; }
+
+      /* Dark mode overrides */
+      @media (prefers-color-scheme: dark) {
+        body {
+          background: #121212;
+          color: #ffffff;
+        }
+        header {
+          background: #1f1f1f;
+          color: #ffffff;
+        }
+        select, label[for="file-input"] {
+          background: #2c2c2c;
+          color: #ffffff;
+          border: 1px solid #444;
+        }
+        #dropzone {
+          border-color: #444;
+          color: #cccccc;
+        }
+        #dropzone.dragover {
+          border-color: #4dabf7;
+          color: #4dabf7;
+        }
+        .hint { color: #999; }
+      }
     </style>
   </head>
   <body>
@@ -33,9 +87,9 @@
       <div class="controls">
         <label for="version">Version:</label>
         <select id="version">
-          <option value="./v1/greetings-v1.yaml">v1</option>
-          <option value="./v2/greetings-v2.yaml">v2</option>
-          <option value="./v3/greetings-v3.yaml">v3</option>
+          <option value="v1/greetings-v1.yaml">v1</option>
+          <option value="v2/greetings-v2.yaml">v2</option>
+          <option value="v3/greetings-v3.yaml">v3</option>
         </select>
 
         <label for="file-input">Upload YAML/JSON</label>
@@ -51,59 +105,69 @@
     <!-- ReDoc -->
     <script src="https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js"></script>
     <!-- YAML parser -->
-    <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js" integrity="sha256-1wlY6tJ9s2pDk3k5o5cR2m+V4JcE5u3pWQm5wT8R3X8=" crossorigin="anonymous"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"
+      integrity="sha256-Rdw90D3AegZwWiwpibjH9wkBPwS9U4bjJ51ORH8H69c="
+      crossorigin="anonymous"></script>
 
     <script>
-      const redocEl = document.getElementById('redoc-container');
+      const redocEl   = document.getElementById('redoc-container');
       const versionSel = document.getElementById('version');
-      const fileInput = document.getElementById('file-input');
-      const dropzone = document.getElementById('dropzone');
+      const fileInput  = document.getElementById('file-input');
+      const dropzone   = document.getElementById('dropzone');
 
-      function renderFromUrl(url) {
-        Redoc.init(url, {}, redocEl);
+      const SPEC_BASE_CANDIDATES = ["./", "../spec/"];
+      let SPEC_BASE = "./";
+
+      async function detectSpecBase() {
+        const testRel = "v1/greetings-v1.yaml";
+        for (const base of SPEC_BASE_CANDIDATES) {
+          try {
+            const res = await fetch(base + testRel, { method: "HEAD" });
+            if (res.ok) return base;
+          } catch (_) {}
+        }
+        return "./";
       }
 
-      function renderFromObject(specObj) {
-        // ReDoc accepts a JS object as the first arg
-        Redoc.init(specObj, {}, redocEl);
-      }
+      function renderFromUrl(url) { Redoc.init(url, {}, redocEl); }
+
+      function renderFromObject(specObj) { Redoc.init(specObj, {}, redocEl); }
 
       function isLikelyJson(text) {
         const t = text.trim();
-        return (t.startsWith('{') || t.startsWith('['));
+        return t.startsWith("{") || t.startsWith("[");
       }
 
       async function handleText(text) {
         try {
           const spec = isLikelyJson(text) ? JSON.parse(text) : jsyaml.load(text);
+          const isOAS3 = spec && typeof spec === "object" && typeof spec.openapi === "string";
+          const isOAS2 = spec && typeof spec === "object" && spec.swagger === "2.0";
+          if (!isOAS2 && !isOAS3) {
+            const hint = spec && typeof spec === "object"
+              ? `Found keys: ${Object.keys(spec).slice(0, 10).join(", ")}`
+              : "The file didn’t parse into an object.";
+            throw new Error("This doesn’t look like an OpenAPI document. " + hint);
+          }
           renderFromObject(spec);
         } catch (err) {
-          alert('Failed to parse file. Ensure it is valid OpenAPI YAML/JSON.\\n\\n' + err);
+          alert("Failed to parse file. Ensure it is valid OpenAPI YAML/JSON.\n\n" + err);
           console.error(err);
         }
       }
 
       function handleFile(file) {
         const reader = new FileReader();
-        reader.onload = e => handleText(e.target.result);
+        reader.onload = (e) => handleText(e.target.result);
         reader.readAsText(file);
       }
 
-      // Version dropdown -> load from URL
-      versionSel.addEventListener('change', () => renderFromUrl(versionSel.value));
-
-      // Upload button
-      fileInput.addEventListener('change', e => {
-        const file = e.target.files && e.target.files[0];
-        if (file) handleFile(file);
-        fileInput.value = ''; // reset so same file can be re-selected
-      });
-
       // Drag & drop
-      ;['dragenter','dragover'].forEach(evt =>
+      ['dragenter','dragover'].forEach(evt =>
         dropzone.addEventListener(evt, e => { e.preventDefault(); e.dataTransfer.dropEffect = 'copy'; dropzone.classList.add('dragover'); })
       );
-      ;['dragleave','drop'].forEach(evt =>
+      ['dragleave','drop'].forEach(evt =>
         dropzone.addEventListener(evt, e => { e.preventDefault(); dropzone.classList.remove('dragover'); })
       );
       dropzone.addEventListener('drop', e => {
@@ -111,8 +175,21 @@
         if (file) handleFile(file);
       });
 
-      // Initial load: default to v1 in your current setup
-      window.onload = () => renderFromUrl(versionSel.value);
+      // Upload button
+      fileInput.addEventListener('change', e => {
+        const file = e.target.files && e.target.files[0];
+        if (file) handleFile(file);
+        fileInput.value = ''; // reset
+      });
+
+      versionSel.addEventListener("change", () => {
+        renderFromUrl(SPEC_BASE + versionSel.value);
+      });
+
+      (async function init() {
+        SPEC_BASE = await detectSpecBase();
+        renderFromUrl(SPEC_BASE + versionSel.value);
+      })();
     </script>
   </body>
 </html>
