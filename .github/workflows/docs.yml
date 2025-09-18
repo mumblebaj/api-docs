@@ -10,8 +10,6 @@ on:
       - 'spec/v1/greetings-v1.yaml'
       - 'spec/v2/greetings-v2.yaml'
       - 'spec/v3/greetings-v3.yaml'
-      - 'spec/gpi/gCCT.yaml'
-      - 'spec/gpi/ft.yaml'
 
 jobs:
   build-and-deploy:
@@ -38,11 +36,6 @@ jobs:
 
       - name: Copy v3 spec
         run: mkdir -p public/v3 && cp spec/v3/greetings-v3.yaml public/v3/      
-        
-      - name: Copy gpi spec
-        run: mkdir -p public/gpi && cp spec/gpi/gCCT.yaml public/gpi/ && cp spec/gpi/ft.yaml public/gpi/
-
-
 
       # 4. Copy landing page into public
       - name: Copy landing page
