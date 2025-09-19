@@ -1,8 +1,8 @@
 openapi: 3.0.3
 info:
-  title: Greetings API
+  title: Sample Greetings API
   version: 1.0.0
-  description: This is a greetings API demonstrating a simple greeting endpoint with query parameters and multilingual support.
+  description: This is a simple greetings API demonstrating a simple greeting endpoint with query parameters and multilingual support.
   license:
     name: MIT
     url: https://opensource.org/licenses/MIT
@@ -35,7 +35,7 @@ paths:
             enum: [en, fr, es, ig]
             example: en
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             application/json:
@@ -53,6 +53,13 @@ paths:
                   value: { message: "¡Hola, Ezinne!" }
                 igbo:
                   value: { message: "Ndeewo, Ezinne!" }
+        status: 400
+        error: Bad Request
+        message: The request body is malformed or invalid.
+        details:
+          - field: language
+            code: invalid_format
+            message: "Invalid language format."
 components:
   securitySchemes:
     api_key:
