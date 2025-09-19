@@ -31,12 +31,6 @@ jobs:
       - name: Copy v1 spec
         run: mkdir -p public/v1 && cp spec/v1/greetings-v1.yaml public/v1/
 
-      - name: Copy v2 spec
-        run: mkdir -p public/v2 && cp spec/v2/greetings-v2.yaml public/v2/
-
-      - name: Copy v3 spec
-        run: mkdir -p public/v3 && cp spec/v3/greetings-v3.yaml public/v3/      
-
       # 4. Copy landing page into public
       - name: Copy landing page
         run: cp docs/index.html public/index.html
