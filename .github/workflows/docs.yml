@@ -48,7 +48,7 @@ jobs:
       
       # 7. Copy styles to public/styles
       - name: Copy styles.css
-        run: mkdir -p public/css && cp css/styles.css public/css
+        run: mkdir -p public/css && cp css/style.css public/css
 
       # 8. Deploy to GitHub Pages
       - name: Deploy to GitHub Pages

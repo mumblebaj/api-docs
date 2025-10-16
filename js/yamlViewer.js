@@ -1,3 +1,4 @@
+// Created by mumblebaj
 // js/yamlViewer.js
 
 async function ensureReDocLoaded() {
