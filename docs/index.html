@@ -146,6 +146,18 @@
 
       // --- View Handling ---
       const modeSelect = document.getElementById("viewer-mode");
+      const modeIndicator = document.getElementById("mode-indicator");
+
+      function updateModeIndicator(mode) {
+        if (mode === "xsd") {
+          modeIndicator.textContent = "📘 XSD Mode";
+          modeIndicator.className = "mode-badge xsd";
+        } else {
+          modeIndicator.textContent = "📂 YAML Mode";
+          modeIndicator.className = "mode-badge yaml";
+        }
+      }
+
       const yamlViewer = document.getElementById("yaml-viewer");
       const xsdViewer = document.getElementById("xsd-viewer");
       const dropzone = document.getElementById("dropzone");
@@ -153,6 +165,9 @@
       let currentMode = modeSelect.value;
       let activeHandler =
         currentMode === "xsd" ? initXsdViewer : initYamlViewer;
+        
+      // ✅ update indicator right here
+      updateModeIndicator(currentMode);
 
       // Initialize default mode
       activeHandler(dropzone, yamlViewer, xsdViewer);
@@ -164,6 +179,8 @@
         // Hide all viewers
         document.querySelectorAll(".viewer").forEach((v) => {
           v.style.display = "none";
+
+          updateModeIndicator(currentMode);
         });
 
         // Reinitialize selected viewer
