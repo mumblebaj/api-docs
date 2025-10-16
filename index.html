@@ -75,13 +75,40 @@
         border-radius: 6px;
         font-size: 1rem;
       }
+      .mode-badge {
+        padding: 0.3rem 0.7rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        background-color: var(--accent);
+        color: #fff;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+      }
+
+      [data-theme="dark"] .mode-badge {
+        background-color: #444;
+        color: #fff;
+      }
+
+      .mode-badge.yaml {
+        background-color: #28a745; /* green */
+      }
+
+      .mode-badge.xsd {
+        background-color: #0d6efd; /* blue */
+      }
+
+      .mode-badge:hover {
+        transform: scale(1.05);
+      }
     </style>
   </head>
 
   <body>
     <header>
       <h2>Universal Schema Viewer</h2>
-      <div>
+      <div style="display: flex; align-items: center; gap: 1rem">
+        <span id="mode-indicator" class="mode-badge">📂 YAML Mode</span>
         <select id="viewer-mode">
           <option value="yaml">YAML / JSON</option>
           <option value="xsd">XSD / XML</option>
@@ -131,34 +158,34 @@
       activeHandler(dropzone, yamlViewer, xsdViewer);
 
       // --- Switch logic ---
-modeSelect.addEventListener("change", () => {
-  currentMode = modeSelect.value;
+      modeSelect.addEventListener("change", () => {
+        currentMode = modeSelect.value;
 
-  // Hide all viewers
-  document.querySelectorAll(".viewer").forEach((v) => {
-    v.style.display = "none";
-  });
+        // Hide all viewers
+        document.querySelectorAll(".viewer").forEach((v) => {
+          v.style.display = "none";
+        });
 
-  // Reinitialize selected viewer
-  if (currentMode === "xsd") {
-    xsdViewer.style.display = "block";
-    activeHandler = initXsdViewer;
-  } else {
-    yamlViewer.style.display = "block";
-    activeHandler = initYamlViewer;
-  }
+        // Reinitialize selected viewer
+        if (currentMode === "xsd") {
+          xsdViewer.style.display = "block";
+          activeHandler = initXsdViewer;
+        } else {
+          yamlViewer.style.display = "block";
+          activeHandler = initYamlViewer;
+        }
 
-  // Replace dropzone safely
-  const oldDrop = document.getElementById("dropzone");
-  const newDrop = oldDrop.cloneNode(true);
-  oldDrop.parentNode.replaceChild(newDrop, oldDrop);
+        // Replace dropzone safely
+        const oldDrop = document.getElementById("dropzone");
+        const newDrop = oldDrop.cloneNode(true);
+        oldDrop.parentNode.replaceChild(newDrop, oldDrop);
 
-  // ✅ Reassign our reference!
-  const updatedDropzone = document.getElementById("dropzone");
+        // ✅ Reassign our reference!
+        const updatedDropzone = document.getElementById("dropzone");
 
-  // Bind the correct handler to the newly created element
-  activeHandler(updatedDropzone, yamlViewer, xsdViewer);
-});
+        // Bind the correct handler to the newly created element
+        activeHandler(updatedDropzone, yamlViewer, xsdViewer);
+      });
     </script>
   </body>
 </html>
