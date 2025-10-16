@@ -10,6 +10,9 @@ on:
       - 'spec/v1/greetings-v1.yaml'
       - 'spec/v2/greetings-v2.yaml'
       - 'spec/v3/greetings-v3.yaml'
+      - 'js/xsdViewer.js'
+      - 'js/yamlViewer.js'
+      - 'css/styles.css'
 
 jobs:
   build-and-deploy:
@@ -35,7 +38,19 @@ jobs:
       - name: Copy landing page
         run: cp docs/index.html public/index.html
 
-      # 5. Deploy to GitHub Pages
+      # 5. Copy xsdViewer into public/js folder
+      - name: Copy xsdViewer
+        run: mkdir -p public/js && cp js/xsdViewer.js public/js/
+
+      # 6. Copy yamlViewer into public/js folder
+      - name: Copy yamlViewer
+        run: cp /js/yamlViewer.js public/js/
+      
+      # 7. Copy styles to public/styles
+      - name: Copy styles.css
+        run: mkdir -p public/css && cp css/styles.css public/css
+
+      # 8. Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:

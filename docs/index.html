@@ -1,193 +1,164 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <title>API Documentation</title>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8" />
+    <title>Universal Schema Viewer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../css/style.css" />
 
     <style>
-      :root { color-scheme: light dark; }
-
+      :root {
+        --bg: #f5f7fa;
+        --fg: #222;
+        --header-bg: #2c3e50;
+        --header-fg: #fff;
+        --accent: #0d6efd;
+      }
+      [data-theme="dark"] {
+        --bg: #1e1e1e;
+        --fg: #eee;
+        --header-bg: #111;
+        --header-fg: #ddd;
+        --accent: #3399ff;
+      }
       body {
-        font-family: Arial, sans-serif;
+        font-family: system-ui, sans-serif;
+        background-color: var(--bg);
+        color: var(--fg);
         margin: 0;
-        background: #fff;
-        color: #000;
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
       }
-
       header {
-        padding: 1rem;
-        display: flex; justify-content: space-between;
-        align-items: center; gap: 1rem; flex-wrap: wrap;
+        background-color: var(--header-bg);
+        color: var(--header-fg);
+        padding: 1rem 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
       }
-
-      .controls { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
-
-      select, label[for="file-input"] {
-        padding: 0.45rem 0.6rem;
-        font-size: 1rem;
-        border-radius: 6px;
-        border: 1px solid #ccc;
-      }
-
-      label[for="file-input"] {
+      #dropzone {
+        flex: 0 0 auto;
+        margin: 1rem auto;
+        padding: 2rem;
+        width: 80%;
+        border: 2px dashed var(--accent);
+        text-align: center;
+        border-radius: 8px;
+        transition: background 0.3s;
         cursor: pointer;
       }
-
-      #dropzone {
-        border: 2px dashed #bbb;
-        border-radius: 8px;
-        margin: 1rem;
-        padding: 0.75rem;
-        text-align: center;
-        font-size: 0.95rem;
-        color: #555;
-        transition: border-color 0.2s, color 0.2s;
-      }
-
       #dropzone.dragover {
-        border-color: #007acc;
-        color: #007acc;
+        background-color: rgba(13, 110, 253, 0.1);
       }
-
-      #redoc-container { min-height: calc(100vh - 140px); }
-
-      .hint { font-size: 0.85rem; color: #666; margin: 0 1rem 1rem; }
-
-      /* Dark mode overrides */
-      @media (prefers-color-scheme: dark) {
-        body {
-          background: #121212;
-          color: #ffffff;
-        }
-        header {
-          background: #1f1f1f;
-          color: #ffffff;
-        }
-        select, label[for="file-input"] {
-          background: #2c2c2c;
-          color: #ffffff;
-          border: 1px solid #444;
-        }
-        #dropzone {
-          border-color: #444;
-          color: #cccccc;
-        }
-        #dropzone.dragover {
-          border-color: #4dabf7;
-          color: #4dabf7;
-        }
-        .hint { color: #999; }
+      .viewer {
+        flex: 1 1 auto;
+        overflow: auto;
+        padding: 1rem;
+        display: none;
+      }
+      #theme-toggle {
+        background: var(--accent);
+        color: #fff;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        cursor: pointer;
+        margin-left: 1rem;
+      }
+      select {
+        background: var(--bg);
+        color: var(--fg);
+        border: 1px solid var(--accent);
+        padding: 0.4rem;
+        border-radius: 6px;
+        font-size: 1rem;
       }
     </style>
   </head>
+
   <body>
     <header>
-      <h2 style="margin:0;">API Documentation</h2>
-      <div class="controls">
-        <label for="version">Version:</label>
-        <select id="version">
-          <option value="v1/greetings-v1.yaml">Example</option>
+      <h2>Universal Schema Viewer</h2>
+      <div>
+        <select id="viewer-mode">
+          <option value="yaml">YAML / JSON</option>
+          <option value="xsd">XSD / XML</option>
         </select>
-
-        <label for="file-input">Upload YAML/JSON</label>
-        <input id="file-input" type="file" accept=".yaml,.yml,.json" style="display:none">
+        <button id="theme-toggle">🌙 Dark Mode</button>
       </div>
     </header>
 
-    <div id="dropzone">Drop your OpenAPI YAML/JSON here (or use the Upload button)</div>
-    <p class="hint">Tip: Uploaded files render locally in your browser and are not sent anywhere.</p>
+    <div id="dropzone">Drop your file here or click to browse</div>
 
-    <div id="redoc-container"></div>
+    <!-- Viewer containers -->
+    <div id="yaml-viewer" class="viewer"></div>
+    <div id="xsd-viewer" class="viewer"></div>
 
-    <!-- ReDoc -->
-    <script src="https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js"></script>
-    <!-- YAML parser -->
-    <script
-      src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"
-      integrity="sha256-Rdw90D3AegZwWiwpibjH9wkBPwS9U4bjJ51ORH8H69c="
-      crossorigin="anonymous"></script>
+    <script type="module">
+      import { initYamlViewer } from "../js/yamlViewer.js";
+      import { initXsdViewer } from "../js/xsdViewer.js";
 
-    <script>
-      const redocEl   = document.getElementById('redoc-container');
-      const versionSel = document.getElementById('version');
-      const fileInput  = document.getElementById('file-input');
-      const dropzone   = document.getElementById('dropzone');
+      const rootEl = document.documentElement;
+      const themeBtn = document.getElementById("theme-toggle");
+      const savedTheme = localStorage.getItem("theme") || "light";
 
-      const SPEC_BASE_CANDIDATES = ["./", "../spec/"];
-      let SPEC_BASE = "./";
+      // --- Theme Handling ---
+      rootEl.dataset.theme = savedTheme;
+      themeBtn.textContent =
+        savedTheme === "dark" ? "☀️ Light Mode" : "🌙 Dark Mode";
 
-      async function detectSpecBase() {
-        const testRel = "v1/greetings-v1.yaml";
-        for (const base of SPEC_BASE_CANDIDATES) {
-          try {
-            const res = await fetch(base + testRel, { method: "HEAD" });
-            if (res.ok) return base;
-          } catch (_) {}
-        }
-        return "./";
-      }
+      themeBtn.onclick = () => {
+        const next = rootEl.dataset.theme === "dark" ? "light" : "dark";
+        rootEl.dataset.theme = next;
+        localStorage.setItem("theme", next);
+        themeBtn.textContent =
+          next === "dark" ? "☀️ Light Mode" : "🌙 Dark Mode";
+      };
 
-      function renderFromUrl(url) { Redoc.init(url, {}, redocEl); }
+      // --- View Handling ---
+      const modeSelect = document.getElementById("viewer-mode");
+      const yamlViewer = document.getElementById("yaml-viewer");
+      const xsdViewer = document.getElementById("xsd-viewer");
+      const dropzone = document.getElementById("dropzone");
 
-      function renderFromObject(specObj) { Redoc.init(specObj, {}, redocEl); }
+      let currentMode = modeSelect.value;
+      let activeHandler =
+        currentMode === "xsd" ? initXsdViewer : initYamlViewer;
 
-      function isLikelyJson(text) {
-        const t = text.trim();
-        return t.startsWith("{") || t.startsWith("[");
-      }
+      // Initialize default mode
+      activeHandler(dropzone, yamlViewer, xsdViewer);
 
-      async function handleText(text) {
-        try {
-          const spec = isLikelyJson(text) ? JSON.parse(text) : jsyaml.load(text);
-          const isOAS3 = spec && typeof spec === "object" && typeof spec.openapi === "string";
-          const isOAS2 = spec && typeof spec === "object" && spec.swagger === "2.0";
-          if (!isOAS2 && !isOAS3) {
-            const hint = spec && typeof spec === "object"
-              ? `Found keys: ${Object.keys(spec).slice(0, 10).join(", ")}`
-              : "The file didn’t parse into an object.";
-            throw new Error("This doesn’t look like an OpenAPI document. " + hint);
-          }
-          renderFromObject(spec);
-        } catch (err) {
-          alert("Failed to parse file. Ensure it is valid OpenAPI YAML/JSON.\n\n" + err);
-          console.error(err);
-        }
-      }
+      // --- Switch logic ---
+modeSelect.addEventListener("change", () => {
+  currentMode = modeSelect.value;
 
-      function handleFile(file) {
-        const reader = new FileReader();
-        reader.onload = (e) => handleText(e.target.result);
-        reader.readAsText(file);
-      }
+  // Hide all viewers
+  document.querySelectorAll(".viewer").forEach((v) => {
+    v.style.display = "none";
+  });
 
-      // Drag & drop
-      ['dragenter','dragover'].forEach(evt =>
-        dropzone.addEventListener(evt, e => { e.preventDefault(); e.dataTransfer.dropEffect = 'copy'; dropzone.classList.add('dragover'); })
-      );
-      ['dragleave','drop'].forEach(evt =>
-        dropzone.addEventListener(evt, e => { e.preventDefault(); dropzone.classList.remove('dragover'); })
-      );
-      dropzone.addEventListener('drop', e => {
-        const file = e.dataTransfer.files && e.dataTransfer.files[0];
-        if (file) handleFile(file);
-      });
+  // Reinitialize selected viewer
+  if (currentMode === "xsd") {
+    xsdViewer.style.display = "block";
+    activeHandler = initXsdViewer;
+  } else {
+    yamlViewer.style.display = "block";
+    activeHandler = initYamlViewer;
+  }
 
-      // Upload button
-      fileInput.addEventListener('change', e => {
-        const file = e.target.files && e.target.files[0];
-        if (file) handleFile(file);
-        fileInput.value = ''; // reset
-      });
+  // Replace dropzone safely
+  const oldDrop = document.getElementById("dropzone");
+  const newDrop = oldDrop.cloneNode(true);
+  oldDrop.parentNode.replaceChild(newDrop, oldDrop);
 
-      versionSel.addEventListener("change", () => {
-        renderFromUrl(SPEC_BASE + versionSel.value);
-      });
+  // ✅ Reassign our reference!
+  const updatedDropzone = document.getElementById("dropzone");
 
-      (async function init() {
-        SPEC_BASE = await detectSpecBase();
-        renderFromUrl(SPEC_BASE + versionSel.value);
-      })();
+  // Bind the correct handler to the newly created element
+  activeHandler(updatedDropzone, yamlViewer, xsdViewer);
+});
     </script>
   </body>
 </html>
