@@ -1,3 +1,5 @@
+// Created by mumblebaj
+
 // js/xsdViewer.js
 async function ensureReDocLoaded() {
   if (window.Redoc) return;
