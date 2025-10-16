@@ -44,7 +44,7 @@ jobs:
 
       # 6. Copy yamlViewer into public/js folder
       - name: Copy yamlViewer
-        run: cp /js/yamlViewer.js public/js/
+        run: cp js/yamlViewer.js public/js/
       
       # 7. Copy styles to public/styles
       - name: Copy styles.css
