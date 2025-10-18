@@ -305,22 +305,78 @@ export function initXsdViewer(dropzone, yamlViewer, xsdViewer) {
     }
 
     // --- Document root ---
-    const docRoot = xml.querySelector(
-      ":scope > xs\\:element[name='Document'], :scope > element[name='Document']"
-    );
-    if (!docRoot) {
-      alert("No <Document> element found in XSD.");
+    let rootEl =
+      xml.querySelector(
+        ":scope > xs\\:element[name='Document'], :scope > element[name='Document']"
+      ) ||
+      xml.querySelector(
+        ":scope > xs\\:element[name='AppHdr'], :scope > element[name='AppHdr']"
+      );
+
+    // Fallback for namespace-safe detection
+    if (!rootEl) {
+      const allElements = Array.from(
+        xml.getElementsByTagNameNS(
+          "http://www.w3.org/2001/XMLSchema",
+          "element"
+        )
+      ).concat(Array.from(xml.getElementsByTagName("element")));
+
+      rootEl = allElements.find(
+        (el) =>
+          el.getAttribute("name") === "Document" ||
+          el.getAttribute("name") === "AppHdr"
+      );
+    }
+
+    if (!rootEl) {
+      alert("No <Document> or <AppHdr> element found in XSD.");
+      console.warn(
+        "Available element names:",
+        Array.from(xml.getElementsByTagName("*"))
+          .map((e) => e.getAttribute && e.getAttribute("name"))
+          .filter(Boolean)
+      );
       return;
     }
 
-    const documentSchema = buildElementSchema(docRoot);
-    components.schemas["Document"] = documentSchema;
-    components.schemas["DocumentRoot"] = {
+    // --- Build schema for whichever root we found ---
+    const rootName = rootEl.getAttribute("name");
+    const rootSchema = buildElementSchema(rootEl);
+    components.schemas[rootName] = rootSchema;
+    components.schemas[`${rootName}Root`] = {
       type: "object",
-      properties: { Document: { $ref: "#/components/schemas/Document" } },
+      properties: {
+        [rootName]: { $ref: `#/components/schemas/${rootName}` },
+      },
     };
 
-    const fileDesc = mdDocs(docRoot, true) || "Auto-generated from XSD";
+    // Build schemas for each root (Document, AppHdr, etc.)
+    // const rootProps = {};
+    // rootElements.forEach((el) => {
+    //   const rootName = el.getAttribute("name");
+    //   const schema = buildElementSchema(el);
+    //   components.schemas[rootName] = schema;
+    //   rootProps[rootName] = { $ref: `#/components/schemas/${rootName}` };
+    // });
+
+    // // Build a combined "MessageRoot" that contains all found roots
+    // components.schemas["MessageRoot"] = {
+    //   type: "object",
+    //   properties: rootProps,
+    // };
+
+    // // Backward-compatible DocumentRoot alias
+    // components.schemas["DocumentRoot"] = components.schemas["MessageRoot"];
+
+    // const documentSchema = buildElementSchema(docRoot);
+    // components.schemas["Document"] = documentSchema;
+    // components.schemas["DocumentRoot"] = {
+    //   type: "object",
+    //   properties: { Document: { $ref: "#/components/schemas/Document" } },
+    // };
+
+    const fileDesc = mdDocs(rootEl, true) || "Auto-generated from XSD";
 
     const openapi = {
       openapi: "3.0.3",
@@ -333,7 +389,7 @@ export function initXsdViewer(dropzone, yamlViewer, xsdViewer) {
             requestBody: {
               content: {
                 "application/xml": {
-                  schema: { $ref: "#/components/schemas/DocumentRoot" },
+                  schema: { $ref: `#/components/schemas/${rootName}Root` },
                 },
               },
             },
@@ -342,7 +398,7 @@ export function initXsdViewer(dropzone, yamlViewer, xsdViewer) {
                 description: "Schema generated successfully",
                 content: {
                   "application/json": {
-                    schema: { $ref: "#/components/schemas/DocumentRoot" },
+                    schema: { $ref: `#/components/schemas/${rootName}Root` },
                   },
                 },
               },
@@ -352,9 +408,33 @@ export function initXsdViewer(dropzone, yamlViewer, xsdViewer) {
       },
     };
 
+    // let viewerContainer = xsdViewer; // re-assignable reference
+    // const parent = viewerContainer.parentNode;
+
+    // if (parent) {
+    //   // only replace if parent is valid and viewer is still attached
+    //   const fresh = viewerContainer.cloneNode(false);
+    //   parent.replaceChild(fresh, viewerContainer);
+    //   viewerContainer = fresh; // update ref
+    // } else {
+    //   // find the intended parent container to reattach if detached
+    //   const mainContainer =
+    //     document.getElementById("xsd-viewer") || document.body;
+    //   const fresh = document.createElement("div");
+    //   fresh.id = "xsd-viewer";
+    //   mainContainer.appendChild(fresh);
+    //   viewerContainer = fresh;
+    // }
+
+    // await ensureReDocLoaded();
+    // Redoc.init(openapi, {}, viewerContainer);
+
+    const parent = xsdViewer.parentNode;
     const fresh = xsdViewer.cloneNode(false);
-    xsdViewer.parentNode.replaceChild(fresh, xsdViewer);
+    parent.replaceChild(fresh, xsdViewer);
+    xsdViewer = fresh; // 👈 update reference to the new element
+
     await ensureReDocLoaded();
-    Redoc.init(openapi, {}, fresh);
+    Redoc.init(openapi, {}, xsdViewer);
   }
 }
