@@ -34,7 +34,7 @@ export function initYamlViewer(dropzone, yamlViewer, xsdViewer) {
   `;
 
   const output = yamlViewer.querySelector("#yaml-output");
-  const redocContainer = yamlViewer.querySelector("#yaml-redoc");
+  let redocContainer = yamlViewer.querySelector("#yaml-redoc");
 
   /* ---------- drag & drop ---------- */
   dropzone.addEventListener("click", () => {
@@ -69,7 +69,8 @@ export function initYamlViewer(dropzone, yamlViewer, xsdViewer) {
     if (typeof window.jsyaml === "undefined") {
       await new Promise((resolve, reject) => {
         const s = document.createElement("script");
-        s.src = "https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js";
+        s.src =
+          "https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js";
         s.onload = resolve;
         s.onerror = reject;
         document.head.appendChild(s);
@@ -97,12 +98,15 @@ export function initYamlViewer(dropzone, yamlViewer, xsdViewer) {
       console.log("🧾 Detected OpenAPI schema — rendering with Redoc");
       await ensureReDocLoaded();
 
-      // Recreate container
+      // Recreate container safely (fixes refresh error)
+      const parent = redocContainer.parentNode;
       const fresh = redocContainer.cloneNode(false);
-      redocContainer.parentNode.replaceChild(fresh, redocContainer);
+      parent.replaceChild(fresh, redocContainer);
+      redocContainer = fresh; // 👈 update reference to the new container
 
       // Render with Redoc
-      Redoc.init(data, {}, fresh);
+      await ensureReDocLoaded();
+      Redoc.init(data, {}, redocContainer);
 
       output.style.display = "none";
       fresh.style.display = "block";
@@ -149,7 +153,9 @@ export function initYamlViewer(dropzone, yamlViewer, xsdViewer) {
           item.appendChild(keyLabel);
           item.appendChild(sub);
         } else {
-          item.innerHTML = `<strong>${key}:</strong> <span>${escapeHtml(value)}</span>`;
+          item.innerHTML = `<strong>${key}:</strong> <span>${escapeHtml(
+            value
+          )}</span>`;
         }
 
         wrapper.appendChild(item);
