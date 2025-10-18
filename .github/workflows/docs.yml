@@ -58,7 +58,11 @@ jobs:
       - name: Copy png Favicon
         run: cp docs/favicon.png public/favicon.png
 
-      # 8. Deploy to GitHub Pages
+      # 10. Copy CNAME
+      - name: Copy CNAME
+        run: mkdir -p public/docs && cp docs/CNAME public/docs/
+
+      # 11. Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
