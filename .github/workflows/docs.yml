@@ -7,9 +7,6 @@ on:
       - main
     paths:
       - 'docs/index.html'
-      - 'spec/v1/greetings-v1.yaml'
-      - 'spec/v2/greetings-v2.yaml'
-      - 'spec/v3/greetings-v3.yaml'
       - 'js/xsdViewer.js'
       - 'js/yamlViewer.js'
       - 'css/styles.css'
@@ -30,39 +27,35 @@ jobs:
       - name: Create build directory
         run: mkdir -p public
 
-      # 3. Copy YAML specs into public folder
-      - name: Copy v1 spec
-        run: mkdir -p public/v1 && cp spec/v1/greetings-v1.yaml public/v1/
-
-      # 4. Copy landing page into public
+      # 3. Copy landing page into public
       - name: Copy landing page
         run: cp docs/index.html public/index.html
 
-      # 5. Copy xsdViewer into public/js folder
+      # 4. Copy xsdViewer into public/js folder
       - name: Copy xsdViewer
         run: mkdir -p public/js && cp js/xsdViewer.js public/js/
 
-      # 6. Copy yamlViewer into public/js folder
+      # 5. Copy yamlViewer into public/js folder
       - name: Copy yamlViewer
         run: cp js/yamlViewer.js public/js/
       
-      # 7. Copy styles to public/styles
+      # 6. Copy styles to public/styles
       - name: Copy styles.css
         run: mkdir -p public/css && cp css/style.css public/css
 
-      # 8. Copy favicon to public
+      # 7. Copy favicon to public
       - name: Copy svg Favicon
         run: cp docs/favicon.svg public/favicon.svg
 
-      # 9. Copy favicon to public
+      # 8. Copy favicon to public
       - name: Copy png Favicon
         run: cp docs/favicon.png public/favicon.png
 
-      # 10. Copy CNAME
+      # 9. Copy CNAME
       - name: Copy CNAME
-        run: mkdir -p public/docs && cp docs/CNAME public/docs/
+        run: cp docs/CNAME public/CNAME
 
-      # 11. Deploy to GitHub Pages
+      # 10. Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
