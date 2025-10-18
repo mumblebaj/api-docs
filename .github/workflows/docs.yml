@@ -50,6 +50,14 @@ jobs:
       - name: Copy styles.css
         run: mkdir -p public/css && cp css/style.css public/css
 
+      # 8. Copy favicon to public
+      - name: Copy svg Favicon
+        run: cp docs/favicon.svg public/favicon.svg
+
+      # 9. Copy favicon to public
+      - name: Copy png Favicon
+        run: cp docs/favicon.png public/favicon.png
+
       # 8. Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
