@@ -1,3 +1,6 @@
+/* =========================================================
+   🌐 Base Theme Variables
+   ========================================================= */
 :root {
   --bg: #f5f7fa;
   --fg: #222;
@@ -14,6 +17,9 @@
   --accent: #3399ff;
 }
 
+/* =========================================================
+   🧱 Layout & Structure
+   ========================================================= */
 body {
   font-family: system-ui, sans-serif;
   background-color: var(--bg);
@@ -46,7 +52,6 @@ header {
   transition: background 0.3s;
   cursor: pointer;
 }
-
 #dropzone.dragover {
   background-color: rgba(13, 110, 253, 0.1);
 }
@@ -59,7 +64,11 @@ header {
   display: none;
 }
 
-/* Theme toggle */
+/* =========================================================
+   🎛️ UI Elements
+   ========================================================= */
+
+/* Theme toggle button */
 #theme-toggle {
   background: var(--accent);
   color: #fff;
@@ -90,20 +99,310 @@ select {
   color: #fff;
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
-
+.mode-badge.yaml {
+  background-color: #28a745; /* green */
+}
+.mode-badge.xsd {
+  background-color: #0d6efd; /* blue */
+}
+.mode-badge:hover {
+  transform: scale(1.05);
+}
 [data-theme="dark"] .mode-badge {
   background-color: #444;
   color: #fff;
 }
 
-.mode-badge.yaml {
-  background-color: #28a745; /* green */
+/* =========================================================
+   🌒 Redoc Dark Mode Overrides
+   ========================================================= */
+[data-theme="dark"] .redoc-wrap,
+[data-theme="dark"] .redoc-container {
+  background-color: var(--bg) !important;
+  color: var(--fg) !important;
 }
 
-.mode-badge.xsd {
-  background-color: #0d6efd; /* blue */
+/* Sidebar */
+[data-theme="dark"] .menu-content {
+  background-color: #111 !important;
+  color: #eee !important;
 }
 
-.mode-badge:hover {
-  transform: scale(1.05);
+/* Links */
+[data-theme="dark"] .redoc-wrap a,
+[data-theme="dark"] .redoc-container a {
+  color: var(--accent) !important;
+}
+
+/* Tables */
+[data-theme="dark"] .redoc-wrap table,
+[data-theme="dark"] .redoc-container table {
+  background-color: #1e1e1e !important;
+  border-color: #333 !important;
+}
+
+[data-theme="dark"] .redoc-wrap tr,
+[data-theme="dark"] .redoc-container tr {
+  background-color: #1e1e1e !important;
+  border-bottom: 1px solid #333 !important;
+}
+
+[data-theme="dark"] .redoc-wrap tr:nth-child(even),
+[data-theme="dark"] .redoc-container tr:nth-child(even) {
+  background-color: #222 !important;
+}
+
+[data-theme="dark"] .redoc-wrap tr:hover,
+[data-theme="dark"] .redoc-container tr:hover {
+  background-color: #2a2a2a !important;
+}
+
+[data-theme="dark"] .redoc-wrap td,
+[data-theme="dark"] .redoc-container td,
+[data-theme="dark"] .redoc-wrap th,
+[data-theme="dark"] .redoc-container th {
+  color: var(--fg) !important;
+  background-color: #1e1e1e !important;
+  border-color: #333 !important;
+}
+
+/* Inline code */
+[data-theme="dark"] code {
+  background-color: #2a2a2a !important;
+  color: #d6d6d6 !important;
+  border-radius: 4px;
+  padding: 0.1rem 0.3rem;
+}
+
+/* Headings */
+[data-theme="dark"] .redoc-wrap h1,
+[data-theme="dark"] .redoc-container h1,
+[data-theme="dark"] .redoc-wrap h2,
+[data-theme="dark"] .redoc-container h2,
+[data-theme="dark"] .redoc-wrap h3,
+[data-theme="dark"] .redoc-container h3,
+[data-theme="dark"] .redoc-wrap h4,
+[data-theme="dark"] .redoc-container h4,
+[data-theme="dark"] .redoc-wrap h5,
+[data-theme="dark"] .redoc-container h5,
+[data-theme="dark"] .redoc-wrap h6,
+[data-theme="dark"] .redoc-container h6 {
+  color: var(--fg) !important;
+}
+
+/* Softer contrast for deep headings */
+[data-theme="dark"] .redoc-wrap h5,
+[data-theme="dark"] .redoc-container h5 {
+  color: #ccc !important;
+  font-weight: 600;
+  margin-top: 1.2em;
+  margin-bottom: 0.5em;
+}
+
+/* Nested spans inside headings */
+[data-theme="dark"] .redoc-wrap h5 span,
+[data-theme="dark"] .redoc-container h5 span,
+[data-theme="dark"] .redoc-wrap h4 span,
+[data-theme="dark"] .redoc-container h4 span {
+  color: var(--fg) !important;
+}
+
+/* Metadata spans (type, required, etc.) */
+[data-theme="dark"] .redoc-wrap h5 span[class*="type"],
+[data-theme="dark"] .redoc-container h5 span[class*="type"],
+[data-theme="dark"] .redoc-wrap h5 span[class*="required"],
+[data-theme="dark"] .redoc-container h5 span[class*="required"] {
+  color: #bbb !important;
+  font-weight: 500;
+}
+
+/* Inline code or emphasis within spans */
+[data-theme="dark"] .redoc-wrap h5 span code,
+[data-theme="dark"] .redoc-container h5 span code,
+[data-theme="dark"] .redoc-wrap h5 span em,
+[data-theme="dark"] .redoc-container h5 span em {
+  color: #d6d6d6 !important;
+}
+
+/* =========================================================
+   ☀️ Redoc Light Mode Enhancements
+   ========================================================= */
+[data-theme="light"] .redoc-wrap,
+[data-theme="light"] .redoc-container {
+  background-color: var(--bg);
+  color: var(--fg);
+}
+
+/* Sidebar */
+[data-theme="light"] .menu-content {
+  background-color: #fafafa;
+  color: var(--fg);
+  border-right: 1px solid #e0e0e0;
+}
+
+/* Links */
+[data-theme="light"] .redoc-wrap a,
+[data-theme="light"] .redoc-container a {
+  color: var(--accent);
+  text-decoration: none;
+}
+[data-theme="light"] .redoc-wrap a:hover,
+[data-theme="light"] .redoc-container a:hover {
+  text-decoration: underline;
+}
+
+/* Tables */
+[data-theme="light"] .redoc-wrap table,
+[data-theme="light"] .redoc-container table {
+  background-color: #fff;
+  border-collapse: collapse;
+  border: 1px solid #e5e5e5;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="light"] .redoc-wrap tr:nth-child(even),
+[data-theme="light"] .redoc-container tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+[data-theme="light"] .redoc-wrap tr:hover,
+[data-theme="light"] .redoc-container tr:hover {
+  background-color: #f0f7ff;
+}
+
+[data-theme="light"] .redoc-wrap td,
+[data-theme="light"] .redoc-container td,
+[data-theme="light"] .redoc-wrap th,
+[data-theme="light"] .redoc-container th {
+  color: var(--fg);
+  border: 1px solid #e5e5e5;
+  padding: 0.5rem 0.75rem;
+}
+
+/* Inline code */
+[data-theme="light"] code {
+  background-color: #f6f8fa;
+  color: #d63384;
+  border-radius: 4px;
+  padding: 0.1rem 0.3rem;
+  font-size: 0.9em;
+}
+
+/* Headings */
+[data-theme="light"] .redoc-wrap h1,
+[data-theme="light"] .redoc-container h1,
+[data-theme="light"] .redoc-wrap h2,
+[data-theme="light"] .redoc-container h2,
+[data-theme="light"] .redoc-wrap h3,
+[data-theme="light"] .redoc-container h3,
+[data-theme="light"] .redoc-wrap h4,
+[data-theme="light"] .redoc-container h4,
+[data-theme="light"] .redoc-wrap h5,
+[data-theme="light"] .redoc-container h5,
+[data-theme="light"] .redoc-wrap h6,
+[data-theme="light"] .redoc-container h6 {
+  color: var(--fg);
+}
+
+/* Softer visual hierarchy for smaller headings */
+[data-theme="light"] .redoc-wrap h5,
+[data-theme="light"] .redoc-container h5 {
+  color: #444;
+  font-weight: 600;
+  margin-top: 1.2em;
+  margin-bottom: 0.5em;
+}
+
+/* Nested spans inside headings */
+[data-theme="light"] .redoc-wrap h5 span,
+[data-theme="light"] .redoc-container h5 span,
+[data-theme="light"] .redoc-wrap h4 span,
+[data-theme="light"] .redoc-container h4 span {
+  color: var(--fg);
+}
+
+/* Metadata spans (type, required, etc.) */
+[data-theme="light"] .redoc-wrap h5 span[class*="type"],
+[data-theme="light"] .redoc-container h5 span[class*="type"],
+[data-theme="light"] .redoc-wrap h5 span[class*="required"],
+[data-theme="light"] .redoc-container h5 span[class*="required"] {
+  color: #666;
+  font-weight: 500;
+}
+
+/* Inline code or emphasis within spans */
+[data-theme="light"] .redoc-wrap h5 span code,
+[data-theme="light"] .redoc-container h5 span code,
+[data-theme="light"] .redoc-wrap h5 span em,
+[data-theme="light"] .redoc-container h5 span em {
+  color: #d63384;
+}
+
+/* =========================================================
+   🧩 Fix for Redoc inline <span> elements (e.g., Enum values)
+   ========================================================= */
+
+/* Dark mode: make Enum spans readable */
+[data-theme="dark"] .redoc-wrap div > span,
+[data-theme="dark"] .redoc-container div > span {
+  color: var(--fg) !important;
+}
+
+/* Optional: differentiate Enum keyword and values */
+[data-theme="dark"] .redoc-wrap div > span:first-child,
+[data-theme="dark"] .redoc-container div > span:first-child {
+  color: var(--accent) !important;   /* “Enum:” label */
+  font-weight: 600;
+}
+
+/* Light mode: slight refinement for contrast and readability */
+[data-theme="light"] .redoc-wrap div > span,
+[data-theme="light"] .redoc-container div > span {
+  color: var(--fg);
+}
+
+[data-theme="light"] .redoc-wrap div > span:first-child,
+[data-theme="light"] .redoc-container div > span:first-child {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+[data-theme="dark"] .redoc-wrap div > span:not(:first-child),
+[data-theme="dark"] .redoc-container div > span:not(:first-child),
+[data-theme="light"] .redoc-wrap div > span:not(:first-child),
+[data-theme="light"] .redoc-container div > span:not(:first-child) {
+  font-family: monospace;
+  padding: 0 0.25rem;
+}
+
+/* =========================================================
+   🧩 Fix for Redoc property-name <span> inside buttons
+   ========================================================= */
+
+/* Dark mode: make property-name spans readable */
+[data-theme="dark"] .redoc-wrap button span,
+[data-theme="dark"] .redoc-container button span {
+  color: var(--fg) !important;
+}
+
+/* Optional: subtle accent on hover/focus for accessibility */
+[data-theme="dark"] .redoc-wrap button:hover span,
+[data-theme="dark"] .redoc-container button:hover span,
+[data-theme="dark"] .redoc-wrap button:focus span,
+[data-theme="dark"] .redoc-container button:focus span {
+  color: var(--accent) !important;
+}
+
+/* Light mode: maintain clarity and accent on hover */
+[data-theme="light"] .redoc-wrap button span,
+[data-theme="light"] .redoc-container button span {
+  color: var(--fg);
+}
+[data-theme="light"] .redoc-wrap button:hover span,
+[data-theme="light"] .redoc-container button:hover span,
+[data-theme="light"] .redoc-wrap button:focus span,
+[data-theme="light"] .redoc-container button:focus span {
+  color: var(--accent);
 }

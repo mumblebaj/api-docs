@@ -351,31 +351,6 @@ export function initXsdViewer(dropzone, yamlViewer, xsdViewer) {
       },
     };
 
-    // Build schemas for each root (Document, AppHdr, etc.)
-    // const rootProps = {};
-    // rootElements.forEach((el) => {
-    //   const rootName = el.getAttribute("name");
-    //   const schema = buildElementSchema(el);
-    //   components.schemas[rootName] = schema;
-    //   rootProps[rootName] = { $ref: `#/components/schemas/${rootName}` };
-    // });
-
-    // // Build a combined "MessageRoot" that contains all found roots
-    // components.schemas["MessageRoot"] = {
-    //   type: "object",
-    //   properties: rootProps,
-    // };
-
-    // // Backward-compatible DocumentRoot alias
-    // components.schemas["DocumentRoot"] = components.schemas["MessageRoot"];
-
-    // const documentSchema = buildElementSchema(docRoot);
-    // components.schemas["Document"] = documentSchema;
-    // components.schemas["DocumentRoot"] = {
-    //   type: "object",
-    //   properties: { Document: { $ref: "#/components/schemas/Document" } },
-    // };
-
     const fileDesc = mdDocs(rootEl, true) || "Auto-generated from XSD";
 
     const openapi = {
@@ -408,33 +383,58 @@ export function initXsdViewer(dropzone, yamlViewer, xsdViewer) {
       },
     };
 
-    // let viewerContainer = xsdViewer; // re-assignable reference
-    // const parent = viewerContainer.parentNode;
+    // --- Helper: safely render Redoc with theme awareness
+    async function safeRenderRedoc(openapi, theme) {
+      await ensureReDocLoaded();
 
-    // if (parent) {
-    //   // only replace if parent is valid and viewer is still attached
-    //   const fresh = viewerContainer.cloneNode(false);
-    //   parent.replaceChild(fresh, viewerContainer);
-    //   viewerContainer = fresh; // update ref
-    // } else {
-    //   // find the intended parent container to reattach if detached
-    //   const mainContainer =
-    //     document.getElementById("xsd-viewer") || document.body;
-    //   const fresh = document.createElement("div");
-    //   fresh.id = "xsd-viewer";
-    //   mainContainer.appendChild(fresh);
-    //   viewerContainer = fresh;
-    // }
+      const viewer = document.getElementById("xsd-viewer");
+      if (!viewer || !viewer.parentNode) {
+        console.warn(
+          "⚠️ xsd-viewer not found or detached from DOM; skipping render"
+        );
+        return;
+      }
 
-    // await ensureReDocLoaded();
-    // Redoc.init(openapi, {}, viewerContainer);
+      viewer.innerHTML = ""; // clear any old Redoc content
+      try {
+        Redoc.init(openapi, { theme }, viewer);
+      } catch (err) {
+        console.error("❌ Redoc initialization failed:", err);
+      }
+    }
 
-    const parent = xsdViewer.parentNode;
-    const fresh = xsdViewer.cloneNode(false);
-    parent.replaceChild(fresh, xsdViewer);
-    xsdViewer = fresh; // 👈 update reference to the new element
+    // --- Define Redoc themes
+    const redocThemes = {
+      light: {
+        colors: {
+          text: { primary: "#000000", secondary: "#555555" },
+          background: { main: "#ffffff" },
+          primary: { main: "#0d6efd" },
+        },
+      },
+      dark: {
+        colors: {
+          text: { primary: "#e0e0e0", secondary: "#aaaaaa" },
+          background: { main: "#1e1e1e" },
+          primary: { main: "#3399ff" },
+        },
+      },
+    };
 
-    await ensureReDocLoaded();
-    Redoc.init(openapi, {}, xsdViewer);
+    // --- Render with current theme
+    const currentTheme = document.documentElement.dataset.theme || "light";
+    await safeRenderRedoc(openapi, redocThemes[currentTheme]);
+
+    // --- Observe theme changes to re-render dynamically ---
+    const observer = new MutationObserver((mutations) => {
+      for (const m of mutations) {
+        if (m.type === "attributes" && m.attributeName === "data-theme") {
+          const newTheme = document.documentElement.dataset.theme || "light";
+          console.log(`🌓 Theme changed → re-rendering Redoc (${newTheme})`);
+          safeRenderRedoc(openapi, redocThemes[newTheme]);
+        }
+      }
+    });
+    observer.observe(document.documentElement, { attributes: true });
   }
 }
