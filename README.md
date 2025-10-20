@@ -82,15 +82,15 @@ Modify:
 
 ## 🧭 Development Roadmap
 
-|Status	| Feature	| Description 
-|✅ |Dark Mode Enhancements	|Deep ReDoc integration for tables, buttons, and spans. 
-|✅ |Safe ReDoc Re-rendering	|Introduced safeRenderRedoc() to prevent race conditions. 
-|🔄 |Export Schema as JSON	|Download converted XSD → OpenAPI as .json. 
-|🔄 |Side-by-side Comparison |Compare YAML vs. converted schema visually. 
-|🔄 |Multi-file Merge |Combine multiple XSDs into one OpenAPI doc. 
-|🧩 |ReDoc v3 Migration |Evaluate ReDoc v3 renderer. 
-|💡 |Syntax Highlighting | Optional Prism.js-based raw YAML/XML view. 
-|🧱 |Dockerized Local Version |Self-hostable container for offline environments. 
+| Status  | Feature	                   | Description 
+| ✅      | Dark Mode Enhancements    | Deep ReDoc integration for tables, buttons, and spans. 
+| ✅      | Safe ReDoc Re-rendering   | Introduced safeRenderRedoc() to prevent race conditions. 
+| 🔄      | Export Schema as JSON	  | Download converted XSD → OpenAPI as .json. 
+| 🔄      | Side-by-side Comparison   | Compare YAML vs. converted schema visually. 
+| 🔄      | Multi-file Merge          | Combine multiple XSDs into one OpenAPI doc. 
+| 🧩      | ReDoc v3 Migration        | Evaluate ReDoc v3 renderer. 
+| 💡      | Syntax Highlighting       | Optional Prism.js-based raw YAML/XML view. 
+| 🧱      | Dockerized Local Version  |Self-hostable container for offline environments. 
 
 ---
 
