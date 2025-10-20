@@ -129,7 +129,7 @@ MIT License © 2025 [Bernard Mumble (mumblebaj)](https://github.com/mumblebaj)
 ---
 
 ## 💬 Acknowledgements
-[ReDoc](https://github.com/Redocly/redoc) — API documentation engine
-[YAML](https://yaml.org/) & [OpenAPI Initiative](https://www.openapis.org/)
-XML Schema (W3C)
-Icons and layout inspired by Swagger Editor and other open developer tools
+- [ReDoc](https://github.com/Redocly/redoc) — API documentation engine
+- [YAML](https://yaml.org/) & [OpenAPI Initiative](https://www.openapis.org/)
+- XML Schema (W3C)
+- Icons and layout inspired by Swagger Editor and other open developer tools
