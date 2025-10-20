@@ -1,5 +1,5 @@
 # 🧾 Universal Schema Viewer
-![Universal Schema Viewer Banner](./docs/banner.png)
+![Universal Schema Viewer Banner](docs/banner.png)
 
 <p align="center"> <a href="https://mumblebaj.github.io/api-docs/"><img src="https://img.shields.io/badge/Live-Demo-blue?style=for-the-badge&logo=githubpages" alt="Live Demo"></a> <a href="https://github.com/mumblebaj/api-docs/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License: MIT"></a> <img src="https://img.shields.io/badge/Status-Stable-brightgreen?style=for-the-badge" alt="Status: Stable"> <img src="https://img.shields.io/badge/Dark%20Mode-Fully%20Supported-555555?style=for-the-badge&logo=github" alt="Dark Mode Supported"> <img src="https://img.shields.io/badge/Deployed%20on-GitHub%20Pages-121013?style=for-the-badge&logo=githubpages" alt="GitHub Pages"> </p>
 
@@ -40,7 +40,7 @@ No backend, no uploads — everything runs locally in your browser.
 ## ⚙️ Project Structure
 
 ```plaintext
-📁 gh-pages-root/
+📁 project-root/
 ├── index.html
 ├── favicon.svg / favicon.png
 ├── css/
@@ -81,15 +81,16 @@ Modify:
 ---
 
 ## 🧭 Development Roadmap
-|Status	| Feature	| Description|
-|✅ |	Dark Mode Enhancements	| Deep ReDoc integration for tables, buttons, and spans.|
-|✅ |	Safe ReDoc Re-rendering	| Introduced safeRenderRedoc() to prevent race conditions.|
-|🔄 | Export Schema as JSON	| Download converted XSD → OpenAPI as .json.|
-|🔄 | Side-by-side Comparison	| Compare YAML vs. converted schema visually.|
-|🔄 | Multi-file Merge	| Combine multiple XSDs into one OpenAPI doc.|
-|🧩 | ReDoc v3 Migration |	Evaluate ReDoc v3 renderer.|
-|💡 | Syntax Highlighting |	Optional Prism.js-based raw YAML/XML view.|
-|🧱 | Dockerized Local Version |	Self-hostable container for offline environments.|
+
+|Status	| Feature	| Description 
+|✅ |Dark Mode Enhancements	|Deep ReDoc integration for tables, buttons, and spans. 
+|✅ |Safe ReDoc Re-rendering	|Introduced safeRenderRedoc() to prevent race conditions. 
+|🔄 |Export Schema as JSON	|Download converted XSD → OpenAPI as .json. 
+|🔄 |Side-by-side Comparison |Compare YAML vs. converted schema visually. 
+|🔄 |Multi-file Merge |Combine multiple XSDs into one OpenAPI doc. 
+|🧩 |ReDoc v3 Migration |Evaluate ReDoc v3 renderer. 
+|💡 |Syntax Highlighting | Optional Prism.js-based raw YAML/XML view. 
+|🧱 |Dockerized Local Version |Self-hostable container for offline environments. 
 
 ---
 
