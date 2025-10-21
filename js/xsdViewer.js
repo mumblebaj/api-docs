@@ -14,9 +14,6 @@ async function ensureReDocLoaded() {
 
 /**
  * Initializes the XSD → OpenAPI viewer logic inside your unified index.html.
- * @param {HTMLElement} dropzone - The dropzone element for file drag/drop.
- * @param {HTMLElement} yamlViewer - The YAML/JSON viewer container.
- * @param {HTMLElement} xsdViewer - The XSD/ReDoc viewer container.
  */
 export function initXsdViewer(dropzone, yamlViewer, xsdViewer) {
   console.log("🧩 XSD Viewer initialized");
@@ -231,9 +228,7 @@ export function initXsdViewer(dropzone, yamlViewer, xsdViewer) {
           if (childSchema._isRequired) schema.required.push(name);
           delete childSchema._isRequired;
         }
-      }
-      // 🔧 FIX: model <simpleContent> (e.g., CBPR_Amount__1) as an object with a "value" prop + attributes
-      else if (simpleContent) {
+      } else if (simpleContent) {
         const ext = simpleContent.querySelector("xs\\:extension, extension");
         if (ext) {
           const baseName = stripNs(ext.getAttribute("base"));
@@ -255,10 +250,9 @@ export function initXsdViewer(dropzone, yamlViewer, xsdViewer) {
             ...valueSchema,
             description: "*(text content)*",
           };
-
           schema.required = ["value"];
 
-          // --- Collect attributes first
+          // --- Collect attributes
           const attrs = [];
           ext.querySelectorAll("xs\\:attribute, attribute").forEach((attr) => {
             const attrName = attr.getAttribute("name");
@@ -281,74 +275,135 @@ export function initXsdViewer(dropzone, yamlViewer, xsdViewer) {
             if (use === "required") schema.required.push(wrappedName);
           });
 
-          // --- Add attributes first, then value, then others (for consistent ReDoc ordering)
           const ordered = {};
-          // First text value
           ordered.value = schema.properties.value;
-          // Then attributes
           for (const [n, s] of attrs) ordered[n] = s;
-
           schema.properties = ordered;
         }
       }
 
-      if (schema.properties && Object.keys(schema.properties).length === 0)
-        delete schema.properties;
-      if (schema.required && schema.required.length === 0)
-        delete schema.required;
+      if (Object.keys(schema.properties).length === 0) delete schema.properties;
+      if (schema.required.length === 0) delete schema.required;
 
-      // Only attach docs once to avoid double Name/Definition
       const typeDocs = mdDocs(ct, true);
       if (typeDocs) schema.description = typeDocs;
 
       return schema;
     }
 
-    // --- Document root ---
-    let rootEl =
-      xml.querySelector(
-        ":scope > xs\\:element[name='Document'], :scope > element[name='Document']"
-      ) ||
-      xml.querySelector(
-        ":scope > xs\\:element[name='AppHdr'], :scope > element[name='AppHdr']"
+    // 🧭 Dynamically detect root element(s)
+    const schemaEl = xml.querySelector("xs\\:schema, schema");
+    let rootEl = null;
+
+    if (schemaEl) {
+      // ✅ Namespace-safe element detection (works with xs:, xsd:, or no prefix)
+      const rootCandidates = Array.from(schemaEl.children).filter(
+        (el) => el.localName === "element"
       );
 
-    // Fallback for namespace-safe detection
-    if (!rootEl) {
-      const allElements = Array.from(
-        xml.getElementsByTagNameNS(
-          "http://www.w3.org/2001/XMLSchema",
-          "element"
-        )
-      ).concat(Array.from(xml.getElementsByTagName("element")));
+      if (rootCandidates.length > 0) {
+        // Prefer known wrappers, else first
+        rootEl =
+          rootCandidates.find((el) => el.getAttribute("name") === "Document") ||
+          rootCandidates.find((el) => el.getAttribute("name") === "AppHdr") ||
+          rootCandidates[0];
 
-      rootEl = allElements.find(
-        (el) =>
-          el.getAttribute("name") === "Document" ||
-          el.getAttribute("name") === "AppHdr"
-      );
+        // If multiple, create dropdown
+        if (rootCandidates.length > 1) {
+          const selector = document.createElement("select");
+          selector.id = "rootSelector";
+          selector.style.margin = "10px 0";
+          selector.style.padding = "4px 6px";
+          selector.style.borderRadius = "6px";
+          selector.style.fontSize = "14px";
+          selector.style.cursor = "pointer";
+
+          rootCandidates.forEach((el) => {
+            const name = el.getAttribute("name");
+            const opt = document.createElement("option");
+            opt.value = name;
+            opt.textContent = `Root: ${name}`;
+            if (el === rootEl) opt.selected = true;
+            selector.appendChild(opt);
+          });
+
+          const viewerHeader =
+            document.querySelector("#xsd-viewer-header") || document.body;
+          viewerHeader.insertBefore(selector, viewerHeader.firstChild);
+
+          selector.addEventListener("change", (e) => {
+            const chosen = rootCandidates.find(
+              (el) => el.getAttribute("name") === e.target.value
+            );
+            if (chosen) {
+              rootEl = chosen;
+              console.log(
+                "🔄 Root element changed to:",
+                rootEl.getAttribute("name")
+              );
+              // Rebuild + re-render Redoc (same as before)
+              const chosenName = rootEl.getAttribute("name");
+              const chosenSchema = buildElementSchema(rootEl);
+              components.schemas[chosenName] = chosenSchema;
+              components.schemas[`${chosenName}Root`] = {
+                type: "object",
+                properties: {
+                  [chosenName]: { $ref: `#/components/schemas/${chosenName}` },
+                },
+              };
+              const updatedOpenApi = {
+                ...openapi,
+                info: { ...openapi.info, title: chosenName },
+                components,
+                paths: {
+                  ["/" + chosenName]: {
+                    post: {
+                      summary: `XSD Schema: ${chosenName}`,
+                      requestBody: {
+                        content: {
+                          "application/xml": {
+                            schema: {
+                              $ref: `#/components/schemas/${chosenName}Root`,
+                            },
+                          },
+                        },
+                      },
+                      responses: {
+                        200: {
+                          description: "Schema generated successfully",
+                          content: {
+                            "application/json": {
+                              schema: {
+                                $ref: `#/components/schemas/${chosenName}Root`,
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              };
+              safeRenderRedoc(updatedOpenApi, redocThemes[currentTheme]);
+            }
+          });
+        }
+      } else {
+        console.warn("⚠️ No top-level elements found in XSD.");
+      }
+    } else {
+      console.error("❌ No <xs:schema> element found in XSD.");
     }
 
-    if (!rootEl) {
-      alert("No <Document> or <AppHdr> element found in XSD.");
-      console.warn(
-        "Available element names:",
-        Array.from(xml.getElementsByTagName("*"))
-          .map((e) => e.getAttribute && e.getAttribute("name"))
-          .filter(Boolean)
-      );
-      return;
-    }
+    if (rootEl)
+      console.log("✅ Root element detected:", rootEl.getAttribute("name"));
 
-    // --- Build schema for whichever root we found ---
-    const rootName = rootEl.getAttribute("name");
+    const rootName = rootEl?.getAttribute("name");
     const rootSchema = buildElementSchema(rootEl);
     components.schemas[rootName] = rootSchema;
     components.schemas[`${rootName}Root`] = {
       type: "object",
-      properties: {
-        [rootName]: { $ref: `#/components/schemas/${rootName}` },
-      },
+      properties: { [rootName]: { $ref: `#/components/schemas/${rootName}` } },
     };
 
     const fileDesc = mdDocs(rootEl, true) || "Auto-generated from XSD";
@@ -389,13 +444,11 @@ export function initXsdViewer(dropzone, yamlViewer, xsdViewer) {
 
       const viewer = document.getElementById("xsd-viewer");
       if (!viewer || !viewer.parentNode) {
-        console.warn(
-          "⚠️ xsd-viewer not found or detached from DOM; skipping render"
-        );
+        console.warn("⚠️ xsd-viewer not found or detached; skipping render");
         return;
       }
 
-      viewer.innerHTML = ""; // clear any old Redoc content
+      viewer.innerHTML = "";
       try {
         Redoc.init(openapi, { theme }, viewer);
       } catch (err) {
@@ -421,11 +474,9 @@ export function initXsdViewer(dropzone, yamlViewer, xsdViewer) {
       },
     };
 
-    // --- Render with current theme
     const currentTheme = document.documentElement.dataset.theme || "light";
     await safeRenderRedoc(openapi, redocThemes[currentTheme]);
 
-    // --- Observe theme changes to re-render dynamically ---
     const observer = new MutationObserver((mutations) => {
       for (const m of mutations) {
         if (m.type === "attributes" && m.attributeName === "data-theme") {
