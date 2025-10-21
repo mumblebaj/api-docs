@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <title>Universal Schema Viewer</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="../css/style.css" />
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
     <link rel="icon" type="image/png" href="./favicon.png" />
   </head>
@@ -23,15 +23,18 @@
     </header>
 
     <div id="dropzone">Drop your file here or click to browse</div>
-    <p class="hint" style="text-align: center;">Note: Uploaded files render locally in your browser and are not sent anywhere.</p>
+    <p class="hint" style="text-align: center">
+      Note: Uploaded files render locally in your browser and are not sent
+      anywhere.
+    </p>
 
     <!-- Viewer containers -->
     <div id="yaml-viewer" class="viewer"></div>
     <div id="xsd-viewer" class="viewer"></div>
 
     <script type="module">
-      import { initYamlViewer } from "./js/yamlViewer.js";
-      import { initXsdViewer } from "./js/xsdViewer.js";
+      import { initYamlViewer } from "../js/yamlViewer.js";
+      import { initXsdViewer } from "../js/xsdViewer.js";
 
       const rootEl = document.documentElement;
       const themeBtn = document.getElementById("theme-toggle");
@@ -71,7 +74,7 @@
       let currentMode = modeSelect.value;
       let activeHandler =
         currentMode === "xsd" ? initXsdViewer : initYamlViewer;
-        
+
       // ✅ update indicator right here
       updateModeIndicator(currentMode);
 
@@ -85,9 +88,14 @@
         // Hide all viewers
         document.querySelectorAll(".viewer").forEach((v) => {
           v.style.display = "none";
-
-          updateModeIndicator(currentMode);
         });
+
+        // 🧹 Clear previous viewer content so it doesn't linger
+        yamlViewer.innerHTML = "";
+        xsdViewer.innerHTML = "";
+
+        // Update mode indicator (this line was inside your forEach earlier)
+        updateModeIndicator(currentMode);
 
         // Reinitialize selected viewer
         if (currentMode === "xsd") {
