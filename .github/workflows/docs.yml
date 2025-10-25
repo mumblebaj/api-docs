@@ -31,31 +31,51 @@ jobs:
       - name: Copy landing page
         run: cp docs/index.html public/index.html
 
-      # 4. Copy xsdViewer into public/js folder
+      # 4. Copy openapiEditor page into public
+      - name: Copy openapiEditor page
+        run: cp docs/openapiEditor.html public/openapiEditor.html
+
+      # 5. Copy xsdViewer into public/js folder
       - name: Copy xsdViewer
         run: mkdir -p public/js && cp js/xsdViewer.js public/js/
 
-      # 5. Copy yamlViewer into public/js folder
+      # 6. Copy yamlViewer into public/js folder
       - name: Copy yamlViewer
         run: cp js/yamlViewer.js public/js/
-      
-      # 6. Copy styles to public/styles
-      - name: Copy styles.css
-        run: mkdir -p public/css && cp css/style.css public/css
 
-      # 7. Copy favicon to public
+      # 7. Copy openapiEditor into public/js folder
+      - name: Copy openapiEditor
+        run: cp js/openapiEditor.js public/js/
+      
+      # 8. Copy swagger-client into public/js folder
+      - name: Copy swagger-client
+        run: cp js/swagger-clinet.browser.min.js public/js/
+
+      # 9. Copy template into public/js folder
+      - name: Copy template
+        run: cp js/template.js public/js/
+      
+      # 10. Copy styles to public/styles
+      - name: Copy styles.css
+        run: css/style.css public/css/
+
+      # 11. Copy openapiEditor styles to public/styles
+      - name: Copy styles.css
+        run: cp css/openapiEditor.css public/css/
+
+      # 12. Copy favicon to public
       - name: Copy svg Favicon
         run: cp docs/favicon.svg public/favicon.svg
 
-      # 8. Copy favicon to public
+      # 13. Copy favicon to public
       - name: Copy png Favicon
         run: cp docs/favicon.png public/favicon.png
 
-      # 9. Copy CNAME
+      # 14. Copy CNAME
       - name: Copy CNAME
         run: cp docs/CNAME public/CNAME
 
-      # 10. Deploy to GitHub Pages
+      # 15. Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
