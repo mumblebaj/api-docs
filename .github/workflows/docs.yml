@@ -57,10 +57,10 @@ jobs:
       
       # 10. Copy styles to public/styles
       - name: Copy styles.css
-        run: mkdir -p public/css %% cp css/style.css public/css/
+        run: mkdir -p public/css && cp css/style.css public/css/
 
       # 11. Copy openapiEditor styles to public/styles
-      - name: Copy styles.css
+      - name: Copy openappiEditor.css
         run: cp css/openapiEditor.css public/css/
 
       # 12. Copy favicon to public
