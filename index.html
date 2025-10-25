@@ -1,3 +1,5 @@
+<!-- Created by mumblebaj -->
+ 
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -19,6 +21,7 @@
           <option value="xsd">XSD / XML</option>
         </select>
         <button id="theme-toggle">🌙 Dark Mode</button>
+        <button id="launchEditorBtn" class="control-btn primary">🚀 OpenAPI Editor</button>
       </div>
     </header>
 
@@ -66,6 +69,12 @@
           modeIndicator.className = "mode-badge yaml";
         }
       }
+
+      document
+        .getElementById("launchEditorBtn")
+        .addEventListener("click", () => {
+          window.open("./openapiEditor.html", "_blank");
+        });
 
       const yamlViewer = document.getElementById("yaml-viewer");
       const xsdViewer = document.getElementById("xsd-viewer");

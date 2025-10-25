@@ -1,0 +1,367 @@
+/* =========================================================
+   🧩 OpenAPI Editor Styles — Dark UI with Monaco + ReDoc
+   ========================================================= */
+
+body.openapi-editor {
+  margin: 0;
+  height: 100vh;
+  background: #1e1e1e;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  font-family: system-ui, sans-serif;
+}
+
+/* Toolbar */
+body.openapi-editor .toolbar {
+  display: flex;
+  gap: 10px;
+  padding: 8px 12px;
+  background: #2d2d2d;
+  border-bottom: 1px solid #444;
+  align-items: center;
+}
+
+/* Buttons */
+body.openapi-editor button {
+  background: #444;
+  border: none;
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+body.openapi-editor button:hover {
+  background: #666;
+}
+
+/* Layout: Monaco left, ReDoc right */
+body.openapi-editor .editor-layout {
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+}
+
+body.openapi-editor #yamlEditor {
+  flex: 0 0 50%;
+  min-width: 25%;
+  max-width: 75%;
+  border-right: 1px solid #444;
+  overflow: hidden;
+}
+
+body.openapi-editor #dragbar {
+  width: 5px;
+  cursor: col-resize;
+  background-color: #333;
+  transition: background-color 0.2s;
+}
+body.openapi-editor #dragbar:hover {
+  background-color: #666;
+}
+
+body.openapi-editor #previewPane {
+  flex: 1;
+  overflow: auto;
+}
+
+/* Highlight for clicked $ref targets */
+body.openapi-editor .monaco-editor .ref-highlight-line {
+  background-color: rgba(97, 175, 254, 0.25) !important;
+  transition: background 0.5s ease;
+}
+
+/* =========================================================
+   🧩 Validation / Lint Panel
+   ========================================================= */
+body.openapi-editor #lintPanel {
+  padding: 8px 10px;
+  border: 1px solid #2b2b2b;
+  border-radius: 8px;
+  background: #111;
+  margin: 8px;
+}
+body.openapi-editor .lint-heading {
+  font-weight: 600;
+  margin-bottom: 6px;
+  opacity: 0.9;
+}
+body.openapi-editor .lint-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 4px;
+}
+body.openapi-editor .lint-item {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12.5px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  background: rgba(255, 0, 0, 0.08);
+  border: 1px solid rgba(255, 0, 0, 0.25);
+}
+body.openapi-editor .lint-item.ref-missing {
+  background: rgba(255, 204, 0, 0.12);
+  border-color: rgba(255, 204, 0, 0.35);
+}
+
+/* =========================================================
+   🌒 ReDoc Dark Overrides — Scoped for #previewPane
+   ========================================================= */
+body.openapi-editor #previewPane .redoc-container,
+body.openapi-editor #previewPane .redoc-wrap {
+  background-color: #121212 !important;
+  color: #e0e0e0 !important;
+}
+
+/* General text */
+body.openapi-editor #previewPane .redoc-container *,
+body.openapi-editor #previewPane .redoc-wrap * {
+  color: #e0e0e0 !important;
+}
+
+/* Headings */
+body.openapi-editor #previewPane .redoc-container h1,
+body.openapi-editor #previewPane .redoc-container h2,
+body.openapi-editor #previewPane .redoc-container h3,
+body.openapi-editor #previewPane .redoc-container h4,
+body.openapi-editor #previewPane .redoc-container h5,
+body.openapi-editor #previewPane .redoc-container h6,
+body.openapi-editor #previewPane .redoc-wrap h1,
+body.openapi-editor #previewPane .redoc-wrap h2,
+body.openapi-editor #previewPane .redoc-wrap h3,
+body.openapi-editor #previewPane .redoc-wrap h4,
+body.openapi-editor #previewPane .redoc-wrap h5,
+body.openapi-editor #previewPane .redoc-wrap h6 {
+  color: #ffffff !important;
+}
+
+/* Label and span text (force neutral for dark background) */
+body.openapi-editor #previewPane label,
+body.openapi-editor #previewPane label span {
+  color: #ffffff !important;
+}
+
+/* Adjust nested span/label text inside properties */
+body.openapi-editor #previewPane label .sc-eyvILC,
+body.openapi-editor #previewPane label .sc-bpUBKd,
+body.openapi-editor #previewPane span.sc-eyvILC {
+  color: #ffffff !important;
+}
+
+/* Tabs (e.g. Payload / Example) */
+body.openapi-editor #previewPane .react-tabs__tab {
+  background-color: #1e1e1e !important;
+  color: #e0e0e0 !important;
+  border: 1px solid #333 !important;
+  border-radius: 6px 6px 0 0;
+  padding: 6px 12px;
+  margin-right: 4px;
+  font-weight: 500;
+}
+body.openapi-editor #previewPane .react-tabs__tab--selected {
+  background-color: #2d2d2d !important;
+  color: #ffffff !important;
+  border-bottom: 2px solid #61affe !important;
+}
+
+/* Fix the tab bar background */
+body.openapi-editor #previewPane .react-tabs {
+  background-color: #121212 !important;
+  border-bottom: 1px solid #333 !important;
+}
+
+/* Table header contrast */
+body.openapi-editor #previewPane table th {
+  background-color: #1a1a1a !important;
+  color: #fff !important;
+}
+
+/* Inline badges (like enum, deprecated, etc.) */
+body.openapi-editor #previewPane .sc-kMkxaj {
+  color: #ffffff !important;
+}
+
+/* =========================================================
+   🧱 ReDoc Schema Card / Wrapper (sc-ikkxIA etc.)
+   ========================================================= */
+
+/* Core wrapper (OneOf / AnyOf / AllOf cards) */
+body.openapi-editor #previewPane div[class*="sc-ikkxIA"] {
+  background-color: #1a1a1a !important; /* darker neutral tone */
+  color: #e0e0e0 !important;
+  border: 1px solid #333 !important;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin: 8px 0;
+}
+
+/* Inner spans and text */
+body.openapi-editor #previewPane div[class*="sc-ikkxIA"] span,
+body.openapi-editor #previewPane div[class*="sc-ikkxIA"] p,
+body.openapi-editor #previewPane div[class*="sc-ikkxIA"] td,
+body.openapi-editor #previewPane div[class*="sc-ikkxIA"] th {
+  color: #ffffff !important;
+}
+
+/* Inner tables (property lists) */
+body.openapi-editor #previewPane div[class*="sc-ikkxIA"] table {
+  background-color: transparent !important;
+  border-color: #333 !important;
+}
+
+/* Buttons inside schema cards (like “Show pattern”) */
+body.openapi-editor #previewPane div[class*="sc-ikkxIA"] button {
+  background-color: #2d2d2d !important;
+  color: #ffffff !important;
+  border: 1px solid #444 !important;
+  border-radius: 6px;
+  padding: 4px 8px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+body.openapi-editor #previewPane div[class*="sc-ikkxIA"] button:hover {
+  background-color: #3a3a3a !important;
+}
+
+/* Nested schema notes like “required”, “additional property”, etc. */
+body.openapi-editor #previewPane div[class*="sc-ikkxIA"] .sc-hRJfrW,
+body.openapi-editor #previewPane div[class*="sc-ikkxIA"] .sc-iHbSHJ,
+body.openapi-editor #previewPane div[class*="sc-ikkxIA"] .property-name {
+  color: #ffffff !important;
+}
+
+
+/* =========================================================
+   🖋 Label / Header Span Visibility Fix
+   ========================================================= */
+
+/* All span/text nodes inside labels, headers or summary titles */
+body.openapi-editor #previewPane label span,
+body.openapi-editor #previewPane span[title],
+body.openapi-editor #previewPane span[class*="sc-eyvILC"],
+body.openapi-editor #previewPane span[class*="sc-"][title],
+body.openapi-editor #previewPane .menu-content span[title],
+body.openapi-editor #previewPane .menu-content label span {
+  color: #000 !important;
+}
+
+/* Fallback: if ReDoc injects inline style forcing black text, neutralize it */
+body.openapi-editor #previewPane span[title][style*="color"],
+body.openapi-editor #previewPane label span[style*="color"] {
+  color: #ffffff !important;
+}
+
+/* Optional hover effect for clarity */
+body.openapi-editor #previewPane span[title]:hover {
+  color: #80bfff !important;
+  transition: color 0.2s ease;
+}
+
+/* Sidebar */
+body.openapi-editor #previewPane .menu-content {
+  background-color: #1a1a1a !important;
+  color: #ddd !important;
+  border-right: 1px solid #333 !important;
+}
+
+/* Links */
+body.openapi-editor #previewPane a {
+  color: #61affe !important;
+  text-decoration: none;
+}
+body.openapi-editor #previewPane a:hover {
+  color: #80bfff !important;
+  text-decoration: underline;
+}
+
+/* Code blocks */
+body.openapi-editor #previewPane pre,
+body.openapi-editor #previewPane code {
+  background-color: #2a2a2a !important;
+  color: #d6d6d6 !important;
+  border-radius: 4px;
+  padding: 0.25rem 0.5rem;
+  font-family: "Fira Code", monospace;
+}
+
+/* Operation badges */
+body.openapi-editor #previewPane .operation-type {
+  border-radius: 4px;
+  padding: 0 6px;
+  text-transform: uppercase;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+body.openapi-editor #previewPane .operation-type.get {
+  background-color: #2e7d32 !important;
+  color: #fff !important;
+}
+body.openapi-editor #previewPane .operation-type.post {
+  background-color: #1565c0 !important;
+  color: #fff !important;
+}
+body.openapi-editor #previewPane .operation-type.put {
+  background-color: #ff9800 !important;
+  color: #000 !important;
+}
+body.openapi-editor #previewPane .operation-type.delete {
+  background-color: #c62828 !important;
+  color: #fff !important;
+}
+
+/* Schema titles / property names */
+body.openapi-editor #previewPane .model {
+  color: #fff !important;
+}
+
+/* Section dividers */
+body.openapi-editor #previewPane .section {
+  border-color: #333 !important;
+}
+
+/* =========================================================
+   🎛️ Theme Selector Dropdown
+   ========================================================= */
+body.openapi-editor select#themeSelect {
+  background: var(--button-bg, #444);
+  color: var(--text-strong, #fff);
+  border: 1px solid var(--border, #666);
+  border-radius: 6px;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+body.openapi-editor[data-theme="light"] select#themeSelect {
+  background: #f0f0f0;
+  color: #000;
+  border-color: #ccc;
+}
+
+/* =========================================================
+   🩸 ReDoc UI Fine-tuning (Labels, Required, Tabs, etc.)
+   ========================================================= */
+/* Explicit match for current structure */
+body.openapi-editor #previewPane div.sc-Nxspf.sc-hRJfrW.lmPAIU.dBPdaM {
+  color: #ff4d4d !important;       /* bright red */
+  font-weight: 600 !important;     /* bold highlight */
+  font-size: 0.9em !important;
+  margin-left: 20px !important;
+  line-height: 1 !important;
+}
+
+/* =========================================================
+   ❤️ Targeted Fix — Restore red for ReDoc “required” badges
+   ========================================================= */
+
+/* Match ReDoc’s generated element structure exactly */
+body.openapi-editor #previewPane div[class*="sc-ikkxIA"] div.sc-hRJfrW.dBPdaM,
+body.openapi-editor #previewPane div[class*="sc-ikkxIA"] .sc-hRJfrW.dBPdaM,
+body.openapi-editor #previewPane div[class*="sc-ikkxIA"] div.sc-iHbSHJ.dBPdaM {
+  color: #ff4d4d !important;       /* bright red */
+  font-weight: 600 !important;     /* emphasize required tag */
+  font-size: 0.9em !important;     /* retain ReDoc’s natural size */
+  margin-left: 20px !important;    /* preserve ReDoc spacing */
+  line-height: 1 !important;
+}
