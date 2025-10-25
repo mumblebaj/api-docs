@@ -1,4 +1,4 @@
-// openapiEditor.js — Created by mumblebaj + GPT-5
+// openapiEditor.js — Created by mumblebaj
 
 // ensure a YAML global exists even if the library exports jsyaml
 window.YAML = window.YAML || window.jsyaml || {};

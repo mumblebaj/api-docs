@@ -49,7 +49,7 @@ jobs:
       
       # 8. Copy swagger-client into public/js folder
       - name: Copy swagger-client
-        run: cp js/swagger-clinet.browser.min.js public/js/
+        run: cp js/swagger-client.browser.min.js public/js/
 
       # 9. Copy template into public/js folder
       - name: Copy template
