@@ -57,7 +57,7 @@ jobs:
       
       # 10. Copy styles to public/styles
       - name: Copy styles.css
-        run: css/style.css public/css/
+        run: mkdir -p public/css %% cp css/style.css public/css/
 
       # 11. Copy openapiEditor styles to public/styles
       - name: Copy styles.css
