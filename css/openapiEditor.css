@@ -144,6 +144,17 @@ body.openapi-editor #previewPane label span {
   color: #ffffff !important;
 }
 
+body.openapi-editor #previewPane .dropdown-select {
+  background-color: #2a2a2a !important;
+  color: #fff !important;
+  border: 1px solid #444 !important;
+}
+
+body.openapi-editor #previewPane .dropdown-select option {
+  background-color: #2a2a2a !important;
+  color: #fff !important;
+}
+
 /* Adjust nested span/label text inside properties */
 body.openapi-editor #previewPane label .sc-eyvILC,
 body.openapi-editor #previewPane label .sc-bpUBKd,
@@ -364,4 +375,33 @@ body.openapi-editor #previewPane div[class*="sc-ikkxIA"] div.sc-iHbSHJ.dBPdaM {
   font-size: 0.9em !important;     /* retain ReDoc’s natural size */
   margin-left: 20px !important;    /* preserve ReDoc spacing */
   line-height: 1 !important;
+}
+
+/* =========================================================
+   🌙 Fix: Environment + Endpoint Block in previewPane
+   ========================================================= */
+
+/* Outer container (Test environment + URL) */
+body.openapi-editor #previewPane .sc-dlWCHZ.ibsmTf {
+  background-color: #2a2a2a !important; /* dark grey background */
+  color: #ffffff !important;
+  border: 1px solid #444 !important;
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin: 10px 0;
+}
+
+/* Inner heading div (e.g., “Test environment”) */
+body.openapi-editor #previewPane .sc-eeDRCY.sc-eBMEME.gvJSKt.gqMRPb {
+  background-color: transparent !important;
+  color: #ffffff !important;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+/* URL span and endpoint path */
+body.openapi-editor #previewPane .sc-hHOBiw.gGSaJG,
+body.openapi-editor #previewPane .sc-hHOBiw.gGSaJG span {
+  color: #ffffff !important;
+  background: transparent !important;
 }
