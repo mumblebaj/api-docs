@@ -37,47 +37,55 @@ jobs:
       - name: Copy openapiEditor page
         run: cp docs/openapiEditor.html public/openapiEditor.html
 
-      # 5. Copy xsdViewer into public/js folder
+      # 5. Copy xmlViewer.html page into public
+      - name: Copy xmlViewer.html page
+        run: cp docs/xmlViewer.html public/xmlViewer.html
+
+      # 6. Copy xsdViewer into public/js folder
       - name: Copy xsdViewer
         run: mkdir -p public/js && cp js/xsdViewer.js public/js/
 
-      # 6. Copy yamlViewer into public/js folder
+      # 7. Copy yamlViewer into public/js folder
       - name: Copy yamlViewer
         run: cp js/yamlViewer.js public/js/
 
-      # 7. Copy openapiEditor into public/js folder
+      # 8. Copy openapiEditor into public/js folder
       - name: Copy openapiEditor
         run: cp js/openapiEditor.js public/js/
+
+      # 9. Copy xmlViewer.js into public/js folder
+      - name: Copy xmlViewer.js
+        run: cp js/xmlViewer.js public/js/
       
-      # 8. Copy swagger-client into public/js folder
+      # 10. Copy swagger-client into public/js folder
       - name: Copy swagger-client
         run: cp js/swagger-client.browser.min.js public/js/
 
-      # 9. Copy template into public/js folder
+      # 11. Copy template into public/js folder
       - name: Copy template
         run: cp js/template.js public/js/
       
-      # 10. Copy styles to public/styles
+      # 12. Copy styles to public/styles
       - name: Copy styles.css
         run: mkdir -p public/css && cp css/style.css public/css/
 
-      # 11. Copy openapiEditor styles to public/styles
+      # 13. Copy openapiEditor styles to public/styles
       - name: Copy openappiEditor.css
         run: cp css/openapiEditor.css public/css/
 
-      # 12. Copy favicon to public
+      # 14. Copy favicon to public
       - name: Copy svg Favicon
         run: cp docs/favicon.svg public/favicon.svg
 
-      # 13. Copy favicon to public
+      # 15. Copy favicon to public
       - name: Copy png Favicon
         run: cp docs/favicon.png public/favicon.png
 
-      # 14. Copy CNAME
+      # 16. Copy CNAME
       - name: Copy CNAME
         run: cp docs/CNAME public/CNAME
 
-      # 15. Deploy to GitHub Pages
+      # 17. Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:

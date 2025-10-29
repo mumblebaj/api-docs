@@ -17,6 +17,10 @@
   --accent: #3399ff;
 }
 
+[data-theme="light"] {
+  --lg: #eee;
+}
+
 /* =========================================================
    🧱 Layout & Structure
    ========================================================= */
@@ -73,7 +77,9 @@ header {
 
 /* Theme toggle button */
 #theme-toggle,
-#launchEditorBtn {
+#launchEditorBtn,
+#themeToggle,
+#xmlViewerBtn {
   background: var(--accent);
   color: #fff;
   border: none;
@@ -358,14 +364,14 @@ select {
 /* Optional: differentiate Enum keyword and values */
 [data-theme="dark"] .redoc-wrap div > span:first-child,
 [data-theme="dark"] .redoc-container div > span:first-child {
-  color: var(--accent) !important;   /* “Enum:” label */
+  color: var(--accent) !important; /* “Enum:” label */
   font-weight: 600;
 }
 
 /* Light mode: slight refinement for contrast and readability */
 [data-theme="light"] .redoc-wrap div > span,
 [data-theme="light"] .redoc-container div > span {
-  color: var(--fg);
+  color: var(--lg);
 }
 
 [data-theme="light"] .redoc-wrap div > span:first-child,
@@ -484,7 +490,6 @@ select {
   background-color: #3a3a3a !important;
 }
 
-
 /* =========================================================
    🎯 Fix: "Status Confirmations." label should remain dark text
    ========================================================= */
@@ -580,7 +585,7 @@ select {
 /* “required” badge – stay red even in dark mode */
 [data-theme="dark"] .redoc-wrap .api-content .sc-Nxspf.sc-hRJfrW,
 [data-theme="dark"] .redoc-container .api-content .sc-Nxspf.sc-hRJfrW {
-  color: #ff5252 !important;          /* bright red for contrast */
+  color: #ff5252 !important; /* bright red for contrast */
   font-weight: 600;
 }
 
@@ -597,7 +602,12 @@ select {
 [data-theme="dark"] .redoc-wrap .api-content .sc-jMakVo.ezhZdr .sc-ihgnxF,
 [data-theme="dark"] .redoc-container .api-content .sc-jMakVo.ezhZdr .sc-ihgnxF,
 [data-theme="dark"] .redoc-wrap .api-content .sc-jMakVo.ezhZdr .sc-ihgnxF i,
-[data-theme="dark"] .redoc-container .api-content .sc-jMakVo.ezhZdr .sc-ihgnxF i {
+[data-theme="dark"]
+  .redoc-container
+  .api-content
+  .sc-jMakVo.ezhZdr
+  .sc-ihgnxF
+  i {
   color: #ffffff !important; /* white for readability */
 }
 
@@ -605,16 +615,26 @@ select {
 [data-theme="dark"] .redoc-wrap .api-content .sc-jMakVo.iqJlbl .sc-ihgnxF,
 [data-theme="dark"] .redoc-container .api-content .sc-jMakVo.iqJlbl .sc-ihgnxF,
 [data-theme="dark"] .redoc-wrap .api-content .sc-jMakVo.iqJlbl .sc-ihgnxF i,
-[data-theme="dark"] .redoc-container .api-content .sc-jMakVo.iqJlbl .sc-ihgnxF i {
+[data-theme="dark"]
+  .redoc-container
+  .api-content
+  .sc-jMakVo.iqJlbl
+  .sc-ihgnxF
+  i {
   color: #000000 !important; /* black for light background */
 }
 
 /* Optional fallback — if neither class is present, stay neutral light gray */
-[data-theme="dark"] .redoc-wrap .api-content .sc-ihgnxF:not(:has(.ezhZdr)):not(:has(.iqJlbl)),
-[data-theme="dark"] .redoc-container .api-content .sc-ihgnxF:not(:has(.ezhZdr)):not(:has(.iqJlbl)) {
+[data-theme="dark"]
+  .redoc-wrap
+  .api-content
+  .sc-ihgnxF:not(:has(.ezhZdr)):not(:has(.iqJlbl)),
+[data-theme="dark"]
+  .redoc-container
+  .api-content
+  .sc-ihgnxF:not(:has(.ezhZdr)):not(:has(.iqJlbl)) {
   color: #e0e0e0 !important;
 }
-
 
 /* 2️⃣ Buttons: ensure consistent contrast for variants */
 /* Good one (“object” with jXRCRV) already has correct dark bg + light text — keep it */
@@ -627,7 +647,11 @@ select {
 
 /* Broken one (“object” with bItXex) — likely inherits dark text on dark bg */
 [data-theme="dark"] .redoc-wrap .api-content .sc-hzhJZQ.bItXex,
-[data-theme="dark"] .redoc-container .api-content .sc-hzhJZQ.bItXex {
+[data-theme="dark"] .redoc-container .api-content .sc-hzhJZQ.bItXex ,
+[data-theme="dark"] .redoc-container .api-content .sc-hzhJZQ.hYAsdN,
+[data-theme="dark"] .redoc-wrap .api-content .sc-hzhJZQ.hYAsdN,
+[data-theme="dark"] .redoc-container .api-content .sc-hzhJZQ.gDqYFC,
+[data-theme="dark"] .redoc-wrap .api-content .sc-hzhJZQ.gDqYFC {
   background-color: #2a2a2a !important;
   color: #fff !important;
   border: 1px solid #3a3a3a !important;
@@ -645,6 +669,41 @@ select {
   color: #ff5252 !important;
   font-weight: 600;
 }
+
+/* =========================================================
+   ☀️ Fix: Make sc-Nxspf spans readable in Light mode
+   ========================================================= */
+[data-theme="light"] .redoc-wrap .api-content .sc-Nxspf,
+[data-theme="light"] .redoc-container .api-content .sc-Nxspf {
+  color: #706969 !important; 
+}
+
+[data-theme="light"] .redoc-wrap .api-content .sc-Nxspf.sc-hRJfrW,
+[data-theme="light"] .redoc-container .api-content .sc-Nxspf.sc-hRJfrW {
+  color: #ff0000 !important; /* keep "required" badge bright red */
+  font-weight: 600;
+}
+
+/* =========================================================
+   ☀️ Fix: Light-mode dark-background elements
+   ========================================================= */
+
+/* "Response samples" header that appears on dark background */
+[data-theme="light"] .redoc-wrap .api-content h3.sc-kpDqfm,
+[data-theme="light"] .redoc-container .api-content h3.sc-kpDqfm {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Endpoint/path span (e.g., /National_Treasury_...) */
+[data-theme="light"] .redoc-wrap .api-content span.sc-iEXKAA,
+[data-theme="light"] .redoc-container .api-content span.sc-iEXKAA,
+[data-theme="light"] .redoc-container .api-content span.sc-ejfMa-d,
+[data-theme="dark"] .redoc-container .api-content span.sc-iEXKAA.lmuCWo,
+[data-theme="dark"] .redoc-wrap .api-content span.sc-iEXKAA {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+
 
 /* 4️⃣ Optional: if other inline type tokens (like “string”, “integer”) appear, keep them neutral light */
 [data-theme="dark"] .redoc-wrap .api-content .sc-Nxspf:not(.sc-hRJfrW),
@@ -678,6 +737,84 @@ select {
    ========================================================= */
 [data-theme="dark"] .mode-badge.yaml {
   background-color: #28a745 !important; /* same vibrant green */
-  color: #fff !important;               /* ensure text stays readable */
+  color: #fff !important; /* ensure text stays readable */
 }
 
+/* XMLVIEWER Style code */
+
+/* Dropzone shell (align with your schema viewer styles) */
+.dropzone {
+  border: 2px dashed var(--accent);
+  border-radius: 1rem;
+  padding: 1.25rem;
+  background: var(--card-bg);
+  cursor: pointer;
+  user-select: none;
+  outline: none;
+}
+.dropzone.dragover {
+  border-color: var(--accent, #4f46e5);
+  box-shadow: 0 0 0 3px
+    color-mix(in oklab, var(--accent, #4f46e5), transparent 70%);
+}
+.dropzone-input {
+  display: none;
+}
+.dropzone-inner {
+  text-align: center;
+}
+.dz-icon {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+.dz-text {
+  font-weight: 600;
+}
+.dz-link {
+  text-decoration: underline;
+}
+.dz-subtext {
+  opacity: 0.8;
+  font-size: 0.9rem;
+}
+
+/* Code-like textarea */
+.code-input {
+  width: 100%;
+  min-height: 140px;
+  margin-top: 1rem;
+  border-radius: 0.75rem;
+  padding: 0.75rem;
+  background: var(--input-bg);
+  color: var(--text-color);
+  border: 1px solid var(--accent);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  resize: vertical;
+}
+
+/* Buttons row (uses your .btn styles) */
+.button-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 1rem;
+  padding: 8px 12px;
+  background: #2d2d2d;
+  border-bottom: 1px solid #444;
+  align-items: center;
+}
+
+/* Toolbar */
+/* body.openapi-editor .toolbar {
+  display: flex;
+  gap: 10px;
+  padding: 8px 12px;
+  background: #2d2d2d;
+  border-bottom: 1px solid #444;
+  align-items: center;
+} */
+
+/* Status line */
+.status-line {
+  margin-top: 0.75rem;
+  font-weight: 600;
+}
