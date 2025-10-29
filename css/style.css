@@ -703,6 +703,19 @@ select {
   color: rgba(255, 255, 255, 0.9) !important;
 }
 
+/* =========================================================
+   🌙 Fix: Dark-mode dropdown-select readability
+   ========================================================= */
+[data-theme="dark"] .dropdown-select {
+  background-color: #2a2a2a !important; /* dark gray background */
+  color: #fff !important;               /* white text */
+  border: 1px solid #444 !important;
+}
+
+[data-theme="dark"] .dropdown-select option {
+  background-color: #2a2a2a !important;
+  color: #fff !important;
+}
 
 
 /* 4️⃣ Optional: if other inline type tokens (like “string”, “integer”) appear, keep them neutral light */
