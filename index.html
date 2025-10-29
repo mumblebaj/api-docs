@@ -22,6 +22,7 @@
         </select>
         <button id="theme-toggle">🌙 Dark Mode</button>
         <button id="launchEditorBtn" class="control-btn primary">🚀 OpenAPI Editor</button>
+        <button id="xmlViewerBtn" class="control-btn primary">🚀 XML Viewer</button>
       </div>
     </header>
 
@@ -74,6 +75,12 @@
         .getElementById("launchEditorBtn")
         .addEventListener("click", () => {
           window.open("./openapiEditor.html", "_blank");
+        });
+
+      document
+        .getElementById("xmlViewerBtn")
+        .addEventListener("click", () => {
+          window.open("./xmlViewer.html", "_blank");
         });
 
       const yamlViewer = document.getElementById("yaml-viewer");

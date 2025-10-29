@@ -217,17 +217,53 @@ export function initXsdViewer(dropzone, yamlViewer, xsdViewer) {
         ":scope > xs\\:simpleContent, :scope > simpleContent"
       );
 
-      if (seq || choice) {
-        const children = (seq || choice).children;
-        for (const n of children) {
+      if (seq) {
+        for (const n of seq.children) {
+          if (/choice$/i.test(n.localName)) {
+            // 🧭 Nested choice inside sequence
+            const oneOfSchemas = [];
+            for (const c of n.children) {
+              if (!/element$/i.test(c.localName)) continue;
+              const cname = c.getAttribute("name");
+              if (!cname) continue;
+              const childSchema = buildElementSchema(c);
+
+              const branch = {
+                type: "object",
+                properties: { [cname]: childSchema },
+                required: childSchema._isRequired ? [cname] : undefined,
+              };
+              oneOfSchemas.push(branch);
+            }
+            if (oneOfSchemas.length > 0) schema.oneOf = oneOfSchemas;
+          } else if (/element$/i.test(n.localName)) {
+            // Regular element
+            const name = n.getAttribute("name");
+            if (!name) continue;
+            const childSchema = buildElementSchema(n);
+            schema.properties[name] = childSchema;
+            if (childSchema._isRequired) schema.required.push(name);
+            delete childSchema._isRequired;
+          }
+        }
+      } else if (choice) {
+        // Handle XSD <choice> as OpenAPI oneOf
+        const oneOfSchemas = [];
+        for (const n of choice.children) {
           if (!/element$/i.test(n.localName)) continue;
           const name = n.getAttribute("name");
           if (!name) continue;
           const childSchema = buildElementSchema(n);
-          schema.properties[name] = childSchema;
-          if (childSchema._isRequired) schema.required.push(name);
-          delete childSchema._isRequired;
+
+          // Each choice branch becomes a oneOf option
+          const branch = {
+            type: "object",
+            properties: { [name]: childSchema },
+            required: childSchema._isRequired ? [name] : undefined,
+          };
+          oneOfSchemas.push(branch);
         }
+        if (oneOfSchemas.length > 0) schema.oneOf = oneOfSchemas;
       } else if (simpleContent) {
         const ext = simpleContent.querySelector("xs\\:extension, extension");
         if (ext) {
@@ -284,6 +320,11 @@ export function initXsdViewer(dropzone, yamlViewer, xsdViewer) {
 
       if (Object.keys(schema.properties).length === 0) delete schema.properties;
       if (schema.required.length === 0) delete schema.required;
+
+      // ✅ Fix for pure oneOf types
+      if (schema.oneOf && !schema.properties) {
+        delete schema.type;
+      }
 
       const typeDocs = mdDocs(ct, true);
       if (typeDocs) schema.description = typeDocs;
@@ -475,6 +516,9 @@ export function initXsdViewer(dropzone, yamlViewer, xsdViewer) {
     };
 
     const currentTheme = document.documentElement.dataset.theme || "light";
+
+    // console.log("🧾 Generated OpenAPI JSON:", JSON.stringify(openapi, null, 2));
+
     await safeRenderRedoc(openapi, redocThemes[currentTheme]);
 
     const observer = new MutationObserver((mutations) => {
