@@ -418,9 +418,32 @@ body.openapi-editor #previewPane .sc-jMakVo.ezhZdr .sc-ihgnxF i {
   color: #ffffff !important; /* white when collapsed on dark background */
 }
 
-/* Expanded (light background) — parent has .iqJlbl */
-body.openapi-editor #previewPane .sc-iMTnTL.gkDyNP .sc-ihgnxF,
-body.openapi-editor #previewPane .sc-iMTnTL.gkDyNP .sc-ihgnxF i {
-  color: #000000 !important; /* black when expanded on light background */
+/* =========================================================
+   🎯 Fix: "Authorization" text visibility in collapsed view
+   ========================================================= */
+
+/* When collapsed (dark background) — parent has .gkDyNP */
+body.openapi-editor #previewPane .sc-iMTnTL.gkDyNP i {
+  color: #ffffff !important; /* white text when collapsed */
 }
+
+/* Ensure the surrounding spans inherit the same color */
+body.openapi-editor #previewPane .sc-iMTnTL.gkDyNP .sc-ihgnxF,
+body.openapi-editor #previewPane .sc-iMTnTL.gkDyNP .sc-ihgnxF span {
+  color: #ffffff !important;
+}
+
+/* When expanded (light background) — parent usually switches to .iqJlbl */
+body.openapi-editor #previewPane .sc-iMTnTL.iqJlbl i,
+body.openapi-editor #previewPane .sc-iMTnTL.iqJlbl .sc-ihgnxF,
+body.openapi-editor #previewPane .sc-iMTnTL.iqJlbl .sc-ihgnxF span {
+  color: #000000 !important; /* revert to black for light background */
+}
+
+
+/* Expanded (light background) — parent has .iqJlbl */
+/* body.openapi-editor #previewPane .sc-iMTnTL.gkDyNP .sc-ihgnxF,
+body.openapi-editor #previewPane .sc-iMTnTL.gkDyNP .sc-ihgnxF i {
+  color: #000000 !important; 
+} */
 
