@@ -17,7 +17,11 @@ console.error = function (...args) {
   oldError.apply(console, args);
 };
 
-import defaultYamlTemplate from "./template.js";
+const version = "20251104a"; // your build/version id
+const { default: defaultYamlTemplate } = await import(`./template.js?v=${version}`);
+
+
+// import defaultYamlTemplate from "./template.js";
 
 // Debounce helper (async-safe + immediate feedback)
 function debounce(fn, delay = 1200, statusEl) {
