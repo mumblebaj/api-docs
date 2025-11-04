@@ -16,6 +16,7 @@ on:
       - 'js/openapiEditor.js'
       - 'js/xmlViewer.js'
       - 'css/styles.css'
+      - 'css/openapiEditor.css'
       - 'js/template.js'
 
 jobs:
