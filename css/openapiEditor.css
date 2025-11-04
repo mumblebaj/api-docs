@@ -405,3 +405,11 @@ body.openapi-editor #previewPane .sc-hHOBiw.gGSaJG span {
   color: #ffffff !important;
   background: transparent !important;
 }
+
+/* Expanded (light background) — parent has .iqJlbl */
+body.openapi-editor #previewPane .sc-ihgnxF,
+body.openapi-editor #previewPane .sc-ihgnxF,
+body.openapi-editor #previewPane .sc-ihgnxF i,
+body.openapi-editor #previewPane .sc-ihgnxF i {
+  color: #000000 !important; /* black for light background */
+}

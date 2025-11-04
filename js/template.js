@@ -78,6 +78,12 @@ components:
       schema:
         $ref: '#/components/schemas/UUIDv4Identifier'
       required: true
+  securitySchemes:
+    Authorization:
+      type: http
+      description: The JWT Token
+      scheme: bearer
+      bearerFormat: JWT
 `;
 
 export default defaultYamlTemplate;
