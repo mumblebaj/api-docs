@@ -124,7 +124,7 @@ Before submitting:
 ---
 
 ## 📄 License
-MIT License © 2025 [Bernard Mumble (mumblebaj)](https://github.com/mumblebaj)
+MIT License © 2025 [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](LICENSE)
 
 ---
 
