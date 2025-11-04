@@ -407,6 +407,21 @@ body.openapi-editor #previewPane .sc-hHOBiw.gGSaJG span {
 }
 
 /* =========================================================
+   🎯 ReDoc api-content: fix dark mode text contrast
+   ========================================================= */
+
+/* Scope: main content panel only (api-content). Keep menu-content untouched. */
+body.openapi-editor #previewPane .sc-ihgnxF,
+body.openapi-editor #previewPane .sc-ihgnxF {
+  /* e.g., <span class="sc-ihgnxF"><i>oauthBearerToken</i></span> */
+  color: #e0e0e0 !important;
+}
+body.openapi-editor #previewPane .sc-ihgnxF i,
+body.openapi-editor #previewPane .sc-ihgnxF i {
+  color: #e0e0e0 !important;
+}
+
+/* =========================================================
    1️⃣ 🎯 Dynamic fix for oauthBearerToken label
    ========================================================= */
 /* Collapsed (dark background) — parent has .ezhZdr */
