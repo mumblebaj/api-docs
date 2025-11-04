@@ -9,9 +9,14 @@ on:
       - main
     paths:
       - 'docs/index.html'
+      - 'docs/openapiEditor.html'
+      - 'docs/xmlViewer.html'
       - 'js/xsdViewer.js'
       - 'js/yamlViewer.js'
+      - 'js/openapiEditor.js'
+      - 'js/xmlViewer.js'
       - 'css/styles.css'
+      - 'js/template.js'
 
 jobs:
   build-and-deploy:

@@ -6,7 +6,7 @@ info:
   contact: 
     name: Your Department Name
     url: yoururl@domain.com
-    email: your-department-email@domain.com
+    email: department_email@domain.com
   license:  
     name: API Restricted License
     url: https://url-to-your-license@domain.com
@@ -22,10 +22,10 @@ servers:
           - stress
           - prod
       port:
-        default: 443
+        default: 123
         enum:
-          - 443
-          - 8443
+          - 123
+          - 1234
       description: Server Details
 security:
   - Authorization: []
