@@ -419,8 +419,8 @@ body.openapi-editor #previewPane .sc-jMakVo.ezhZdr .sc-ihgnxF i {
 }
 
 /* Expanded (light background) — parent has .iqJlbl */
-body.openapi-editor #previewPane .sc-jMakVo.iqJlbl .sc-ihgnxF,
-body.openapi-editor #previewPane .sc-jMakVo.iqJlbl .sc-ihgnxF i {
+body.openapi-editor #previewPane .sc-iMTnTL.gkDyNP .sc-ihgnxF,
+body.openapi-editor #previewPane .sc-iMTnTL.gkDyNP .sc-ihgnxF i {
   color: #000000 !important; /* black when expanded on light background */
 }
 
