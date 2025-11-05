@@ -72,7 +72,7 @@ jobs:
 
           # --- Update JS 'const version = "...";' lines ---
           find js -name "*.js" -type f -exec \
-            sed -i "s#const version = \".*\";#const version = \"${VERSION_TAG}\";#g" {} +
+            sed -i "s#template\.js?v=[0-9a-zA-ZT:-]*#template.js?v=${VERSION_TAG}#g" js/openapiEditor.js
 
           echo "✅ Updated HTML + JS with cache-busting version"
 

@@ -474,12 +474,12 @@ body.openapi-editor #build-info {
 }
 
 /* Light/Dark modes */
-body.openapi-editor[data-theme="dark"] #build-info {
+body.openapi-editor #build-info {
   color: #dfdddd !important;
 }
 
-body.openapi-editor[data-theme="light"] #build-info {
-  color: #333 !important;
+body.openapi-editor #build-info {
+  color: #acabab !important;
 }
 
 
