@@ -44,8 +44,14 @@ jobs:
           MAJOR=$(echo $VERSION | cut -d. -f1)
           MINOR=$(echo $VERSION | cut -d. -f2)
           PATCH=$(echo $VERSION | cut -d. -f3)
-          MINOR=$((MINOR + 1))
-          PATCH=0
+
+          # Increment PATCH and roll over every 10 builds
+          PATCH=$((PATCH + 1))
+          if [ $PATCH -ge 10 ]; then
+            PATCH=0
+            MINOR=$((MINOR + 1))
+          fi
+
           NEW_VERSION="${MAJOR}.${MINOR}.${PATCH}"
 
           CACHE_TAG=$(date -u +'%Y%m%dT%H%M%SZ')
@@ -59,6 +65,7 @@ jobs:
 
           echo "cache_tag=${CACHE_TAG}" >> $GITHUB_OUTPUT
           echo "✅ Bumped version to $NEW_VERSION with cacheTag ${CACHE_TAG}"
+
 
       # 2b. Inject cache-busting version strings
       - name: Inject cache-busting version strings
