@@ -1,5 +1,14 @@
 # Changelog
 
+## [v1.0.1] - 2025-10-25
+### Build Enhancements
+- Implement cache-busting tech to bypass Redoc caching
+- Implement auto build incrementation
+- Implement auto-increment of cache-busting refresh
+- Add build-info.json
+- Add buildVersion.js
+- Update deployment logic in docs.yml
+
 ## [1.0.0] – 2025-10-25
 ### 🎨 UI / Theme Enhancements
 - Implemented **Monaco Editor theme dropdown** with persistent selection (`vs`, `vs-dark`, `hc-black`).

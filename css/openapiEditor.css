@@ -461,4 +461,26 @@ body.openapi-editor #previewPane .sc-iMTnTL.jwzUPb .sc-ihgnxF span {
   color: #000000 !important; /* solid black on white background */
 }
 
+/* =========================================================
+   🧩 Build Info Footer — Theme-Aware Colors
+   ========================================================= */
+body.openapi-editor #build-info {
+  position: fixed;
+  bottom: 6px;
+  right: 10px;
+  font-size: 12px;
+  opacity: 0.8;
+  z-index: 9999;
+}
+
+/* Light/Dark modes */
+body.openapi-editor[data-theme="dark"] #build-info {
+  color: #dfdddd !important;
+}
+
+body.openapi-editor[data-theme="light"] #build-info {
+  color: #333 !important;
+}
+
+
 

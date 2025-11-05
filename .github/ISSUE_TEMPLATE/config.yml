@@ -1,0 +1,7 @@
+contact_links:
+  - name: 💬 Discussions
+    url: https://github.com/mumblebaj/api-docs/discussions
+    about: Community Q&A and feature brainstorming
+  - name: 🌐 Project site
+    url: https://schema.mumblebaj.xyz
+    about: Visit the live Universal Schema Studio demo and documentation

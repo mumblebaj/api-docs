@@ -1,11 +1,10 @@
 # Created by mumblebaj
 
-# Name of the workflow
 name: Build and Deploy API Documentation
 
 on:
   push:
-    branches: 
+    branches:
       - main
     paths:
       - 'docs/index.html'
@@ -18,80 +17,117 @@ on:
       - 'css/styles.css'
       - 'css/openapiEditor.css'
       - 'js/template.js'
+      - 'js/buildVersion.js'
+      - 'build-info.json'
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-
     permissions:
       contents: write
 
     steps:
-      # 1. Checkout the repository
+      # 1. Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. Create build directory
+      # 2. Bump version and update build-info.json
+      - name: Update build-info.json
+        id: buildinfo
+        run: |
+          FILE=build-info.json
+          if [ ! -f "$FILE" ]; then
+            echo '{"version":"1.0.0","commit":"","date":"","cacheTag":""}' > "$FILE"
+          fi
+
+          VERSION=$(jq -r '.version' "$FILE")
+          MAJOR=$(echo $VERSION | cut -d. -f1)
+          MINOR=$(echo $VERSION | cut -d. -f2)
+          PATCH=$(echo $VERSION | cut -d. -f3)
+          MINOR=$((MINOR + 1))
+          PATCH=0
+          NEW_VERSION="${MAJOR}.${MINOR}.${PATCH}"
+
+          CACHE_TAG=$(date -u +'%Y%m%dT%H%M%SZ')
+
+          echo "{
+            \"version\": \"${NEW_VERSION}\",
+            \"commit\": \"$(git rev-parse --short HEAD)\",
+            \"date\": \"$(date -u +'%Y-%m-%dT%H:%M:%SZ')\",
+            \"cacheTag\": \"${CACHE_TAG}\"
+          }" > "$FILE"
+
+          echo "cache_tag=${CACHE_TAG}" >> $GITHUB_OUTPUT
+          echo "✅ Bumped version to $NEW_VERSION with cacheTag ${CACHE_TAG}"
+
+      # 2b. Inject cache-busting version strings
+      - name: Inject cache-busting version strings
+        run: |
+          VERSION_TAG=${{ steps.buildinfo.outputs.cache_tag }}
+          echo "Injecting cache-busting tag: $VERSION_TAG"
+
+          # --- Update HTML query strings ---
+          find docs -name "*.html" -type f -exec \
+            sed -i "s#?v=[0-9a-zA-ZT:-]*#?v=${VERSION_TAG}#g" {} +
+
+          # --- Update JS 'const version = "...";' lines ---
+          find js -name "*.js" -type f -exec \
+            sed -i "s#const version = \".*\";#const version = \"${VERSION_TAG}\";#g" {} +
+
+          echo "✅ Updated HTML + JS with cache-busting version"
+
+      # 3. Commit updated files
+      - name: Commit updated files
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add build-info.json docs/*.html js/*.js
+          git commit -m "chore: bump build to $(jq -r '.version' build-info.json) [${{ steps.buildinfo.outputs.cache_tag }}]" || echo "No changes to commit"
+          git push
+
+      # 4. Create build directory
       - name: Create build directory
         run: mkdir -p public
 
-      # 3. Copy landing page into public
+      # 5. Copy landing page into public
       - name: Copy landing page
         run: cp docs/index.html public/index.html
 
-      # 4. Copy openapiEditor page into public
+      # 6. Copy openapiEditor page
       - name: Copy openapiEditor page
         run: cp docs/openapiEditor.html public/openapiEditor.html
 
-      # 5. Copy xmlViewer.html page into public
+      # 7. Copy xmlViewer.html page
       - name: Copy xmlViewer.html page
         run: cp docs/xmlViewer.html public/xmlViewer.html
 
-      # 6. Copy xsdViewer into public/js folder
-      - name: Copy xsdViewer
-        run: mkdir -p public/js && cp js/xsdViewer.js public/js/
+      # 8. Copy build-info.json into public
+      - name: Copy build-info.json
+        run: cp build-info.json public/build-info.json
 
-      # 7. Copy yamlViewer into public/js folder
-      - name: Copy yamlViewer
-        run: cp js/yamlViewer.js public/js/
+      # 9. Copy JS files
+      - name: Copy JS files
+        run: |
+          mkdir -p public/js
+          cp js/*.js public/js/
 
-      # 8. Copy openapiEditor into public/js folder
-      - name: Copy openapiEditor
-        run: cp js/openapiEditor.js public/js/
+      # 10. Copy CSS files
+      - name: Copy CSS files
+        run: |
+          mkdir -p public/css
+          cp css/*.css public/css/
 
-      # 9. Copy xmlViewer.js into public/js folder
-      - name: Copy xmlViewer.js
-        run: cp js/xmlViewer.js public/js/
-      
-      # 10. Copy swagger-client into public/js folder
-      - name: Copy swagger-client
-        run: cp js/swagger-client.browser.min.js public/js/
+      # 11. Copy favicons
+      - name: Copy favicons
+        run: |
+          cp docs/favicon.svg public/favicon.svg
+          cp docs/favicon.png public/favicon.png
 
-      # 11. Copy template into public/js folder
-      - name: Copy template
-        run: cp js/template.js public/js/
-      
-      # 12. Copy styles to public/styles
-      - name: Copy styles.css
-        run: mkdir -p public/css && cp css/style.css public/css/
-
-      # 13. Copy openapiEditor styles to public/styles
-      - name: Copy openappiEditor.css
-        run: cp css/openapiEditor.css public/css/
-
-      # 14. Copy favicon to public
-      - name: Copy svg Favicon
-        run: cp docs/favicon.svg public/favicon.svg
-
-      # 15. Copy favicon to public
-      - name: Copy png Favicon
-        run: cp docs/favicon.png public/favicon.png
-
-      # 16. Copy CNAME
+      # 12. Copy CNAME
       - name: Copy CNAME
         run: cp docs/CNAME public/CNAME
 
-      # 17. Deploy to GitHub Pages
+      # 13. Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
