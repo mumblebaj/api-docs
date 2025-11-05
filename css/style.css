@@ -831,3 +831,10 @@ select {
   margin-top: 0.75rem;
   font-weight: 600;
 }
+
+[data-theme="dark"] #build-info {
+  color: #aaa !important;
+}
+[data-theme="light"] #build-info {
+  color: #333 !important;
+}
