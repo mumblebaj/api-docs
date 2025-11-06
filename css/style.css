@@ -833,8 +833,8 @@ select {
 }
 
 [data-theme="dark"] #build-info {
-  color: #aaa !important;
+  color: #cac8c8 !important;
 }
 [data-theme="light"] #build-info {
-  color: #333 !important;
+  color: #bebdbd !important;
 }
