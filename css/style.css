@@ -816,16 +816,6 @@ select {
   align-items: center;
 }
 
-/* Toolbar */
-/* body.openapi-editor .toolbar {
-  display: flex;
-  gap: 10px;
-  padding: 8px 12px;
-  background: #2d2d2d;
-  border-bottom: 1px solid #444;
-  align-items: center;
-} */
-
 /* Status line */
 .status-line {
   margin-top: 0.75rem;
@@ -833,8 +823,8 @@ select {
 }
 
 [data-theme="dark"] #build-info {
-  color: #aaa !important;
+  color: #cac8c8 !important;
 }
 [data-theme="light"] #build-info {
-  color: #333 !important;
+  color: #bebdbd !important;
 }
