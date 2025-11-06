@@ -14,7 +14,7 @@ on:
       - 'js/yamlViewer.js'
       - 'js/openapiEditor.js'
       - 'js/xmlViewer.js'
-      - 'css/styles.css'
+      - 'css/style.css'
       - 'css/openapiEditor.css'
       - 'js/template.js'
       - 'js/buildVersion.js'
