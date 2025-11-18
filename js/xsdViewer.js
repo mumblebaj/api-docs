@@ -133,28 +133,129 @@ export function initXsdViewer(dropzone, yamlViewer, xsdViewer) {
       }
     }
 
+    // ===========================
+    // SIMPLE TYPE BUILDER (PATCHED)
+    // ===========================
     function buildSimpleTypeSchema(st) {
       const schema = { type: "string" };
+
       const restriction = st.querySelector("xs\\:restriction, restriction");
       if (restriction) {
         const base = restriction.getAttribute("base");
         if (base) Object.assign(schema, mapXsdType(base));
+
+        // Track numeric facets for proper combined behavior
+        let numeric = {
+          minInclusive: null,
+          maxInclusive: null,
+          minExclusive: null,
+          maxExclusive: null,
+          totalDigits: null,
+          fractionDigits: null,
+        };
+
         restriction.querySelectorAll(":scope > *").forEach((f) => {
           const val = f.getAttribute("value");
+
           switch (f.localName) {
+            /* STRING FACETS --------------------- */
             case "pattern":
               schema.pattern = val;
               break;
+
             case "maxLength":
               schema.maxLength = +val;
               break;
+
             case "minLength":
               schema.minLength = +val;
               break;
+
+            case "length":
+              schema.minLength = +val;
+              schema.maxLength = +val;
+              break;
+
+            case "enumeration":
+              if (!schema.enum) schema.enum = [];
+              schema.enum.push(val);
+              break;
+
+            /* NUMERIC FACETS --------------------- */
+            case "minInclusive":
+              numeric.minInclusive = +val;
+              break;
+
+            case "maxInclusive":
+              numeric.maxInclusive = +val;
+              break;
+
+            case "minExclusive":
+              numeric.minExclusive = +val;
+              break;
+
+            case "maxExclusive":
+              numeric.maxExclusive = +val;
+              break;
+
+            case "fractionDigits":
+              numeric.fractionDigits = +val;
+              break;
+
+            case "totalDigits":
+              numeric.totalDigits = +val;
+              break;
           }
         });
+
+        /* Apply numeric facets ------------------ */
+        if (numeric.minInclusive !== null) {
+          schema.minimum = numeric.minInclusive;
+        }
+        if (numeric.maxInclusive !== null) {
+          schema.maximum = numeric.maxInclusive;
+        }
+        if (numeric.minExclusive !== null) {
+          schema.minimum = numeric.minExclusive;
+          schema.exclusiveMinimum = true;
+        }
+        if (numeric.maxExclusive !== null) {
+          schema.maximum = numeric.maxExclusive;
+          schema.exclusiveMaximum = true;
+        }
+
+        /* fractionDigits only ------------------ */
+        if (numeric.fractionDigits !== null && numeric.totalDigits === null) {
+          const fd = numeric.fractionDigits;
+          schema.pattern = `^-?\\\\d+(?:\\\\.\\\\d{1,${fd}})?$`;
+        }
+
+        /* totalDigits only ---------------------- */
+        if (numeric.totalDigits !== null && numeric.fractionDigits === null) {
+          const td = numeric.totalDigits;
+          schema.pattern = `^-?\\\\d{1,${td}}(?:\\\\.\\\\d{1,${td}})?$`;
+        }
+
+        /* Combined totalDigits + fractionDigits (ISO20022 accurate) */
+        if (numeric.totalDigits !== null && numeric.fractionDigits !== null) {
+          const td = numeric.totalDigits;
+          const fd = numeric.fractionDigits;
+          const intMax = td - fd;
+          schema.pattern = `^-?\\\\d{1,${intMax}}(?:\\\\.\\\\d{1,${fd}})?$`;
+        }
       }
+
       return schema;
+    }
+
+    function ensureSimple(name) {
+      if (!name || components.schemas[name]) return;
+      const st = simpleTypes[name];
+      if (!st) return;
+      const sch = buildSimpleTypeSchema(st);
+      const d = mdDocs(st, true);
+      if (d) sch.description = d;
+      components.schemas[name] = sch;
     }
 
     function buildElementSchema(el) {
