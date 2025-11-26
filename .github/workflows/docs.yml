@@ -112,8 +112,9 @@ jobs:
 
       # 7b. Copy Tutor page
       - name: Copy tutor/index.html
-        run: cp tutor/index.html public/tutor/index.html
-
+        run: |
+          mkdir -p public/tutor
+          cp tutor/index.html public/tutor/index.html
 
       # 8. Copy build-info.json into public
       - name: Copy build-info.json
