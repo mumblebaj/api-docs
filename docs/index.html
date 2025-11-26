@@ -19,8 +19,13 @@
           <option value="xsd">XSD / XML</option>
         </select>
         <button id="theme-toggle">🌙 Dark Mode</button>
-        <button id="launchEditorBtn" class="control-btn primary">🚀 OpenAPI Editor</button>
-        <button id="xmlViewerBtn" class="control-btn primary">🚀 XML Viewer</button>
+        <button id="launchEditorBtn" class="control-btn primary">
+          🚀 OpenAPI Editor
+        </button>
+        <button id="xmlViewerBtn" class="control-btn primary">
+          🚀 XML Viewer
+        </button>
+        <button id="yamlTutorBtn" class="control-btn primary">📘 YAML Tutor</button>
       </div>
     </header>
 
@@ -35,7 +40,6 @@
     <div id="xsd-viewer" class="viewer"></div>
 
     <script type="module">
-     
       import { initYamlViewer } from "./js/yamlViewer.js?v=20251118T121916Z";
       import { initXsdViewer } from "./js/xsdViewer.js?v=20251118T121916Z";
 
@@ -76,11 +80,13 @@
           window.open("./openapiEditor.html", "_blank");
         });
 
-      document
-        .getElementById("xmlViewerBtn")
-        .addEventListener("click", () => {
-          window.open("./xmlViewer.html", "_blank");
-        });
+      document.getElementById("xmlViewerBtn").addEventListener("click", () => {
+        window.open("./xmlViewer.html", "_blank");
+      });
+
+      document.getElementById("yamlTutorBtn").addEventListener("click", () => {
+        window.open("./tutor/index.html", "_blank");
+      });
 
       const yamlViewer = document.getElementById("yaml-viewer");
       const xsdViewer = document.getElementById("xsd-viewer");

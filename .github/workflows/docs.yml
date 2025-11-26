@@ -20,6 +20,7 @@ on:
       - 'js/template.js'
       - 'js/buildVersion.js'
       - 'build-info.json'
+      - 'tutor/**'
 
 jobs:
   build-and-deploy:
@@ -109,6 +110,11 @@ jobs:
       - name: Copy xmlViewer.html page
         run: cp docs/xmlViewer.html public/xmlViewer.html
 
+      # 7b. Copy Tutor page
+      - name: Copy tutor/index.html
+        run: cp tutor/index.html public/tutor/index.html
+
+
       # 8. Copy build-info.json into public
       - name: Copy build-info.json
         run: cp build-info.json public/build-info.json
@@ -119,11 +125,29 @@ jobs:
           mkdir -p public/js
           cp js/*.js public/js/
 
+      # 9b. Copy Tutor JS
+      - name: Copy Tutor JS files
+        run: |
+          mkdir -p public/tutor/js
+          cp tutor/js/*.js public/tutor/js/
+
+      # 9c. Copy Tutor Lessons
+      - name: Copy Tutor lesson files
+        run: |
+          mkdir -p public/tutor/lessons
+          cp tutor/lessons/*.json public/tutor/lessons/
+
       # 10. Copy CSS files
       - name: Copy CSS files
         run: |
           mkdir -p public/css
           cp css/*.css public/css/
+
+      # 10b. Copy Tutor CSS
+      - name: Copy Tutor CSS files
+        run: |
+          mkdir -p public/tutor/css
+          cp tutor/css/*.css public/tutor/css/
 
       # 11. Copy favicons
       - name: Copy favicons
