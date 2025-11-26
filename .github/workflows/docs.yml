@@ -136,7 +136,7 @@ jobs:
       - name: Copy Tutor lesson files
         run: |
           mkdir -p public/tutor/lessons
-          cp tutor/lessons/*.json public/tutor/lessons/
+          cp tutor/lessons/*.md public/tutor/lessons/
 
       # 10. Copy CSS files
       - name: Copy CSS files
