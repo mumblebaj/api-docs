@@ -1,0 +1,465 @@
+body {
+  margin: 0;
+  font-family: sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+:root {
+  --bg: #ffffff;
+  --text: #222;
+  --panel-bg: #f3f3f3;
+  --header-bg: #222;
+  --header-text: #fff;
+  --border: #ccc;
+  --example-btn-bg: #f6f8fa;
+  --example-btn-border: #c8d1dc;
+  --example-btn-text: #24292f;
+  --example-btn-hover-bg: #e9eef2;
+  --example-btn-hover-border: #bbc4cf;
+}
+
+[data-theme="dark"] {
+  --bg: #1f1f1f;
+  --text: #fff;
+  --panel-bg: #2b2b2b;
+  --border: #444;
+}
+
+.header {
+  padding: 1rem;
+  background: var(--header-bg);
+  color: var(--header-text);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.controls button {
+  margin-left: 0.5rem;
+}
+
+.pane, .pane * {
+  box-sizing: border-box;
+}
+
+.layout {
+  display: flex;
+  width: 100vw;
+  max-width: calc(100vw - 15px);
+  height: calc(100vh - 120px);
+  overflow: visible;
+}
+
+.pane {
+  flex: 0 1 50%;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--border);
+  background: var(--panel-bg);
+}
+
+.pane.right {
+  padding: 0;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.pane.right,
+#lessonsOutput {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+textarea {
+  flex: 1;
+  padding: 1rem;
+  resize: none;
+  border: none;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+}
+
+.tab {
+  padding: 0.5rem 1rem;
+  background: transparent;
+  color: var(--text);
+  border: none;
+  cursor: pointer;
+}
+
+.tab.active {
+  border-bottom: 3px solid dodgerblue;
+  font-weight: bold;
+}
+
+.tab-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.tab-pane {
+  display: none;
+  padding: 1rem;
+}
+
+.tab-pane.active {
+  display: block;
+}
+
+#statusBar {
+  padding: 0.5rem;
+  background: var(--panel-bg);
+  border-top: 1px solid var(--border);
+  text-align: center;
+}
+
+.editor-wrapper {
+  position: relative;
+  flex: 1;
+  overflow: hidden;         /* <-- REQUIRED to stop overflow */
+  width: 100%;              /* <-- ensure no horizontal resize */
+}
+
+
+#yamlInput {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  z-index: 2;
+  font-family: monospace;
+  line-height: 1.4em;
+}
+
+#lineHighlight {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  overflow: hidden;
+  height: 1.5em;
+  margin: 0;
+  padding: 8px;
+  background: rgba(30, 144, 255, 0.2);
+  font-family: monospace;
+  font-size: 15px;
+  line-height: 1.5em;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.pane.left {
+  min-width: 0;
+  overflow: hidden;
+}
+
+#yamlInput,
+#lineHighlight {
+  box-sizing: border-box;   /* <-- EXACT FIT inside wrapper */
+  width: 100%;              /* <-- do not expand horizontally */
+}
+
+#lineHighlight {
+  left: 0;
+  right: 0;
+  overflow: hidden;         /* EXTRA safety */
+}
+
+.hover-tooltip {
+  position: absolute;
+  z-index: 9999;
+  background: var(--panel-bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 6px 10px;
+  font-family: monospace;
+  font-size: 13px;
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.25);
+  display: none; /* hidden by default */
+  max-width: 300px;
+  pointer-events: none; /* so mouse stays on textarea */
+}
+
+#doctorOutput {
+  padding: 10px;
+  white-space: pre-wrap;
+  font-family: monospace;
+}
+
+#monacoContainer {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  border: 1px solid #333;
+  border-radius: 6px;
+}
+
+.monaco-editor .monaco-hover {
+  top: 10px !important;
+  max-height: calc(100vh - 20px) !important;
+}
+
+/* Highlight full line background */
+.monaco-line-highlight {
+  background-color: rgba(255, 255, 0, 0.12) !important;
+}
+
+/* Highlight gutter on the left */
+.monaco-line-highlight-gutter {
+  background-color: rgba(255, 255, 0, 0.35) !important;
+}
+
+.ref-valid-underline {
+  text-decoration: underline;
+  text-decoration-color: #4CAF50 !important; /* green */
+  text-decoration-thickness: 1px;
+}
+
+.ref-error-underline {
+  text-decoration: underline;
+  text-decoration-color: #FF3B30 !important; /* red */
+  text-decoration-thickness: 1px;
+}
+
+.ref-target-highlight {
+  background-color: rgba(0, 255, 0, 0.22) !important;
+}
+
+.ref-underline {
+  text-decoration: underline dotted #30a0ff !important;
+}
+
+.ref-underline-error {
+  text-decoration: underline wavy #ff3b3b !important;
+}
+
+/* Teaching Mode ON button highlight */
+#toggleTeachingBtn.teaching-on {
+  background-color: #0b7;
+  border-color: #095;
+  color: black;
+  font-weight: bold;
+}
+
+#doctorBtn, 
+#toggleLessonsBtn {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+
+.teaching-highlight {
+  background-color: rgba(40, 200, 120, 0.15);
+}
+
+.glyph-teaching {
+  background: url('data:image/svg+xml;utf8,<svg ...></svg>') center no-repeat;
+}
+
+/* Teaching Mode Highlights */
+.teaching-highlight {
+  background-color: rgba(40, 200, 120, 0.15); /* soft green */
+}
+
+.glyph-teaching {
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='lightgreen'><circle cx='7' cy='7' r='6'/></svg>") 
+    center no-repeat;
+}
+
+.teaching-marker {
+  background: url("data:image/svg+xml;utf8,<svg ...>") no-repeat center center;
+}
+
+/* ------------------------------
+   LESSONS PANEL
+------------------------------- */
+
+#lessonsOutput {
+  padding: 1rem;
+  overflow-y: auto;
+  line-height: 1.55;
+  font-size: 1rem;
+}
+
+#lessonsOutput, #tipsOutput {
+  max-width: 100%;     /* keep content within pane */
+  width: 100%;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+
+/* Markdown headings */
+#lessonsOutput h1,
+#lessonsOutput h2,
+#lessonsOutput h3 {
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+#lessonsOutput h1 {
+  font-size: 1.8rem;
+}
+
+#lessonsOutput h2 {
+  font-size: 1.4rem;
+}
+
+#lessonsOutput h3 {
+  font-size: 1.2rem;
+}
+
+/* Markdown code blocks */
+#lessonsOutput pre {
+  background: transparent !important;
+  color: var(--code-fg, #747373);
+  padding: 0.75rem;
+  border-radius: 6px;
+  overflow-x: auto;
+  font-size: 0.9rem;
+  margin: 1rem 0;
+}
+
+/* Lessons → code block dark theme */
+#lessonsOutput pre code {
+  background: #1e1e1e !important;      /* VSCode dark */
+  color: #dddddd !important;
+  display: block;
+  padding: 12px 14px;
+  border-radius: 6px;
+  overflow-x: auto;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+
+
+/* Markdown lists */
+#lessonsOutput ul {
+  margin-left: 1.2rem;
+  padding-left: 0.8rem;
+}
+
+#lessonsOutput li {
+  margin-bottom: 0.4rem;
+}
+
+/* Lesson navigation */
+.lesson-nav {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.lesson-nav button {
+  padding: 0.5rem 1rem;
+  background: #007acc;
+  border: none;
+  color: white;
+  font-weight: bold;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.lesson-nav button:hover {
+  background: #005fa3;
+}
+
+/* Shared button design */
+.open-example-btn {
+  margin-top: 8px;
+  padding: 6px 14px;
+  font-size: 0.9rem;
+  background: var(--example-btn-bg);
+  border: 1px solid var(--example-btn-border);
+  color: var(--example-btn-text);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s, border 0.2s;
+}
+
+/* Hover effect */
+.open-example-btn:hover {
+  background: var(--example-btn-hover-bg);
+  border-color: var(--example-btn-hover-border);
+}
+
+/* Dark mode variables */
+[data-theme="dark"] {
+  --example-btn-bg: #1f242b;
+  --example-btn-border: #3a414b;
+  --example-btn-text: #e6e6e6;
+  --example-btn-hover-bg: #2a3139;
+  --example-btn-hover-border: #4d5561;
+}
+
+/* ----------------------------------------------------
+   DRAGGABLE SPLIT PANE BAR  (Non-conflicting patch)
+----------------------------------------------------- */
+
+/* The draggable divider */
+#dragbar {
+  width: 6px;
+  cursor: col-resize;
+  background: var(--border); /* neutral line based on your theme */
+  flex-shrink: 0;            /* prevent it collapsing */
+  transition: background 0.15s ease;
+}
+
+#dragbar:hover {
+  background: #999; /* a little highlight for UX */
+}
+
+/* Ensure left pane is allowed to shrink nicely */
+#leftPane {
+  flex-basis: 50%;   /* initial size */
+  min-width: 200px;  /* prevents collapsing fully */
+  overflow: hidden;  /* avoid horizontal scrollbars */
+}
+
+/* Ensure right pane respects minimum */
+#rightPane {
+  min-width: 0;
+  flex-grow: 1;
+  min-width: 300px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+#lessonsOutput {
+  max-width: 100%;
+  /* overflow-x: auto;     ensures scrolling, not pane expansion */
+}
+
+#lessonsOutput pre {
+  max-width: 100%;
+}
+
+/* FORCE ALL CODE/PRE BLOCKS TO WRAP INSTEAD OF SCROLL */
+#lessonsOutput pre,
+#lessonsOutput code,
+#tipsOutput pre,
+#tipsOutput code {
+  white-space: pre-wrap !important;   /* wrap lines */
+  word-wrap: break-word !important;   /* break long words */
+  overflow-x: hidden !important;      /* no scroll */
+  max-width: 100% !important;         /* never expand pane */
+  box-sizing: border-box;
+}
+

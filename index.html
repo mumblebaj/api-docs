@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <title>Universal Schema Studio</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="css/style.css?v=20251118T121916Z" />
+    <link rel="stylesheet" href="css/style.css?v=20251126T192105Z" />
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
     <link rel="icon" type="image/png" href="./favicon.png" />
   </head>
@@ -19,8 +19,13 @@
           <option value="xsd">XSD / XML</option>
         </select>
         <button id="theme-toggle">🌙 Dark Mode</button>
-        <button id="launchEditorBtn" class="control-btn primary">🚀 OpenAPI Editor</button>
-        <button id="xmlViewerBtn" class="control-btn primary">🚀 XML Viewer</button>
+        <button id="launchEditorBtn" class="control-btn primary">
+          🚀 OpenAPI Editor
+        </button>
+        <button id="xmlViewerBtn" class="control-btn primary">
+          🚀 XML Viewer
+        </button>
+        <button id="yamlTutorBtn" class="control-btn primary">📘 YAML Tutor</button>
       </div>
     </header>
 
@@ -35,9 +40,8 @@
     <div id="xsd-viewer" class="viewer"></div>
 
     <script type="module">
-     
-      import { initYamlViewer } from "./js/yamlViewer.js?v=20251118T121916Z";
-      import { initXsdViewer } from "./js/xsdViewer.js?v=20251118T121916Z";
+      import { initYamlViewer } from "./js/yamlViewer.js?v=20251126T192105Z";
+      import { initXsdViewer } from "./js/xsdViewer.js?v=20251126T192105Z";
 
       const rootEl = document.documentElement;
       const themeBtn = document.getElementById("theme-toggle");
@@ -76,11 +80,13 @@
           window.open("./openapiEditor.html", "_blank");
         });
 
-      document
-        .getElementById("xmlViewerBtn")
-        .addEventListener("click", () => {
-          window.open("./xmlViewer.html", "_blank");
-        });
+      document.getElementById("xmlViewerBtn").addEventListener("click", () => {
+        window.open("./xmlViewer.html", "_blank");
+      });
+
+      document.getElementById("yamlTutorBtn").addEventListener("click", () => {
+        window.open("./tutor/index.html", "_blank");
+      });
 
       const yamlViewer = document.getElementById("yaml-viewer");
       const xsdViewer = document.getElementById("xsd-viewer");
@@ -133,9 +139,9 @@
         activeHandler(updatedDropzone, yamlViewer, xsdViewer);
       });
     </script>
-    <script src="./js/viewTracker.js?v=20251118T121916Z"></script>
+    <script src="./js/viewTracker.js?v=20251126T192105Z"></script>
   </body>
   <footer>
-    <script src="./js/buildVersion.js?v=20251118T121916Z" defer></script>
+    <script src="./js/buildVersion.js?v=20251126T192105Z" defer></script>
   </footer>
 </html>
