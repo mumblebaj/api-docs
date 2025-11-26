@@ -148,7 +148,7 @@ jobs:
       - name: Copy Tutor CSS files
         run: |
           mkdir -p public/tutor/css
-          cp tutor/css/*.css public/tutor/css/
+          cp tutor/styles.css public/tutor/styles.css
 
       # 11. Copy favicons
       - name: Copy favicons
