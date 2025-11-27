@@ -54,6 +54,28 @@ function loadLastLesson() {
   return null;
 }
 
+function buildTOC() {
+  const toc = document.getElementById("lessonTOC");
+  toc.innerHTML = "";
+
+  const ul = document.createElement("ul");
+
+  lessons.forEach((lesson, index) => {
+    const li = document.createElement("li");
+    li.textContent = lesson.title || `Lesson ${index + 1}`;
+
+    li.addEventListener("click", () => {
+      loadLesson(index);
+    });
+
+    li.dataset.index = index;
+    ul.appendChild(li);
+  });
+
+  toc.appendChild(ul);
+}
+
+
 // -------------------------------------------------------------
 // INITIALISE MONACO
 // -------------------------------------------------------------
@@ -72,6 +94,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     if (found !== -1) index = found;
   }
 
+   buildTOC();
   await loadLesson(index);
   initTabs();
 
@@ -300,6 +323,9 @@ async function loadLesson(index) {
   // Add "Open in Editor" buttons under each YAML example
   enhanceLessonWithExamples(out);
 
+  highlightActiveLesson(index);
+
+
   // Wire navigation handlers (after insertion!)
   const prevBtn = document.getElementById("prevLessonBtn");
   const nextBtn = document.getElementById("nextLessonBtn");
@@ -319,6 +345,13 @@ async function loadLesson(index) {
 
   switchTab("lessons");
 }
+
+function highlightActiveLesson(idx) {
+  document.querySelectorAll("#lessonTOC li").forEach(li => {
+    li.classList.toggle("active", +li.dataset.index === idx);
+  });
+}
+
 
 // -------------------------------------------------------------
 // DRAG BAR
