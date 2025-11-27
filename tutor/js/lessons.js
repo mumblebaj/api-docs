@@ -113,33 +113,14 @@ export const lessonPacks = [
   // PACK G — AI & EVENTING
   // ---------------------------------------------------------
   {
-    id: "lesson_cloudevents",
-    title: "CloudEvents Fundamentals",
-    type: "md",
-    src: "./lessons/lesson_cloudevents.md",
-  },
-  {
-    id: "lesson_asyncapi_streams",
-    title: "AsyncAPI 3.0 & Event Streams",
-    type: "md",
-    src: "./lessons/lesson_asyncapi_streams.md",
-  },
-  {
-    id: "lesson_ml_pipelines",
-    title: "ML Pipelines & Model Deployment",
-    type: "md",
-    src: "./lessons/lesson_ml_pipelines.md",
-  },
-  {
-    id: "lesson_mlops_observability",
-    title: "MLOps Monitoring & Drift Detection",
-    type: "md",
-    src: "./lessons/lesson_mlops_observability.md",
-  },
-  {
-    id: "lesson_event_stream_processing",
-    title: "Real-time Event Processing & CQRS",
-    type: "md",
-    src: "./lessons/lesson_event_stream_processing.md",
+    id: "packG",
+    title: "AI & Eventing",
+    lessons: [
+      { id: "lesson_cloudevents", title: "CloudEvents Fundamentals", type: "md", src: "./lessons/lesson_cloudevents.md" },
+      { id: "lesson_asyncapi_streams", title: "AsyncAPI 3.0 & Event Streams", type: "md", src: "./lessons/lesson_asyncapi_streams.md" },
+      { id: "lesson_ml_pipelines", title: "ML Pipelines & Model Deployment", type: "md", src: "./lessons/lesson_ml_pipelines.md" },
+      { id: "lesson_mlops_observability", title: "MLOps Monitoring & Drift Detection", type: "md", src: "./lessons/lesson_mlops_observability.md" },
+      { id: "lesson_event_stream_processing", title: "Real-time Event Processing & CQRS", type: "md", src: "./lessons/lesson_event_stream_processing.md" }
+    ]
   }
 ];
