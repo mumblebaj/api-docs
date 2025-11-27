@@ -21,20 +21,27 @@
     <link rel="stylesheet" href="../css/style.css?v=20251126T121916Z" />
   </head>
   <body>
-<header class="header uss-header">
-  <h2>Universal Schema Studio — YAML Tutor</h2>
+    <header class="header uss-header">
+      <h2>Universal Schema Studio — YAML Tutor</h2>
 
-  <div class="uss-controls" style="display: flex; align-items: center; gap: 1rem">
+      <div
+        class="uss-controls"
+        style="display: flex; align-items: center; gap: 1rem"
+      >
+        <!-- Tutor Buttons (keep these!) -->
+        <button id="doctorBtn" class="control-btn primary">
+          🩺 YAML Doctor
+        </button>
+        <button id="toggleLessonsBtn" class="control-btn primary">
+          📚 Lessons
+        </button>
 
-    <!-- Tutor Buttons (keep these!) -->
-    <button id="doctorBtn" class="control-btn primary">🩺 YAML Doctor</button>
-    <button id="toggleLessonsBtn" class="control-btn primary">📚 Lessons</button>
-
-    <!-- Shared USS Theme Button -->
-    <button id="theme-toggle" class="control-btn primary">🌙 Dark Mode</button>
-
-  </div>
-</header>
+        <!-- Shared USS Theme Button -->
+        <button id="theme-toggle" class="control-btn primary">
+          🌙 Dark Mode
+        </button>
+      </div>
+    </header>
 
     <main class="layout">
       <section id="leftPane" class="pane left">
@@ -56,8 +63,11 @@
 
         <div class="tab-content">
           <div id="tipsOutput" class="tab-pane active"></div>
-          <div id="lessonTOC" class="lesson-toc"></div>
-          <div id="lessonsOutput" class="tab-pane"></div>
+          <div class="lesson-view">
+            <aside id="lessonTOC" class="lesson-toc"></aside>
+
+            <div id="lessonsOutput" class="lesson-content tab-pane"></div>
+          </div>
 
           <!-- Doctor Output Panel (used by live validation) -->
           <div id="doctorOutput" class="tab-panel" style="display: none">

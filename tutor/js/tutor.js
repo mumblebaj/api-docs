@@ -75,7 +75,6 @@ function buildTOC() {
   toc.appendChild(ul);
 }
 
-
 // -------------------------------------------------------------
 // INITIALISE MONACO
 // -------------------------------------------------------------
@@ -94,7 +93,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     if (found !== -1) index = found;
   }
 
-   buildTOC();
+  buildTOC();
   await loadLesson(index);
   initTabs();
 
@@ -314,17 +313,16 @@ async function loadLesson(index) {
     </div>
     `;
 
-  // Reset scroll to the top of the scrollable container
+
   setTimeout(() => {
-    const tabContent = document.querySelector(".tab-content");
-    if (tabContent) tabContent.scrollTop = 0;
+    const lessonPane = document.getElementById("lessonsOutput");
+    if (lessonPane) lessonPane.scrollTop = 0;
   }, 0);
 
   // Add "Open in Editor" buttons under each YAML example
   enhanceLessonWithExamples(out);
 
   highlightActiveLesson(index);
-
 
   // Wire navigation handlers (after insertion!)
   const prevBtn = document.getElementById("prevLessonBtn");
@@ -347,11 +345,10 @@ async function loadLesson(index) {
 }
 
 function highlightActiveLesson(idx) {
-  document.querySelectorAll("#lessonTOC li").forEach(li => {
+  document.querySelectorAll("#lessonTOC li").forEach((li) => {
     li.classList.toggle("active", +li.dataset.index === idx);
   });
 }
-
 
 // -------------------------------------------------------------
 // DRAG BAR
