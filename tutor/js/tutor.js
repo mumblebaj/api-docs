@@ -313,7 +313,7 @@ async function loadLesson(index) {
     </div>
     `;
 
-  // Reset scroll to the top of the scrollable container
+
   setTimeout(() => {
     const lessonPane = document.getElementById("lessonsOutput");
     if (lessonPane) lessonPane.scrollTop = 0;
