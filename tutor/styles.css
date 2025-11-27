@@ -519,3 +519,16 @@ textarea {
   height: 100%;
 }
 
+#lessonsOutput.tab-pane.active,
+#lessonsOutput {
+  display: flex !important;
+  flex-direction: column;
+  padding: 0; /* remove the inherited padding */
+}
+
+#lessonsOutput .lesson-view {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+}
+
