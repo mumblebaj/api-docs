@@ -199,18 +199,18 @@ outputs:
 
 - Use modules for anything reused
 - Keep sensitive values in:
-    - environment variables
-    - Terraform Cloud/Enterprise
-    - SSM Parameter Store
+  - environment variables
+  - Terraform Cloud/Enterprise
+  - SSM Parameter Store
 - Don’t hardcode regions / IDs / AMIs
 - Use locals for repeated values
 - Use terraform fmt
 - Use terraform validate before commits
 - Separate:
-    - dev
-    - staging
-    - prod
-      into folders with different backends
+  - dev
+  - staging
+  - prod
+  into folders with different backends
 
 ---
 
