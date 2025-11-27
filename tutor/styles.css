@@ -463,26 +463,59 @@ textarea {
   box-sizing: border-box;
 }
 
+.lesson-view {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  overflow: hidden;
+}
+
 .lesson-toc {
-  padding: 1rem;
+  width: 240px;
   border-right: 1px solid var(--border);
-  max-width: 260px;
+  padding: 1rem;
+  overflow-y: auto;
+  background: var(--bg);
+}
+
+.lesson-content {
+  flex: 1;
+  padding: 1.5rem;
+  overflow-y: auto;
 }
 
 .lesson-toc ul {
   list-style: none;
-  padding: 0;
   margin: 0;
+  padding: 0;
 }
 
 .lesson-toc li {
-  padding: 0.4rem 0;
+  padding: 0.4rem 0.2rem;
   cursor: pointer;
+  border-radius: 6px;
   color: var(--text);
 }
 
+.lesson-toc li:hover {
+  background: var(--hover, rgba(0,0,0,0.1));
+}
+
+[data-theme="dark"] .lesson-toc li:hover {
+  background: rgba(255,255,255,0.1);
+}
+
 .lesson-toc li.active {
-  font-weight: bold;
+  background: var(--accent-bg, #28a74533);
+  color: var(--accent-text, var(--text));
+  font-weight: 600;
   border-left: 4px solid var(--accent, #28a745);
   padding-left: 0.5rem;
 }
+
+.lesson-toc {
+  position: sticky;
+  top: 0;
+  height: 100%;
+}
+
