@@ -303,7 +303,7 @@ async function loadLesson(index) {
   }
 
   // Inject lesson + buttons
-  const out = document.getElementById("lessonsOutput");
+  const out = document.getElementById("lessonContent");
   out.innerHTML =
     html +
     `
