@@ -315,7 +315,7 @@ async function loadLesson(index) {
 
 
   setTimeout(() => {
-    const lessonPane = document.getElementById("lessonsOutput");
+    const lessonPane = document.getElementById("lessonContent");
     if (lessonPane) lessonPane.scrollTop = 0;
   }, 0);
 

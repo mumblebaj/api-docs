@@ -59,8 +59,8 @@ body {
   background: var(--panel-bg);
 }
 
-.pane.right {
-  padding: 0;
+.pane.right,
+#lessonContent {
   max-width: 100%;
   overflow-x: hidden;
 }
@@ -290,43 +290,42 @@ textarea {
    LESSONS PANEL
 ------------------------------- */
 
-#lessonsOutput {
+#lessonContent {
   padding: 1rem;
   overflow-y: auto;
   line-height: 1.55;
   font-size: 1rem;
 }
 
-#lessonsOutput, #tipsOutput {
-  max-width: 100%;     /* keep content within pane */
+#lessonContent,
+#tipsOutput {
+  max-width: 100%;
   width: 100%;
   overflow-wrap: break-word;
   word-break: break-word;
 }
 
-
-/* Markdown headings */
-#lessonsOutput h1,
-#lessonsOutput h2,
-#lessonsOutput h3 {
+#lessonContent h1,
+#lessonContent h2,
+#lessonContent h3 {
   margin-top: 1rem;
   margin-bottom: 0.5rem;
 }
 
-#lessonsOutput h1 {
+#lessonContent h1 {
   font-size: 1.8rem;
 }
 
-#lessonsOutput h2 {
+#lessonContent h2 {
   font-size: 1.4rem;
 }
 
-#lessonsOutput h3 {
+#lessonContent h3 {
   font-size: 1.2rem;
 }
 
 /* Markdown code blocks */
-#lessonsOutput pre {
+#lessonContent pre {
   background: transparent !important;
   color: var(--code-fg, #747373);
   padding: 0.75rem;
@@ -337,8 +336,8 @@ textarea {
 }
 
 /* Lessons → code block dark theme */
-#lessonsOutput pre code {
-  background: #1e1e1e !important;      /* VSCode dark */
+#lessonContent pre code {
+  background: #1e1e1e !important;
   color: #dddddd !important;
   display: block;
   padding: 12px 14px;
@@ -348,17 +347,16 @@ textarea {
   line-height: 1.45;
 }
 
-
-
 /* Markdown lists */
-#lessonsOutput ul {
+#lessonContent ul {
   margin-left: 1.2rem;
   padding-left: 0.8rem;
 }
 
-#lessonsOutput li {
+#lessonContent li {
   margin-bottom: 0.4rem;
 }
+
 
 /* Lesson navigation */
 .lesson-nav {
@@ -442,18 +440,18 @@ textarea {
   overflow-y: auto;
 }
 
-#lessonsOutput {
+#lessonContent {
   max-width: 100%;
-  /* overflow-x: auto;     ensures scrolling, not pane expansion */
 }
 
-#lessonsOutput pre {
+#lessonContent pre {
   max-width: 100%;
 }
+
 
 /* FORCE ALL CODE/PRE BLOCKS TO WRAP INSTEAD OF SCROLL */
-#lessonsOutput pre,
-#lessonsOutput code,
+#lessonContent pre,
+#lessonContent code,
 #tipsOutput pre,
 #tipsOutput code {
   white-space: pre-wrap !important;   /* wrap lines */
@@ -519,16 +517,4 @@ textarea {
   height: 100%;
 }
 
-#lessonsOutput.tab-pane.active,
-#lessonsOutput {
-  display: flex !important;
-  flex-direction: column;
-  padding: 0; /* remove the inherited padding */
-}
-
-#lessonsOutput .lesson-view {
-  display: flex;
-  flex-direction: row;
-  height: 100%;
-}
 
