@@ -18,9 +18,9 @@ console.error = function (...args) {
 };
 
 // const version = "20251105a"; // your build/version id
-// const { default: defaultYamlTemplate } = await import(`./template.js?v=20251127T175024Z${version}`);
+// const { default: defaultYamlTemplate } = await import(`./template.js?v=20251128T054650Z${version}`);
 
-import defaultYamlTemplate from "./template.js?v=20251127T175024Z";
+import defaultYamlTemplate from "./template.js?v=20251128T054650Z";
 
 
 // import defaultYamlTemplate from "./template.js";
