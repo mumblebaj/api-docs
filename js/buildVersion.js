@@ -1,3 +1,8 @@
+/* 
+XSS-SAFE: Appended node is constructed using textContent from CI-generated
+metadata (not user input). No innerHTML or unsafe sinks used. 
+*/
+
 // buildVersion.js — Display version info dynamically
 
 async function showBuildInfo() {
