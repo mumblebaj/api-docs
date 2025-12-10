@@ -1,10 +1,10 @@
 // openapiEditor.js — Created by mumblebaj
 
-import { buildDocModel } from "./exporter/docModel.js?v=20251210T174947Z";
-import { filterDocModelForSchemas } from "./exporter/docModel.js?v=20251210T174947Z";
-import { exportMarkdown } from "./exporter/exportMarkdown.js?v=20251210T174947Z";
-import { downloadMarkdownFile } from "./exporter/downloadUtils.js?v=20251210T174947Z";
-import { exportConfluence } from "./exporter/exportConfluence.js?v=20251210T174947Z";
+import { buildDocModel } from "./exporter/docModel.js?v=20251210T181109Z";
+import { filterDocModelForSchemas } from "./exporter/docModel.js?v=20251210T181109Z";
+import { exportMarkdown } from "./exporter/exportMarkdown.js?v=20251210T181109Z";
+import { downloadMarkdownFile } from "./exporter/downloadUtils.js?v=20251210T181109Z";
+import { exportConfluence } from "./exporter/exportConfluence.js?v=20251210T181109Z";
 
 // ensure a YAML global exists even if the library exports jsyaml
 window.YAML = window.YAML || window.jsyaml || {};
@@ -24,9 +24,9 @@ console.error = function (...args) {
 };
 
 // const version = "20251105a"; // your build/version id
-// const { default: defaultYamlTemplate } = await import(`./template.js?v=20251210T174947Z${version}`);
+// const { default: defaultYamlTemplate } = await import(`./template.js?v=20251210T181109Z${version}`);
 
-import defaultYamlTemplate from "./template.js?v=20251210T174947Z";
+import defaultYamlTemplate from "./template.js?v=20251210T181109Z";
 
 // import defaultYamlTemplate from "./template.js";
 
