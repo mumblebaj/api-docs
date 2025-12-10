@@ -21,6 +21,10 @@ on:
       - 'js/buildVersion.js'
       - 'build-info.json'
       - 'tutor/**'
+      - 'js/exporter/docModel.js'
+      - 'js/exporter/downloadUtils.js'
+      - 'js/exporter/exportConfluence.js'
+      - 'js/exporter/exportMarkdown.js'
 
 jobs:
   build-and-deploy:
@@ -137,6 +141,12 @@ jobs:
         run: |
           mkdir -p public/tutor/lessons
           cp tutor/lessons/*.md public/tutor/lessons/
+      
+      # 9d. Copy exporter JS
+      - name: Copy Tutor JS files
+        run: |
+          mkdir -p public/js/exporter
+          cp js/exporter/*.js public/js/exporter/
 
       # 10. Copy CSS files
       - name: Copy CSS files
