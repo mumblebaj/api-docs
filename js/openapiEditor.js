@@ -1,5 +1,11 @@
 // openapiEditor.js — Created by mumblebaj
 
+import { buildDocModel } from "./exporter/docModel.js?v=20251210T174947Z";
+import { filterDocModelForSchemas } from "./exporter/docModel.js?v=20251210T174947Z";
+import { exportMarkdown } from "./exporter/exportMarkdown.js?v=20251210T174947Z";
+import { downloadMarkdownFile } from "./exporter/downloadUtils.js?v=20251210T174947Z";
+import { exportConfluence } from "./exporter/exportConfluence.js?v=20251210T174947Z";
+
 // ensure a YAML global exists even if the library exports jsyaml
 window.YAML = window.YAML || window.jsyaml || {};
 if (
@@ -18,10 +24,9 @@ console.error = function (...args) {
 };
 
 // const version = "20251105a"; // your build/version id
-// const { default: defaultYamlTemplate } = await import(`./template.js?v=20251210T173702Z${version}`);
+// const { default: defaultYamlTemplate } = await import(`./template.js?v=20251210T174947Z${version}`);
 
-import defaultYamlTemplate from "./template.js?v=20251210T173702Z";
-
+import defaultYamlTemplate from "./template.js?v=20251210T174947Z";
 
 // import defaultYamlTemplate from "./template.js";
 
@@ -42,6 +47,28 @@ function debounce(fn, delay = 1200, statusEl) {
     }, delay);
   };
 }
+
+function showToast(message, type = "success") {
+  const container = document.getElementById("toast-container");
+
+  const toast = document.createElement("div");
+  toast.className = `toast ${type}`;
+  toast.textContent = message;
+
+  container.appendChild(toast);
+
+  // trigger animation
+  requestAnimationFrame(() => {
+    toast.classList.add("show");
+  });
+
+  // remove after delay
+  setTimeout(() => {
+    toast.classList.remove("show");
+    setTimeout(() => container.removeChild(toast), 300);
+  }, 5000);
+}
+
 
 // --- SwaggerClient → SwaggerParser shim -------------------
 if (window.SwaggerClient && !window.SwaggerParser) {
@@ -208,7 +235,7 @@ function initMonaco() {
     // Parse reference path like "#/components/examples/ACCC_partial_confirmation"
     const parts = refPath.replace(/^#\//, "").split("/");
     if (parts.length < 2) {
-      alert(`⚠️ Invalid ref path: ${refPath}`);
+      showToast(`⚠️ Invalid ref path: ${refPath}`);
       return;
     }
 
@@ -253,7 +280,7 @@ function initMonaco() {
     }
 
     if (targetLine == null) {
-      alert(`⚠️ Reference target not found: ${refPath}`);
+      showToast(`⚠️ Reference target not found: ${refPath}`);
       return;
     }
 
@@ -421,7 +448,7 @@ function initMonaco() {
         monaco.editor.setModelMarkers(model, "yaml", markers);
         statusEl.textContent = `❌ ${missingRefs.length} unresolved $ref(s) found`;
         statusEl.style.color = "red";
-        alert(
+        showToast(
           `❌ Validation failed:\n\nUnresolved references:\n${missingRefs.join(
             "\n"
           )}`
@@ -435,7 +462,7 @@ function initMonaco() {
       console.error("Validation error:", err);
       statusEl.textContent = "❌ Invalid OpenAPI document";
       statusEl.style.color = "red";
-      alert("Validation failed:\n\n" + (err.message || "Unknown error"));
+      showToast("Validation failed:\n\n" + (err.message || "Unknown error"));
     }
   };
 
@@ -454,7 +481,7 @@ function initMonaco() {
     try {
       const yamlText = editor.getValue();
       if (!yamlText.trim()) {
-        alert("⚠️ No content to export!");
+        showToast("⚠️ No content to export!");
         return;
       }
       let fileName = "openapi.yaml";
@@ -477,7 +504,7 @@ function initMonaco() {
       URL.revokeObjectURL(link.href);
     } catch (err) {
       console.error("YAML export failed:", err);
-      alert("❌ Failed to export YAML.");
+      showToast("❌ Failed to export YAML.");
     }
   };
 
@@ -485,7 +512,7 @@ function initMonaco() {
     try {
       const yamlText = editor.getValue();
       if (!yamlText.trim()) {
-        alert("⚠️ No content to export!");
+        showToast("⚠️ No content to export!");
         return;
       }
       const parsed = YAML.parse(yamlText);
@@ -509,9 +536,240 @@ function initMonaco() {
       URL.revokeObjectURL(link.href);
     } catch (err) {
       console.error("JSON export failed:", err);
-      alert("❌ Conversion error: " + err.message);
+      showToast("❌ Conversion error: " + err.message);
     }
   };
+
+  // =======================================================
+  // 📦 Export Dropdown UI Behavior
+  // =======================================================
+  const exportMenuBtn = document.getElementById("exportMenuBtn");
+  const exportDropdown = document.getElementById("exportDropdown");
+
+  exportMenuBtn.addEventListener("click", () => {
+    exportDropdown.classList.toggle("hidden");
+  });
+
+  // Hide when clicking outside
+  document.addEventListener("click", (event) => {
+    if (
+      !exportDropdown.contains(event.target) &&
+      !exportMenuBtn.contains(event.target)
+    ) {
+      exportDropdown.classList.add("hidden");
+    }
+  });
+
+  // =======================================================
+  // 📦 Invoke Markdown Exporter
+  // =======================================================
+
+  window.handleExportMarkdown = function () {
+    try {
+      const yamlText = editor.getValue();
+      const spec = YAML.parse(yamlText);
+      const doc = buildDocModel(spec);
+      const md = exportMarkdown(doc);
+
+      const safeTitle = (doc.meta.title || "openapi")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-");
+      const fileName = `${safeTitle}-${doc.meta.version}-${Date.now()}.md`;
+
+      downloadMarkdownFile(md, fileName);
+    } catch (err) {
+      console.error("Export failed:", err);
+      showToast("❌ Failed to generate documentation. See console.");
+    }
+  };
+
+  window.handleExportConfluence = async function () {
+    try {
+      const yamlText = editor.getValue();
+      const spec = YAML.parse(yamlText);
+      const doc = buildDocModel(spec);
+      const wiki = exportConfluence(doc);
+
+      const safeTitle = (doc.meta.title || "openapi")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-");
+
+      const fileName = `${safeTitle}-${doc.meta.version}-${Date.now()}.txt`;
+
+      // 🔽 Download file for archival
+      downloadMarkdownFile(wiki, fileName);
+
+      // 📋 Clipboard Copy
+      try {
+        await navigator.clipboard.writeText(wiki);
+        showToast(
+          "✔️ Confluence Wiki Export copied to clipboard.\nYou can now paste directly into Confluence."
+        );
+      } catch (copyErr) {
+        console.warn("Clipboard copy failed:", copyErr);
+        showToast(
+          "Exported successfully.\n⚠️ Clipboard copy failed — you may need HTTPS or browser permission."
+        );
+      }
+    } catch (err) {
+      console.error("Confluence export failed:", err);
+      showToast("❌ Failed to export Confluence wiki format. See console.");
+    }
+  };
+
+  // ================================
+  // Selective Schema Export Modal
+  // ================================
+  const schemaExportModal = document.getElementById("schemaExportModal");
+  const schemaCheckboxContainer = document.getElementById(
+    "schemaCheckboxContainer"
+  );
+  const cancelSchemaExportBtn = document.getElementById("cancelSchemaExport");
+  const confirmSchemaExportBtn = document.getElementById("confirmSchemaExport");
+
+  let currentSchemaExportMode = null; // "markdown" or "wiki"
+
+  function closeSchemaExportModal() {
+    schemaExportModal.classList.add("hidden");
+    schemaCheckboxContainer.innerHTML = "";
+    currentSchemaExportMode = null;
+  }
+
+  function openSchemaExportModal(mode) {
+    currentSchemaExportMode = mode;
+
+    try {
+      const yamlText = editor.getValue();
+      const spec = YAML.parse(yamlText);
+      const doc = buildDocModel(spec);
+
+      schemaCheckboxContainer.innerHTML = "";
+
+      if (!doc.schemas.length) {
+        const msg = document.createElement("div");
+        msg.textContent = "No schemas found in this specification.";
+        schemaCheckboxContainer.appendChild(msg);
+      } else {
+        const sorted = doc.schemas
+          .slice()
+          .sort((a, b) => a.name.localeCompare(b.name));
+
+        sorted.forEach((schema) => {
+          const label = document.createElement("label");
+          label.className = "schema-row";
+
+          const cb = document.createElement("input");
+          cb.type = "checkbox";
+          cb.value = schema.name;
+          cb.checked = false; // pre-select all
+
+          const span = document.createElement("span");
+          span.textContent = schema.name;
+
+          label.appendChild(cb);
+          label.appendChild(span);
+          schemaCheckboxContainer.appendChild(label);
+        });
+      }
+
+      schemaExportModal.classList.remove("hidden");
+    } catch (err) {
+      console.error("Failed to prepare selective export:", err);
+      showToast(
+        "❌ Could not parse the OpenAPI spec for selective export. Please fix YAML first."
+      );
+      currentSchemaExportMode = null;
+    }
+  }
+
+  cancelSchemaExportBtn.addEventListener("click", () => {
+    closeSchemaExportModal();
+  });
+
+  confirmSchemaExportBtn.addEventListener("click", async () => {
+    if (!currentSchemaExportMode) {
+      closeSchemaExportModal();
+      return;
+    }
+
+    const checked = Array.from(
+      schemaCheckboxContainer.querySelectorAll("input[type='checkbox']:checked")
+    ).map((cb) => cb.value);
+
+    if (!checked.length) {
+      showToast("Please select at least one schema to export.");
+      return;
+    }
+
+    try {
+      const yamlText = editor.getValue();
+      const spec = YAML.parse(yamlText);
+      const fullDoc = buildDocModel(spec);
+      const filteredDoc = filterDocModelForSchemas(fullDoc, checked);
+
+      if (currentSchemaExportMode === "markdown") {
+        const md = exportMarkdown(filteredDoc);
+        const safeTitle = (filteredDoc.meta.title || "openapi")
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-");
+        const fileName = `${safeTitle}-${
+          filteredDoc.meta.version
+        }-${Date.now()}-schemas.md`;
+        downloadMarkdownFile(md, fileName);
+      }
+
+      if (currentSchemaExportMode === "wiki") {
+        const wiki = exportConfluence(filteredDoc);
+        const safeTitle = (filteredDoc.meta.title || "openapi")
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-");
+        const fileName = `${safeTitle}-${
+          filteredDoc.meta.version
+        }-${Date.now()}-schemas.txt`;
+
+        // download file
+        downloadMarkdownFile(wiki, fileName);
+
+        // clipboard copy (best effort)
+        try {
+          await navigator.clipboard.writeText(wiki);
+          showToast(
+            "✔️ Confluence Wiki (selected schemas) copied to clipboard.\nPaste directly into Confluence."
+          );
+        } catch (copyErr) {
+          console.warn("Clipboard copy failed:", copyErr);
+          showToast(
+            "Exported selected schemas.\n⚠️ Clipboard copy failed — you may need HTTPS or browser permission."
+          );
+        }
+      }
+    } catch (err) {
+      console.error("Selective export failed:", err);
+      showToast("❌ Selective export failed. See console for details.");
+    } finally {
+      closeSchemaExportModal();
+    }
+  });
+
+  // Hook for clicking export options (phase 2 will call the real exporter)
+  exportDropdown.addEventListener("click", (e) => {
+    const opt = e.target.closest(".export-option");
+    if (!opt) return;
+
+    const type = opt.dataset.export;
+
+    if (type === "markdown") {
+      handleExportMarkdown();
+    } else if (type === "wiki") {
+      handleExportConfluence();
+    } else if (type === "markdown-select") {
+      openSchemaExportModal("markdown");
+    } else if (type === "wiki-select") {
+      openSchemaExportModal("wiki");
+    }
+
+    exportDropdown.classList.add("hidden");
+  });
 
   updatePreview(editor.getValue());
 }
