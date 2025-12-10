@@ -1,10 +1,10 @@
 // openapiEditor.js — Created by mumblebaj
 
-import { buildDocModel } from "./exporter/docModel.js?v=20251210T174947Z";
-import { filterDocModelForSchemas } from "./exporter/docModel.js?v=20251210T174947Z";
-import { exportMarkdown } from "./exporter/exportMarkdown.js?v=20251210T174947Z";
-import { downloadMarkdownFile } from "./exporter/downloadUtils.js?v=20251210T174947Z";
-import { exportConfluence } from "./exporter/exportConfluence.js?v=20251210T174947Z";
+import { buildDocModel } from "./exporter/docModel.js?v=1";
+import { filterDocModelForSchemas } from "./exporter/docModel.js?v=1";
+import { exportMarkdown } from "./exporter/exportMarkdown.js?v=1";
+import { downloadMarkdownFile } from "./exporter/downloadUtils.js?v=1";
+import { exportConfluence } from "./exporter/exportConfluence.js?v=1";
 
 // ensure a YAML global exists even if the library exports jsyaml
 window.YAML = window.YAML || window.jsyaml || {};
