@@ -1,10 +1,18 @@
 // openapiEditor.js — Created by mumblebaj
 
-import { buildDocModel } from "./exporter/docModel.js?v=20251210T181109Z";
-import { filterDocModelForSchemas } from "./exporter/docModel.js?v=20251210T181109Z";
-import { exportMarkdown } from "./exporter/exportMarkdown.js?v=20251210T181109Z";
-import { downloadMarkdownFile } from "./exporter/downloadUtils.js?v=20251210T181109Z";
-import { exportConfluence } from "./exporter/exportConfluence.js?v=20251210T181109Z";
+import { buildDocModel } from "./exporter/docModel.js?v=20251212T153616Z";
+import { filterDocModelForSchemas } from "./exporter/docModel.js?v=20251212T153616Z";
+import { exportMarkdown } from "./exporter/exportMarkdown.js?v=20251212T153616Z";
+import { downloadMarkdownFile } from "./exporter/downloadUtils.js?v=20251212T153616Z";
+import { exportConfluence } from "./exporter/exportConfluence.js?v=20251212T153616Z";
+
+// Schema selection state (selective export)
+const userSelected = new Set();
+const autoSelected = new Set();
+const userDeselected = new Set();
+
+// Final resolved selection
+let finalSelectedSchemas = [];
 
 // ensure a YAML global exists even if the library exports jsyaml
 window.YAML = window.YAML || window.jsyaml || {};
@@ -24,9 +32,9 @@ console.error = function (...args) {
 };
 
 // const version = "20251105a"; // your build/version id
-// const { default: defaultYamlTemplate } = await import(`./template.js?v=20251210T181109Z${version}`);
+// const { default: defaultYamlTemplate } = await import(`./template.js?v=20251212T153616Z${version}`);
 
-import defaultYamlTemplate from "./template.js?v=20251210T181109Z";
+import defaultYamlTemplate from "./template.js?v=20251212T153616Z";
 
 // import defaultYamlTemplate from "./template.js";
 
@@ -68,7 +76,6 @@ function showToast(message, type = "success") {
     setTimeout(() => container.removeChild(toast), 300);
   }, 5000);
 }
-
 
 // --- SwaggerClient → SwaggerParser shim -------------------
 if (window.SwaggerClient && !window.SwaggerParser) {
@@ -564,11 +571,16 @@ function initMonaco() {
   // 📦 Invoke Markdown Exporter
   // =======================================================
 
-  window.handleExportMarkdown = function () {
+  window.handleExportMarkdown = function (isSelective = false) {
     try {
       const yamlText = editor.getValue();
       const spec = YAML.parse(yamlText);
-      const doc = buildDocModel(spec);
+      let doc = buildDocModel(spec);
+
+      if (isSelective && finalSelectedSchemas.length) {
+        doc = filterDocModelForSchemas(doc, finalSelectedSchemas);
+      }
+
       const md = exportMarkdown(doc);
 
       const safeTitle = (doc.meta.title || "openapi")
@@ -577,43 +589,33 @@ function initMonaco() {
       const fileName = `${safeTitle}-${doc.meta.version}-${Date.now()}.md`;
 
       downloadMarkdownFile(md, fileName);
+      showToast("✅ File downloaded successfully")
     } catch (err) {
       console.error("Export failed:", err);
       showToast("❌ Failed to generate documentation. See console.");
     }
   };
 
-  window.handleExportConfluence = async function () {
+  window.handleExportConfluence = function (isSelective = false) {
     try {
       const yamlText = editor.getValue();
       const spec = YAML.parse(yamlText);
-      const doc = buildDocModel(spec);
-      const wiki = exportConfluence(doc);
+      let doc = buildDocModel(spec);
 
-      const safeTitle = (doc.meta.title || "openapi")
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, "-");
-
-      const fileName = `${safeTitle}-${doc.meta.version}-${Date.now()}.txt`;
-
-      // 🔽 Download file for archival
-      downloadMarkdownFile(wiki, fileName);
-
-      // 📋 Clipboard Copy
-      try {
-        await navigator.clipboard.writeText(wiki);
-        showToast(
-          "✔️ Confluence Wiki Export copied to clipboard.\nYou can now paste directly into Confluence."
-        );
-      } catch (copyErr) {
-        console.warn("Clipboard copy failed:", copyErr);
-        showToast(
-          "Exported successfully.\n⚠️ Clipboard copy failed — you may need HTTPS or browser permission."
-        );
+      if (isSelective && finalSelectedSchemas.length) {
+        doc = filterDocModelForSchemas(doc, finalSelectedSchemas);
       }
+
+      const wiki = exportConfluence(doc);
+      showToast("✅ File downloaded successfully")
+
+      navigator.clipboard.writeText(wiki).then(
+        () => showToast("✔️ Copied to clipboard — paste into Confluence"),
+        () => showToast("⚠️ Exported but clipboard copy failed")
+      );
     } catch (err) {
       console.error("Confluence export failed:", err);
-      showToast("❌ Failed to export Confluence wiki format. See console.");
+      showToast("❌ Failed to export to Confluence.");
     }
   };
 
@@ -637,6 +639,9 @@ function initMonaco() {
 
   function openSchemaExportModal(mode) {
     currentSchemaExportMode = mode;
+    userSelected.clear();
+    autoSelected.clear();
+    userDeselected.clear();
 
     try {
       const yamlText = editor.getValue();
@@ -661,10 +666,38 @@ function initMonaco() {
           const cb = document.createElement("input");
           cb.type = "checkbox";
           cb.value = schema.name;
-          cb.checked = false; // pre-select all
+          cb.checked = false;
 
           const span = document.createElement("span");
           span.textContent = schema.name;
+
+          // -----------------------------
+          // STEP B.2 — checkbox behaviour
+          // -----------------------------
+          cb.addEventListener("change", () => {
+            const name = cb.value;
+
+            if (cb.checked) {
+              // User explicitly selected
+              userSelected.add(name);
+              userDeselected.delete(name);
+
+              // Auto-select dependencies
+              const deps = doc.schemaDependencies?.[name] || [];
+              deps.forEach((dep) => {
+                if (!userDeselected.has(dep)) {
+                  autoSelected.add(dep);
+                }
+              });
+            } else {
+              // User explicitly deselected
+              userSelected.delete(name);
+              autoSelected.delete(name);
+              userDeselected.add(name);
+            }
+
+            updateSchemaCheckboxStates();
+          });
 
           label.appendChild(cb);
           label.appendChild(span);
@@ -682,6 +715,16 @@ function initMonaco() {
     }
   }
 
+  function updateSchemaCheckboxStates() {
+    const effectiveSelection = new Set([...userSelected, ...autoSelected]);
+
+    schemaCheckboxContainer
+      .querySelectorAll("input[type='checkbox']")
+      .forEach((cb) => {
+        cb.checked = effectiveSelection.has(cb.value);
+      });
+  }
+
   cancelSchemaExportBtn.addEventListener("click", () => {
     closeSchemaExportModal();
   });
@@ -692,63 +735,24 @@ function initMonaco() {
       return;
     }
 
-    const checked = Array.from(
-      schemaCheckboxContainer.querySelectorAll("input[type='checkbox']:checked")
-    ).map((cb) => cb.value);
+    finalSelectedSchemas = Array.from(
+      new Set([...userSelected, ...autoSelected])
+    );
 
-    if (!checked.length) {
-      showToast("Please select at least one schema to export.");
+    if (!finalSelectedSchemas.length) {
+      showToast("❌ Please select at least one schema to export.");
       return;
     }
 
-    try {
-      const yamlText = editor.getValue();
-      const spec = YAML.parse(yamlText);
-      const fullDoc = buildDocModel(spec);
-      const filteredDoc = filterDocModelForSchemas(fullDoc, checked);
-
-      if (currentSchemaExportMode === "markdown") {
-        const md = exportMarkdown(filteredDoc);
-        const safeTitle = (filteredDoc.meta.title || "openapi")
-          .toLowerCase()
-          .replace(/[^a-z0-9]+/g, "-");
-        const fileName = `${safeTitle}-${
-          filteredDoc.meta.version
-        }-${Date.now()}-schemas.md`;
-        downloadMarkdownFile(md, fileName);
-      }
-
-      if (currentSchemaExportMode === "wiki") {
-        const wiki = exportConfluence(filteredDoc);
-        const safeTitle = (filteredDoc.meta.title || "openapi")
-          .toLowerCase()
-          .replace(/[^a-z0-9]+/g, "-");
-        const fileName = `${safeTitle}-${
-          filteredDoc.meta.version
-        }-${Date.now()}-schemas.txt`;
-
-        // download file
-        downloadMarkdownFile(wiki, fileName);
-
-        // clipboard copy (best effort)
-        try {
-          await navigator.clipboard.writeText(wiki);
-          showToast(
-            "✔️ Confluence Wiki (selected schemas) copied to clipboard.\nPaste directly into Confluence."
-          );
-        } catch (copyErr) {
-          console.warn("Clipboard copy failed:", copyErr);
-          showToast(
-            "Exported selected schemas.\n⚠️ Clipboard copy failed — you may need HTTPS or browser permission."
-          );
-        }
-      }
-    } catch (err) {
-      console.error("Selective export failed:", err);
-      showToast("❌ Selective export failed. See console for details.");
-    } finally {
-      closeSchemaExportModal();
+    if (currentSchemaExportMode === "markdown") {
+      window.handleExportMarkdown(true);
+    } else if (currentSchemaExportMode === "wiki") {
+      window.handleExportConfluence(true);
     }
+
+    closeSchemaExportModal();
+
+    currentSchemaExportMode = null;
   });
 
   // Hook for clicking export options (phase 2 will call the real exporter)
@@ -759,9 +763,9 @@ function initMonaco() {
     const type = opt.dataset.export;
 
     if (type === "markdown") {
-      handleExportMarkdown();
+      window.handleExportMarkdown();
     } else if (type === "wiki") {
-      handleExportConfluence();
+      window.handleExportConfluence();
     } else if (type === "markdown-select") {
       openSchemaExportModal("markdown");
     } else if (type === "wiki-select") {

@@ -182,6 +182,9 @@ model.endpoints.push(endpoint);
   model.overview.totalSchemas = model.schemas.length;
   model.overview.totalEndpoints = model.endpoints.length;
 
+  // Build schema dependency graph
+  model.schemaDependencies = buildSchemaDependencyGraph(model.schemas);
+
   // =====================================================
   // 📚 Build Table of Contents (ToC)
   // =====================================================
@@ -214,14 +217,63 @@ model.endpoints.push(endpoint);
   return model;
 }
 
+//-------------------------------------------------------------
+// Step A: Schema Dependency Graph Builder
+//-------------------------------------------------------------
+
+function buildSchemaDependencyGraph(schemas) {
+  const graph = {};
+
+  for (const schema of schemas) {
+    const deps = new Set();
+    collectSchemaDeps(schema, deps);
+    graph[schema.name] = Array.from(deps);
+  }
+
+  return graph;
+}
+
+// Recursively collect dependencies for a schema
+function collectSchemaDeps(schemaObj, deps) {
+  if (!schemaObj || !Array.isArray(schemaObj.properties)) return;
+
+  for (const prop of schemaObj.properties) {
+    // Direct $ref
+    if (prop.ref) {
+      deps.add(stripRef(prop.ref));
+    }
+
+    // Array-of-$ref (future-proofing)
+    if (prop.type === "array" && prop.items?.$ref) {
+      deps.add(stripRef(prop.items.$ref));
+    }
+
+    // allOf / anyOf / oneOf (future-proof)
+    ["allOf", "anyOf", "oneOf"].forEach(key => {
+      if (prop[key]) {
+        for (const item of prop[key]) {
+          if (item.$ref) deps.add(stripRef(item.$ref));
+        }
+      }
+    });
+  }
+}
+
+
+// Normalize $ref → schema name
+function stripRef(ref) {
+  return ref.replace(/^#\/components\/schemas\//, "");
+}
+
+
 export function filterDocModelForSchemas(model, selectedNames) {
   const selected = new Set(selectedNames);
 
   // Helper: normalize $ref → schemaName
-  function stripRef(ref) {
-    if (!ref) return ref;
-    return ref.replace(/^#\/components\/schemas\//, "");
-  }
+  // function stripRef(ref) {
+  //   if (!ref) return ref;
+  //   return ref.replace(/^#\/components\/schemas\//, "");
+  // }
 
   // ---------------------------------------------
   // Filter Schemas
