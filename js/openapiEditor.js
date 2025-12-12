@@ -1,10 +1,10 @@
 // openapiEditor.js — Created by mumblebaj
 
-import { buildDocModel } from "./exporter/docModel.js?v=20251212T153616Z";
-import { filterDocModelForSchemas } from "./exporter/docModel.js?v=20251212T153616Z";
-import { exportMarkdown } from "./exporter/exportMarkdown.js?v=20251212T153616Z";
-import { downloadMarkdownFile } from "./exporter/downloadUtils.js?v=20251212T153616Z";
-import { exportConfluence } from "./exporter/exportConfluence.js?v=20251212T153616Z";
+import { buildDocModel } from "./exporter/docModel.js?v=20251212T154636Z";
+import { filterDocModelForSchemas } from "./exporter/docModel.js?v=20251212T154636Z";
+import { exportMarkdown } from "./exporter/exportMarkdown.js?v=20251212T154636Z";
+import { downloadMarkdownFile } from "./exporter/downloadUtils.js?v=20251212T154636Z";
+import { exportConfluence } from "./exporter/exportConfluence.js?v=20251212T154636Z";
 
 // Schema selection state (selective export)
 const userSelected = new Set();
@@ -32,9 +32,9 @@ console.error = function (...args) {
 };
 
 // const version = "20251105a"; // your build/version id
-// const { default: defaultYamlTemplate } = await import(`./template.js?v=20251212T153616Z${version}`);
+// const { default: defaultYamlTemplate } = await import(`./template.js?v=20251212T154636Z${version}`);
 
-import defaultYamlTemplate from "./template.js?v=20251212T153616Z";
+import defaultYamlTemplate from "./template.js?v=20251212T154636Z";
 
 // import defaultYamlTemplate from "./template.js";
 
