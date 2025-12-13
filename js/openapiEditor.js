@@ -1,10 +1,10 @@
 // openapiEditor.js — Created by mumblebaj
 
-import { buildDocModel } from "./exporter/docModel.js?v=20251212T154636Z";
-import { filterDocModelForSchemas } from "./exporter/docModel.js?v=20251212T154636Z";
-import { exportMarkdown } from "./exporter/exportMarkdown.js?v=20251212T154636Z";
-import { downloadMarkdownFile } from "./exporter/downloadUtils.js?v=20251212T154636Z";
-import { exportConfluence } from "./exporter/exportConfluence.js?v=20251212T154636Z";
+import { buildDocModel } from "./exporter/docModel.js?v=20251213T112842Z";
+import { filterDocModelForSchemas } from "./exporter/docModel.js?v=20251213T112842Z";
+import { exportMarkdown } from "./exporter/exportMarkdown.js?v=20251213T112842Z";
+import { downloadMarkdownFile } from "./exporter/downloadUtils.js?v=20251213T112842Z";
+import { exportConfluence } from "./exporter/exportConfluence.js?v=20251213T112842Z";
 
 // Schema selection state (selective export)
 const userSelected = new Set();
@@ -31,12 +31,7 @@ console.error = function (...args) {
   oldError.apply(console, args);
 };
 
-// const version = "20251105a"; // your build/version id
-// const { default: defaultYamlTemplate } = await import(`./template.js?v=20251212T154636Z${version}`);
-
-import defaultYamlTemplate from "./template.js?v=20251212T154636Z";
-
-// import defaultYamlTemplate from "./template.js";
+import defaultYamlTemplate from "./template.js?v=20251213T112842Z";
 
 // Debounce helper (async-safe + immediate feedback)
 function debounce(fn, delay = 1200, statusEl) {
@@ -589,7 +584,7 @@ function initMonaco() {
       const fileName = `${safeTitle}-${doc.meta.version}-${Date.now()}.md`;
 
       downloadMarkdownFile(md, fileName);
-      showToast("✅ File downloaded successfully")
+      showToast("✅ File downloaded successfully");
     } catch (err) {
       console.error("Export failed:", err);
       showToast("❌ Failed to generate documentation. See console.");
@@ -607,7 +602,7 @@ function initMonaco() {
       }
 
       const wiki = exportConfluence(doc);
-      showToast("✅ File downloaded successfully")
+      showToast("✅ File downloaded successfully");
 
       navigator.clipboard.writeText(wiki).then(
         () => showToast("✔️ Copied to clipboard — paste into Confluence"),
@@ -639,6 +634,7 @@ function initMonaco() {
 
   function openSchemaExportModal(mode) {
     currentSchemaExportMode = mode;
+    updateConfirmButtonState();
     userSelected.clear();
     autoSelected.clear();
     userDeselected.clear();
@@ -671,6 +667,10 @@ function initMonaco() {
           const span = document.createElement("span");
           span.textContent = schema.name;
 
+          const badge = document.createElement("span");
+          badge.className = "schema-badge hidden";
+          badge.textContent = "auto";
+
           // -----------------------------
           // STEP B.2 — checkbox behaviour
           // -----------------------------
@@ -697,10 +697,13 @@ function initMonaco() {
             }
 
             updateSchemaCheckboxStates();
+            updateDependencySummary();
+            updateConfirmButtonState();
           });
 
           label.appendChild(cb);
           label.appendChild(span);
+          label.appendChild(badge);
           schemaCheckboxContainer.appendChild(label);
         });
       }
@@ -715,14 +718,49 @@ function initMonaco() {
     }
   }
 
-  function updateSchemaCheckboxStates() {
-    const effectiveSelection = new Set([...userSelected, ...autoSelected]);
+  function updateConfirmButtonState() {
+    const btn = confirmSchemaExportBtn;
+    const hasSelection = userSelected.size || autoSelected.size;
 
-    schemaCheckboxContainer
-      .querySelectorAll("input[type='checkbox']")
-      .forEach((cb) => {
-        cb.checked = effectiveSelection.has(cb.value);
-      });
+    btn.disabled = !hasSelection;
+  }
+
+  function updateDependencySummary() {
+    const el = document.getElementById("dependencySummary");
+
+    if (!userSelected.size) {
+      el.classList.add("hidden");
+      return;
+    }
+
+    const deps = new Set(autoSelected);
+    const count = deps.size;
+
+    el.textContent = `This export will include ${count} dependency${
+      count === 1 ? "" : "ies"
+    }.`;
+    el.classList.remove("hidden");
+  }
+
+  function updateSchemaCheckboxStates() {
+    const rows = schemaCheckboxContainer.querySelectorAll(".schema-row");
+
+    rows.forEach((row) => {
+      const cb = row.querySelector("input[type='checkbox']");
+      const badge = row.querySelector(".schema-badge");
+      const name = cb.value;
+
+      if (userSelected.has(name)) {
+        cb.checked = true;
+        badge.classList.add("hidden");
+      } else if (autoSelected.has(name)) {
+        cb.checked = true;
+        badge.classList.remove("hidden");
+      } else {
+        cb.checked = false;
+        badge.classList.add("hidden");
+      }
+    });
   }
 
   cancelSchemaExportBtn.addEventListener("click", () => {

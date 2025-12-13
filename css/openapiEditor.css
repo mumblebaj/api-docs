@@ -631,3 +631,26 @@ body.openapi-editor #build-info {
   border-left: 4px solid #ff4d4d; /* red */
 }
 
+.schema-badge {
+  margin-left: 0.5rem;
+  font-size: 0.7rem;
+  background: #e0f2fe;
+  color: #0369a1;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.schema-badge.hidden {
+  display: none;
+}
+
+.dependency-summary {
+  margin: 0.5rem 0;
+  font-size: 0.85rem;
+  color: #8f949b;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
