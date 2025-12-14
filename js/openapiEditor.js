@@ -1,10 +1,10 @@
 // openapiEditor.js — Created by mumblebaj
 
-import { buildDocModel } from "./exporter/docModel.js?v=20251214T175327Z";
-import { filterDocModelForSchemas } from "./exporter/docModel.js?v=20251214T175327Z";
-import { exportMarkdown } from "./exporter/exportMarkdown.js?v=20251214T175327Z";
-import { downloadMarkdownFile } from "./exporter/downloadUtils.js?v=20251214T175327Z";
-import { exportConfluence } from "./exporter/exportConfluence.js?v=20251214T175327Z";
+import { buildDocModel } from "./exporter/docModel.js?v=20251214T182209Z";
+import { filterDocModelForSchemas } from "./exporter/docModel.js?v=20251214T182209Z";
+import { exportMarkdown } from "./exporter/exportMarkdown.js?v=20251214T182209Z";
+import { downloadMarkdownFile } from "./exporter/downloadUtils.js?v=20251214T182209Z";
+import { exportConfluence } from "./exporter/exportConfluence.js?v=20251214T182209Z";
 
 // Schema selection state (selective export)
 const userSelected = new Set();
@@ -31,7 +31,7 @@ console.error = function (...args) {
   oldError.apply(console, args);
 };
 
-import defaultYamlTemplate from "./template.js?v=20251214T175327Z";
+import defaultYamlTemplate from "./template.js?v=20251214T182209Z";
 
 // Debounce helper (async-safe + immediate feedback)
 function debounce(fn, delay = 1200, statusEl) {
