@@ -1,10 +1,10 @@
 // openapiEditor.js — Created by mumblebaj
 
-import { buildDocModel } from "./exporter/docModel.js?v=20251213T112842Z";
-import { filterDocModelForSchemas } from "./exporter/docModel.js?v=20251213T112842Z";
-import { exportMarkdown } from "./exporter/exportMarkdown.js?v=20251213T112842Z";
-import { downloadMarkdownFile } from "./exporter/downloadUtils.js?v=20251213T112842Z";
-import { exportConfluence } from "./exporter/exportConfluence.js?v=20251213T112842Z";
+import { buildDocModel } from "./exporter/docModel.js?v=20251214T175327Z";
+import { filterDocModelForSchemas } from "./exporter/docModel.js?v=20251214T175327Z";
+import { exportMarkdown } from "./exporter/exportMarkdown.js?v=20251214T175327Z";
+import { downloadMarkdownFile } from "./exporter/downloadUtils.js?v=20251214T175327Z";
+import { exportConfluence } from "./exporter/exportConfluence.js?v=20251214T175327Z";
 
 // Schema selection state (selective export)
 const userSelected = new Set();
@@ -31,7 +31,7 @@ console.error = function (...args) {
   oldError.apply(console, args);
 };
 
-import defaultYamlTemplate from "./template.js?v=20251213T112842Z";
+import defaultYamlTemplate from "./template.js?v=20251214T175327Z";
 
 // Debounce helper (async-safe + immediate feedback)
 function debounce(fn, delay = 1200, statusEl) {
@@ -630,6 +630,10 @@ function initMonaco() {
     schemaExportModal.classList.add("hidden");
     schemaCheckboxContainer.innerHTML = "";
     currentSchemaExportMode = null;
+
+    // ✅ reset dependency summary UI
+    dependencySummaryEl.textContent = "";
+    dependencySummaryEl.classList.add("hidden");
   }
 
   function openSchemaExportModal(mode) {
@@ -736,8 +740,8 @@ function initMonaco() {
     const deps = new Set(autoSelected);
     const count = deps.size;
 
-    el.textContent = `This export will include ${count} dependency${
-      count === 1 ? "" : "ies"
+    el.textContent = `This export will include ${count} ${
+      count === 1 ? "dependency" : "dependencies"
     }.`;
     el.classList.remove("hidden");
   }
