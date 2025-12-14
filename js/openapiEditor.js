@@ -630,6 +630,10 @@ function initMonaco() {
     schemaExportModal.classList.add("hidden");
     schemaCheckboxContainer.innerHTML = "";
     currentSchemaExportMode = null;
+
+    // ✅ reset dependency summary UI
+    dependencySummaryEl.textContent = "";
+    dependencySummaryEl.classList.add("hidden");
   }
 
   function openSchemaExportModal(mode) {
@@ -736,8 +740,8 @@ function initMonaco() {
     const deps = new Set(autoSelected);
     const count = deps.size;
 
-    el.textContent = `This export will include ${count} dependency${
-      count === 1 ? "" : "ies"
+    el.textContent = `This export will include ${count} ${
+      count === 1 ? "dependency" : "dependencies"
     }.`;
     el.classList.remove("hidden");
   }
