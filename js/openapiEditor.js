@@ -632,8 +632,11 @@ function initMonaco() {
     currentSchemaExportMode = null;
 
     // ✅ reset dependency summary UI
-    dependencySummaryEl.textContent = "";
-    dependencySummaryEl.classList.add("hidden");
+    const el = document.getElementById("dependencySummary");
+    if (el) {
+      el.textContent = "";
+      el.classList.add("hidden");
+    }
   }
 
   function openSchemaExportModal(mode) {
@@ -642,6 +645,13 @@ function initMonaco() {
     userSelected.clear();
     autoSelected.clear();
     userDeselected.clear();
+
+    // ✅ ensure dependency summary is reset on open
+    const summaryEl = document.getElementById("dependencySummary");
+    if (summaryEl) {
+      summaryEl.textContent = "";
+      summaryEl.classList.add("hidden");
+    }
 
     try {
       const yamlText = editor.getValue();
