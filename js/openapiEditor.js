@@ -1,10 +1,10 @@
 // openapiEditor.js — Created by mumblebaj
 
-import { buildDocModel } from "./exporter/docModel.js?v=20251214T175327Z";
-import { filterDocModelForSchemas } from "./exporter/docModel.js?v=20251214T175327Z";
-import { exportMarkdown } from "./exporter/exportMarkdown.js?v=20251214T175327Z";
-import { downloadMarkdownFile } from "./exporter/downloadUtils.js?v=20251214T175327Z";
-import { exportConfluence } from "./exporter/exportConfluence.js?v=20251214T175327Z";
+import { buildDocModel } from "./exporter/docModel.js?v=20251214T182209Z";
+import { filterDocModelForSchemas } from "./exporter/docModel.js?v=20251214T182209Z";
+import { exportMarkdown } from "./exporter/exportMarkdown.js?v=20251214T182209Z";
+import { downloadMarkdownFile } from "./exporter/downloadUtils.js?v=20251214T182209Z";
+import { exportConfluence } from "./exporter/exportConfluence.js?v=20251214T182209Z";
 
 // Schema selection state (selective export)
 const userSelected = new Set();
@@ -31,7 +31,7 @@ console.error = function (...args) {
   oldError.apply(console, args);
 };
 
-import defaultYamlTemplate from "./template.js?v=20251214T175327Z";
+import defaultYamlTemplate from "./template.js?v=20251214T182209Z";
 
 // Debounce helper (async-safe + immediate feedback)
 function debounce(fn, delay = 1200, statusEl) {
@@ -632,8 +632,11 @@ function initMonaco() {
     currentSchemaExportMode = null;
 
     // ✅ reset dependency summary UI
-    dependencySummaryEl.textContent = "";
-    dependencySummaryEl.classList.add("hidden");
+    const el = document.getElementById("dependencySummary");
+    if (el) {
+      el.textContent = "";
+      el.classList.add("hidden");
+    }
   }
 
   function openSchemaExportModal(mode) {
@@ -642,6 +645,13 @@ function initMonaco() {
     userSelected.clear();
     autoSelected.clear();
     userDeselected.clear();
+
+    // ✅ ensure dependency summary is reset on open
+    const summaryEl = document.getElementById("dependencySummary");
+    if (summaryEl) {
+      summaryEl.textContent = "";
+      summaryEl.classList.add("hidden");
+    }
 
     try {
       const yamlText = editor.getValue();
