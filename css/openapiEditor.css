@@ -650,6 +650,10 @@ body.openapi-editor #build-info {
   color: #8f949b;
 }
 
+.dependency-summary.hidden {
+  display: none;
+}
+
 button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
