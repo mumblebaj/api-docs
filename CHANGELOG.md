@@ -1,5 +1,16 @@
 # Changelog
 
+## [v1.0.2] - 2025-12-18
+## Schema Export Architecture
+
+- openapiEditor.js: orchestration only
+- schemaExportModal.js: modal lifecycle
+- selectionUtils.js: selection state
+- dependencyResolver.js: dependency graph
+- exporters: markdown / confluence
+
+Refactored via multi-pass extraction to avoid regressions.
+
 ## [v1.0.1] - 2025-10-25
 ### Build Enhancements
 - Implement cache-busting tech to bypass Redoc caching
