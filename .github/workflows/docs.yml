@@ -25,6 +25,8 @@ on:
       - 'js/exporter/downloadUtils.js'
       - 'js/exporter/exportConfluence.js'
       - 'js/exporter/exportMarkdown.js'
+      - 'js/schemaExport/**'
+      - 'js/ui/**'
 
 jobs:
   build-and-deploy:
@@ -143,10 +145,22 @@ jobs:
           cp tutor/lessons/*.md public/tutor/lessons/
       
       # 9d. Copy exporter JS
-      - name: Copy Tutor JS files
+      - name: Copy exporter JS files
         run: |
           mkdir -p public/js/exporter
           cp js/exporter/*.js public/js/exporter/
+        
+      # 9e. Copy schemaExport JS
+      - name: Copy schemaExport JS files
+        run: |
+          mkdir -p public/js/schemaExport
+          cp js/schemaExport/*.js public/js/schemaExport/
+
+      # 9f. Copy ui JS
+      - name: Copy ui JS files
+        run: |
+          mkdir -p public/js/ui
+          cp js/ui/*.js public/js/ui/
 
       # 10. Copy CSS files
       - name: Copy CSS files

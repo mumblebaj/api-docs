@@ -5,14 +5,17 @@ import { filterDocModelForSchemas } from "./exporter/docModel.js?v=20251214T1822
 import { exportMarkdown } from "./exporter/exportMarkdown.js?v=20251214T182209Z";
 import { downloadMarkdownFile } from "./exporter/downloadUtils.js?v=20251214T182209Z";
 import { exportConfluence } from "./exporter/exportConfluence.js?v=20251214T182209Z";
-
-// Schema selection state (selective export)
-const userSelected = new Set();
-const autoSelected = new Set();
-const userDeselected = new Set();
-
-// Final resolved selection
-let finalSelectedSchemas = [];
+import { showToast } from "./ui/toast.js?v=20251214T182209Z";
+import { initExportDropdown } from "./ui/dropdown.js?v=20251214T182209Z";
+import {
+  createSelectionState,
+  applyUserSelection,
+  applyUserDeselection,
+  getFinalSelection,
+  getDependencyCount,
+} from "./schemaExport/selectionUtils.js?v=20251214T182209Z";
+import { buildSchemaDependencyMap } from "./schemaExport/dependencyResolver.js?v=20251214T182209Z";
+import { initSchemaExportModal } from "./schemaExport/schemaExportModal.js";
 
 // ensure a YAML global exists even if the library exports jsyaml
 window.YAML = window.YAML || window.jsyaml || {};
@@ -49,27 +52,6 @@ function debounce(fn, delay = 1200, statusEl) {
       }
     }, delay);
   };
-}
-
-function showToast(message, type = "success") {
-  const container = document.getElementById("toast-container");
-
-  const toast = document.createElement("div");
-  toast.className = `toast ${type}`;
-  toast.textContent = message;
-
-  container.appendChild(toast);
-
-  // trigger animation
-  requestAnimationFrame(() => {
-    toast.classList.add("show");
-  });
-
-  // remove after delay
-  setTimeout(() => {
-    toast.classList.remove("show");
-    setTimeout(() => container.removeChild(toast), 300);
-  }, 5000);
 }
 
 // --- SwaggerClient → SwaggerParser shim -------------------
@@ -543,37 +525,25 @@ function initMonaco() {
   };
 
   // =======================================================
-  // 📦 Export Dropdown UI Behavior
+  // 📦 Export Dropdown UI Behavior (externalised)
   // =======================================================
   const exportMenuBtn = document.getElementById("exportMenuBtn");
   const exportDropdown = document.getElementById("exportDropdown");
 
-  exportMenuBtn.addEventListener("click", () => {
-    exportDropdown.classList.toggle("hidden");
-  });
-
-  // Hide when clicking outside
-  document.addEventListener("click", (event) => {
-    if (
-      !exportDropdown.contains(event.target) &&
-      !exportMenuBtn.contains(event.target)
-    ) {
-      exportDropdown.classList.add("hidden");
-    }
-  });
+  initExportDropdown(exportMenuBtn, exportDropdown);
 
   // =======================================================
   // 📦 Invoke Markdown Exporter
   // =======================================================
 
-  window.handleExportMarkdown = function (isSelective = false) {
+  function handleExportMarkdown(isSelective = false, selectedSchemas = []) {
     try {
       const yamlText = editor.getValue();
       const spec = YAML.parse(yamlText);
       let doc = buildDocModel(spec);
 
-      if (isSelective && finalSelectedSchemas.length) {
-        doc = filterDocModelForSchemas(doc, finalSelectedSchemas);
+      if (isSelective && selectedSchemas.length) {
+        doc = filterDocModelForSchemas(doc, selectedSchemas);
       }
 
       const md = exportMarkdown(doc);
@@ -589,19 +559,26 @@ function initMonaco() {
       console.error("Export failed:", err);
       showToast("❌ Failed to generate documentation. See console.");
     }
-  };
+  }
 
-  window.handleExportConfluence = function (isSelective = false) {
+  function handleExportConfluence(isSelective = false, selectedSchemas = []) {
     try {
       const yamlText = editor.getValue();
       const spec = YAML.parse(yamlText);
       let doc = buildDocModel(spec);
 
-      if (isSelective && finalSelectedSchemas.length) {
-        doc = filterDocModelForSchemas(doc, finalSelectedSchemas);
+      if (isSelective && selectedSchemas.length) {
+        doc = filterDocModelForSchemas(doc, selectedSchemas);
       }
 
       const wiki = exportConfluence(doc);
+
+      const safeTitle = (doc.meta.title || "openapi")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-");
+      const fileName = `${safeTitle}-${doc.meta.version}-${Date.now()}.txt`;
+
+      downloadMarkdownFile(wiki, fileName);
       showToast("✅ File downloaded successfully");
 
       navigator.clipboard.writeText(wiki).then(
@@ -612,202 +589,12 @@ function initMonaco() {
       console.error("Confluence export failed:", err);
       showToast("❌ Failed to export to Confluence.");
     }
-  };
+  }
 
   // ================================
   // Selective Schema Export Modal
   // ================================
-  const schemaExportModal = document.getElementById("schemaExportModal");
-  const schemaCheckboxContainer = document.getElementById(
-    "schemaCheckboxContainer"
-  );
-  const cancelSchemaExportBtn = document.getElementById("cancelSchemaExport");
-  const confirmSchemaExportBtn = document.getElementById("confirmSchemaExport");
 
-  let currentSchemaExportMode = null; // "markdown" or "wiki"
-
-  function closeSchemaExportModal() {
-    schemaExportModal.classList.add("hidden");
-    schemaCheckboxContainer.innerHTML = "";
-    currentSchemaExportMode = null;
-
-    // ✅ reset dependency summary UI
-    const el = document.getElementById("dependencySummary");
-    if (el) {
-      el.textContent = "";
-      el.classList.add("hidden");
-    }
-  }
-
-  function openSchemaExportModal(mode) {
-    currentSchemaExportMode = mode;
-    updateConfirmButtonState();
-    userSelected.clear();
-    autoSelected.clear();
-    userDeselected.clear();
-
-    // ✅ ensure dependency summary is reset on open
-    const summaryEl = document.getElementById("dependencySummary");
-    if (summaryEl) {
-      summaryEl.textContent = "";
-      summaryEl.classList.add("hidden");
-    }
-
-    try {
-      const yamlText = editor.getValue();
-      const spec = YAML.parse(yamlText);
-      const doc = buildDocModel(spec);
-
-      schemaCheckboxContainer.innerHTML = "";
-
-      if (!doc.schemas.length) {
-        const msg = document.createElement("div");
-        msg.textContent = "No schemas found in this specification.";
-        schemaCheckboxContainer.appendChild(msg);
-      } else {
-        const sorted = doc.schemas
-          .slice()
-          .sort((a, b) => a.name.localeCompare(b.name));
-
-        sorted.forEach((schema) => {
-          const label = document.createElement("label");
-          label.className = "schema-row";
-
-          const cb = document.createElement("input");
-          cb.type = "checkbox";
-          cb.value = schema.name;
-          cb.checked = false;
-
-          const span = document.createElement("span");
-          span.textContent = schema.name;
-
-          const badge = document.createElement("span");
-          badge.className = "schema-badge hidden";
-          badge.textContent = "auto";
-
-          // -----------------------------
-          // STEP B.2 — checkbox behaviour
-          // -----------------------------
-          cb.addEventListener("change", () => {
-            const name = cb.value;
-
-            if (cb.checked) {
-              // User explicitly selected
-              userSelected.add(name);
-              userDeselected.delete(name);
-
-              // Auto-select dependencies
-              const deps = doc.schemaDependencies?.[name] || [];
-              deps.forEach((dep) => {
-                if (!userDeselected.has(dep)) {
-                  autoSelected.add(dep);
-                }
-              });
-            } else {
-              // User explicitly deselected
-              userSelected.delete(name);
-              autoSelected.delete(name);
-              userDeselected.add(name);
-            }
-
-            updateSchemaCheckboxStates();
-            updateDependencySummary();
-            updateConfirmButtonState();
-          });
-
-          label.appendChild(cb);
-          label.appendChild(span);
-          label.appendChild(badge);
-          schemaCheckboxContainer.appendChild(label);
-        });
-      }
-
-      schemaExportModal.classList.remove("hidden");
-    } catch (err) {
-      console.error("Failed to prepare selective export:", err);
-      showToast(
-        "❌ Could not parse the OpenAPI spec for selective export. Please fix YAML first."
-      );
-      currentSchemaExportMode = null;
-    }
-  }
-
-  function updateConfirmButtonState() {
-    const btn = confirmSchemaExportBtn;
-    const hasSelection = userSelected.size || autoSelected.size;
-
-    btn.disabled = !hasSelection;
-  }
-
-  function updateDependencySummary() {
-    const el = document.getElementById("dependencySummary");
-
-    if (!userSelected.size) {
-      el.classList.add("hidden");
-      return;
-    }
-
-    const deps = new Set(autoSelected);
-    const count = deps.size;
-
-    el.textContent = `This export will include ${count} ${
-      count === 1 ? "dependency" : "dependencies"
-    }.`;
-    el.classList.remove("hidden");
-  }
-
-  function updateSchemaCheckboxStates() {
-    const rows = schemaCheckboxContainer.querySelectorAll(".schema-row");
-
-    rows.forEach((row) => {
-      const cb = row.querySelector("input[type='checkbox']");
-      const badge = row.querySelector(".schema-badge");
-      const name = cb.value;
-
-      if (userSelected.has(name)) {
-        cb.checked = true;
-        badge.classList.add("hidden");
-      } else if (autoSelected.has(name)) {
-        cb.checked = true;
-        badge.classList.remove("hidden");
-      } else {
-        cb.checked = false;
-        badge.classList.add("hidden");
-      }
-    });
-  }
-
-  cancelSchemaExportBtn.addEventListener("click", () => {
-    closeSchemaExportModal();
-  });
-
-  confirmSchemaExportBtn.addEventListener("click", async () => {
-    if (!currentSchemaExportMode) {
-      closeSchemaExportModal();
-      return;
-    }
-
-    finalSelectedSchemas = Array.from(
-      new Set([...userSelected, ...autoSelected])
-    );
-
-    if (!finalSelectedSchemas.length) {
-      showToast("❌ Please select at least one schema to export.");
-      return;
-    }
-
-    if (currentSchemaExportMode === "markdown") {
-      window.handleExportMarkdown(true);
-    } else if (currentSchemaExportMode === "wiki") {
-      window.handleExportConfluence(true);
-    }
-
-    closeSchemaExportModal();
-
-    currentSchemaExportMode = null;
-  });
-
-  // Hook for clicking export options (phase 2 will call the real exporter)
   exportDropdown.addEventListener("click", (e) => {
     const opt = e.target.closest(".export-option");
     if (!opt) return;
@@ -815,9 +602,9 @@ function initMonaco() {
     const type = opt.dataset.export;
 
     if (type === "markdown") {
-      window.handleExportMarkdown();
+      handleExportMarkdown();
     } else if (type === "wiki") {
-      window.handleExportConfluence();
+      handleExportConfluence();
     } else if (type === "markdown-select") {
       openSchemaExportModal("markdown");
     } else if (type === "wiki-select") {
@@ -825,6 +612,14 @@ function initMonaco() {
     }
 
     exportDropdown.classList.add("hidden");
+  });
+
+  const { openSchemaExportModal } = initSchemaExportModal({
+    editor,
+    buildDocModel,
+    showToast,
+    handleExportMarkdown,
+    handleExportConfluence,
   });
 
   updatePreview(editor.getValue());
