@@ -1,17 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8" 
+      name="description"
+      content="View and convert OpenAPI, YAML, JSON, and XSD schemas directly in your browser. Privacy-first, offline-capable, and open source."
+    />
     <title>Universal Schema Studio</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="css/style.css?v=20251218T174047Z" />
+    <link rel="stylesheet" href="css/style.css?v=20260129T171136Z" />
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
     <link rel="icon" type="image/png" href="./favicon.png" />
   </head>
 
   <body>
     <header>
-      <h2>Universal Schema Viewer</h2>
+      <h2>Universal Schema Studio</h2>
       <div style="display: flex; align-items: center; gap: 1rem">
         <span id="mode-indicator" class="mode-badge">📂 YAML Mode</span>
         <select id="viewer-mode">
@@ -28,6 +31,11 @@
         <button id="yamlTutorBtn" class="control-btn primary">📘 YAML Tutor</button>
       </div>
     </header>
+<header class="uss-landing">
+  <p class="uss-tagline">
+    View & convert OpenAPI, YAML, JSON, and XSD schemas · 100% in your browser · No uploads · Privacy-first
+  </p>
+</header>
 
     <div id="dropzone">Drop your file here or click to browse</div>
     <p class="hint" style="text-align: center">
@@ -40,8 +48,8 @@
     <div id="xsd-viewer" class="viewer"></div>
 
     <script type="module">
-      import { initYamlViewer } from "./js/yamlViewer.js?v=20251218T174047Z";
-      import { initXsdViewer } from "./js/xsdViewer.js?v=20251218T174047Z";
+      import { initYamlViewer } from "./js/yamlViewer.js?v=20260129T171136Z";
+      import { initXsdViewer } from "./js/xsdViewer.js?v=20260129T171136Z";
 
       const rootEl = document.documentElement;
       const themeBtn = document.getElementById("theme-toggle");
@@ -139,9 +147,9 @@
         activeHandler(updatedDropzone, yamlViewer, xsdViewer);
       });
     </script>
-    <script src="./js/viewTracker.js?v=20251218T174047Z"></script>
+    <script src="./js/viewTracker.js?v=20260129T171136Z"></script>
   </body>
   <footer>
-    <script src="./js/buildVersion.js?v=20251218T174047Z" defer></script>
+    <script src="./js/buildVersion.js?v=20260129T171136Z" defer></script>
   </footer>
 </html>
