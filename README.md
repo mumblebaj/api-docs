@@ -7,6 +7,27 @@ A lightweight browser-based tool for viewing, converting, and exploring OpenAPI 
 
 ---
 
+## Name & Branding
+
+"Universal Schema Studio" and "USS" are project names associated with this
+repository and its official distributions.
+
+Forks are welcome under the terms of the open-source license, but may not
+use the "Universal Schema Studio" name, branding, or logos in a way that
+implies official endorsement or origin.
+
+---
+
+## Licensing Note
+
+Universal Schema Studio is currently released under the MIT License.
+
+We are exploring additional commercial offerings (USS Pro / USS Cloud).
+The open-source core will remain available, and any future licensing
+changes will be clearly communicated in advance.
+
+---
+
 ## 🌐 Live Demo
 
 👉 [View on GitHub Pages](https://mumblebaj.github.io/api-docs/)

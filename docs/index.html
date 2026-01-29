@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8" 
+      name="description"
+      content="View and convert OpenAPI, YAML, JSON, and XSD schemas directly in your browser. Privacy-first, offline-capable, and open source."
+    />
     <title>Universal Schema Studio</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="css/style.css?v=20251218T174047Z" />
@@ -11,7 +14,7 @@
 
   <body>
     <header>
-      <h2>Universal Schema Viewer</h2>
+      <h2>Universal Schema Studio</h2>
       <div style="display: flex; align-items: center; gap: 1rem">
         <span id="mode-indicator" class="mode-badge">📂 YAML Mode</span>
         <select id="viewer-mode">
@@ -28,6 +31,11 @@
         <button id="yamlTutorBtn" class="control-btn primary">📘 YAML Tutor</button>
       </div>
     </header>
+<header class="uss-landing">
+  <p class="uss-tagline">
+    View & convert OpenAPI, YAML, JSON, and XSD schemas · 100% in your browser · No uploads · Privacy-first
+  </p>
+</header>
 
     <div id="dropzone">Drop your file here or click to browse</div>
     <p class="hint" style="text-align: center">

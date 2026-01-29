@@ -71,6 +71,26 @@ header {
   display: none;
 }
 
+.uss-landing {
+  text-align: center;
+  padding: 1.5rem 1rem 0.75rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.uss-landing {
+  margin-top: 0.5rem;
+  font-size: 0.95rem;
+  opacity: 0.75;
+}
+
+.uss-tagline {
+  margin-top: 0.5rem;
+  font-size: 0.95rem;
+  opacity: 0.75;
+}
+
+
 /* =========================================================
    🎛️ UI Elements
    ========================================================= */
