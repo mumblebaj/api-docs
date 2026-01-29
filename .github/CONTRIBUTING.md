@@ -5,6 +5,24 @@ Whether you’re fixing a typo, improving documentation, or adding a feature, ev
 
 ---
 
+## Contributor License Agreement (CLA)
+
+By submitting a contribution to this repository, you agree that:
+
+1. You grant the project maintainer a perpetual, worldwide, royalty-free,
+   irrevocable license to use, modify, distribute, sublicense, and relicense
+   your contribution as part of the project.
+
+2. You confirm that you have the right to grant this license and that your
+   contribution does not infringe on the rights of any third party.
+
+3. You understand that your contribution may be included in both open-source
+   and commercial versions of the project.
+
+If you do not agree with these terms, please do not submit a contribution.
+
+---
+
 ## 🧠 Table of Contents
 1. [Project Setup](#project-setup)
 2. [Branch Naming](#branch-naming)
