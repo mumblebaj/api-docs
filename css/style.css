@@ -849,3 +849,23 @@ select {
 [data-theme="light"] #build-info {
   color: #bebdbd !important;
 }
+
+/* =========================================================
+   🟩 Footer styling
+   ========================================================= */
+
+.uss-footer {
+  text-align: center;
+  padding: 0.75rem 0.5rem 1rem;
+  font-size: 0.8rem;
+  opacity: 0.6;
+}
+
+.uss-footer-hint a {
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.uss-footer-hint a:hover {
+  text-decoration: underline;
+}

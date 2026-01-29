@@ -1,7 +1,8 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" 
+    <meta
+      charset="UTF-8"
       name="description"
       content="View and convert OpenAPI, YAML, JSON, and XSD schemas directly in your browser. Privacy-first, offline-capable, and open source."
     />
@@ -22,20 +23,46 @@
           <option value="xsd">XSD / XML</option>
         </select>
         <button id="theme-toggle">🌙 Dark Mode</button>
-        <button id="launchEditorBtn" class="control-btn primary">
+        <a
+          id="launchEditorBtn"
+          class="control-btn primary"
+          href="./openapiEditor.html"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Open the OpenAPI Editor in a new tab"
+        >
           🚀 OpenAPI Editor
-        </button>
-        <button id="xmlViewerBtn" class="control-btn primary">
+        </a>
+
+        <a
+          id="xmlViewerBtn"
+          class="control-btn primary"
+          href="./xmlViewer.html"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Open the XML / XSD Viewer in a new tab"
+        >
           🚀 XML Viewer
-        </button>
-        <button id="yamlTutorBtn" class="control-btn primary">📘 YAML Tutor</button>
+        </a>
+
+        <a
+          id="yamlTutorBtn"
+          class="control-btn primary"
+          href="./tutor/index.html"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Open the YAML Tutor in a new tab"
+        >
+          📘 YAML Tutor
+        </a>
       </div>
     </header>
-<header class="uss-landing">
-  <p class="uss-tagline">
-    View & convert OpenAPI, YAML, JSON, and XSD schemas · 100% in your browser · No uploads · Privacy-first
-  </p>
-</header>
+    <header class="uss-landing">
+      <p class="uss-tagline">
+        View & convert OpenAPI, YAML, JSON, and XSD schemas · 100% in your
+        browser · No uploads · Privacy-first
+      </p>
+    </header>
 
     <div id="dropzone">Drop your file here or click to browse</div>
     <p class="hint" style="text-align: center">
@@ -82,19 +109,19 @@
         }
       }
 
-      document
-        .getElementById("launchEditorBtn")
-        .addEventListener("click", () => {
-          window.open("./openapiEditor.html", "_blank");
-        });
+      // document
+      //   .getElementById("launchEditorBtn")
+      //   .addEventListener("click", () => {
+      //     window.open("./openapiEditor.html", "_blank");
+      //   });
 
-      document.getElementById("xmlViewerBtn").addEventListener("click", () => {
-        window.open("./xmlViewer.html", "_blank");
-      });
+      // document.getElementById("xmlViewerBtn").addEventListener("click", () => {
+      //   window.open("./xmlViewer.html", "_blank");
+      // });
 
-      document.getElementById("yamlTutorBtn").addEventListener("click", () => {
-        window.open("./tutor/index.html", "_blank");
-      });
+      // document.getElementById("yamlTutorBtn").addEventListener("click", () => {
+      //   window.open("./tutor/index.html", "_blank");
+      // });
 
       const yamlViewer = document.getElementById("yaml-viewer");
       const xsdViewer = document.getElementById("xsd-viewer");
@@ -149,7 +176,19 @@
     </script>
     <script src="./js/viewTracker.js?v=20260129T171136Z"></script>
   </body>
-  <footer>
+  <footer class="uss-footer">
+    <span class="uss-footer-hint">
+      Using this at work?
+      <a
+        href="https://github.com/mumblebaj/api-docs"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        ⭐ Star on GitHub
+      </a>
+      or share feedback.
+    </span>
+
     <script src="./js/buildVersion.js?v=20260129T171136Z" defer></script>
   </footer>
 </html>
