@@ -154,3 +154,17 @@ MIT License © 2025 [![license](https://img.shields.io/github/license/mashape/ap
 - [YAML](https://yaml.org/) & [OpenAPI Initiative](https://www.openapis.org/)
 - XML Schema (W3C)
 - Icons and layout inspired by Swagger Editor and other open developer tools
+
+---
+
+## Commercial Use
+
+Universal Schema Studio is used internally by teams exploring schema governance,
+documentation, and conversion workflows.
+
+If you’re interested in:
+- Self-hosted enterprise usage
+- Custom exporters or integrations
+- Internal training or support
+
+You can reach out via GitHub Issues or discussions.
