@@ -1,5 +1,5 @@
-# 🧾 Universal Schema Viewer
-![Universal Schema Viewer Banner](docs/banner.png)
+# 🧾 Universal Schema Studio
+![Universal Schema Studio Banner](docs/banner.png)
 
 <p align="center"> <a href="https://mumblebaj.github.io/api-docs/"><img src="https://img.shields.io/badge/Live-Demo-blue?style=for-the-badge&logo=githubpages" alt="Live Demo"></a> <a href="https://github.com/mumblebaj/api-docs/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License: MIT"></a> <img src="https://img.shields.io/badge/Status-Stable-brightgreen?style=for-the-badge" alt="Status: Stable"> <img src="https://img.shields.io/badge/Dark%20Mode-Fully%20Supported-555555?style=for-the-badge&logo=github" alt="Dark Mode Supported"> <img src="https://img.shields.io/badge/Deployed%20on-GitHub%20Pages-121013?style=for-the-badge&logo=githubpages" alt="GitHub Pages"> </p>
 
@@ -38,7 +38,7 @@ or use my custom domain: [schema.mumblebaj.xyz](https://schema.mumblebaj.xyz)
 
 ## 🧩 Overview
 
-The Universal Schema Viewer lets you drag-and-drop or browse to load either:
+The Universal Schema Studio lets you drag-and-drop or browse to load either:
 
 - OpenAPI / Swagger YAML or JSON → rendered instantly using [ReDoc](https://github.com/Redocly/redoc)
 
