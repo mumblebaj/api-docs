@@ -83,8 +83,7 @@ feat: add build-info cache buster in deploy workflow (#88)
 1. Fork the repository and create your branch from main.
 2. Follow coding conventions and linting rules.
 3. Test thoroughly before submitting.
-4. Use the correct [PR template](../PULL_REQUEST_TEMPLATE.md)
-    - when creating your pull request:
+4. Use the correct [PR template](../PULL_REQUEST_TEMPLATE.md) when creating your pull request:
     - 🪲 Bug Fix
     - ✨ Feature Enhancement
     - 📝 Documentation Update
