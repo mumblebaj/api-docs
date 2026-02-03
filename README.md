@@ -60,7 +60,12 @@ No backend, no uploads — everything runs locally in your browser.
 
 ## ⚙️ Project Structure
 
+<details>
+<summary>Show full directory tree</summary>
+
 ```plaintext
+
+.
 📁 project-root/
 │   build-info.json
 │   CHANGELOG.md
@@ -201,6 +206,9 @@ No backend, no uploads — everything runs locally in your browser.
             lesson_versioning.md
             lesson_zero_downtime.md
 ```
+
+</details>
+
 ---
 
 ## 🧑‍💻 Local Development
