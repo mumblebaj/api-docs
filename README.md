@@ -58,13 +58,30 @@ No backend, no uploads — everything runs locally in your browser.
 
 ---
 
-## 🏗 Architecture
+## 🏗 Architecture (Product Modules)
 
-- **USS Core** → schema viewing/editing
-- **Exporter** → Markdown/Confluence output
-- **Tutor** → interactive learning mode
-- **View Tracker API** → analytics service
-- **GitHub Actions** → auto-deploy docs
+### 1) Universal Schema Studio (USS)
+**Goal:** View and work with real-world schemas quickly.
+- Viewers: YAML / XSD / XML
+- OpenAPI Editor: Monaco-based editing, validation + helpers
+- Shared UI: consistent theme, dropdown/toast controls
+
+### 2) Export Engine
+**Goal:** Turn specs into documentation.
+- Markdown export
+- Confluence export
+- Selective export with dependency resolver
+
+### 3) YAML Tutor
+**Goal:** Teach and validate YAML with practical examples.
+- Lessons (Markdown)
+- Teaching mode (markers/rules)
+- YAML Doctor (feedback + warnings)
+
+### 4) Automation
+**Goal:** Repeatable builds + clean repo hygiene.
+- Deploy pipeline (GitHub Actions)
+- Scheduled maintenance workflows
 
 ---
 
