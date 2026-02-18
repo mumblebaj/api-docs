@@ -1,15 +1,78 @@
 // Created by mumblebaj
 
 // js/xsdViewer.js
-async function ensureReDocLoaded() {
-  if (window.Redoc) return;
-  await new Promise((resolve, reject) => {
+// async function ensureReDocLoaded() {
+//   if (window.Redoc) return;
+//   await new Promise((resolve, reject) => {
+//     const s = document.createElement("script");
+//     s.src = "https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js";
+//     s.onload = resolve;
+//     s.onerror = reject;
+//     document.head.appendChild(s);
+//   });
+// }
+
+function isTrustedScriptSrc(src) {
+  // allow same-origin absolute paths
+  if (src.startsWith("/")) return true;
+
+  // allow known CDNs only
+  return (
+    src.startsWith("https://cdn.jsdelivr.net/") ||
+    src.startsWith("https://cdnjs.cloudflare.com/") ||
+    src.startsWith("https://unpkg.com/")
+  );
+}
+
+function loadScript(src) {
+  return new Promise((resolve, reject) => {
+    if (!isTrustedScriptSrc(src)) {
+      reject(new Error(`[USS] Blocked untrusted script src: ${src}`));
+      return;
+    }
+
     const s = document.createElement("script");
-    s.src = "https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js";
+    s.src = src;
+    s.async = true;
     s.onload = resolve;
-    s.onerror = reject;
+    s.onerror = () => reject(new Error(`Failed: ${src}`));
     document.head.appendChild(s);
   });
+}
+
+async function ensureReDocLoaded() {
+  if (window.Redoc) return;
+
+  const cdn =
+    "https://cdn.jsdelivr.net/npm/redoc@2.1.3/bundles/redoc.standalone.min.js";
+
+  // ✅ No location-derived path building — just try both deployments
+  const localCandidates = [
+    "/vendor/redoc/redoc.standalone.min.js", // custom domain
+    "/api-docs/vendor/redoc/redoc.standalone.min.js", // GitHub Pages
+  ];
+
+  try {
+    await loadScript(cdn);
+  } catch (err) {
+    console.warn("[USS] ReDoc CDN failed, trying local fallbacks...", err);
+
+    let lastErr = null;
+    for (const local of localCandidates) {
+      try {
+        await loadScript(local);
+        lastErr = null;
+        break;
+      } catch (e) {
+        lastErr = e;
+      }
+    }
+    if (lastErr) throw lastErr;
+  }
+
+  if (!window.Redoc) {
+    throw new Error("ReDoc failed to load from both CDN and local fallbacks.");
+  }
 }
 
 /**
@@ -28,7 +91,7 @@ export function initXsdViewer(dropzone, yamlViewer, xsdViewer) {
     if (!node) return "";
     const docs = shallowOnly
       ? node.querySelectorAll(
-          ":scope > xs\\:annotation > xs\\:documentation, :scope > annotation > documentation"
+          ":scope > xs\\:annotation > xs\\:documentation, :scope > annotation > documentation",
         )
       : node.querySelectorAll("xs\\:documentation, documentation");
 
@@ -292,7 +355,7 @@ export function initXsdViewer(dropzone, yamlViewer, xsdViewer) {
       else baseSchema = { type: "string" };
 
       const annDocs = el.querySelector(
-        ":scope > xs\\:annotation, :scope > annotation"
+        ":scope > xs\\:annotation, :scope > annotation",
       );
       const docsText = mdDocs(annDocs, true);
       if (docsText) {
@@ -315,7 +378,7 @@ export function initXsdViewer(dropzone, yamlViewer, xsdViewer) {
       const seq = ct.querySelector(":scope > xs\\:sequence, :scope > sequence");
       const choice = ct.querySelector(":scope > xs\\:choice, :scope > choice");
       const simpleContent = ct.querySelector(
-        ":scope > xs\\:simpleContent, :scope > simpleContent"
+        ":scope > xs\\:simpleContent, :scope > simpleContent",
       );
 
       if (seq) {
@@ -440,7 +503,7 @@ export function initXsdViewer(dropzone, yamlViewer, xsdViewer) {
     if (schemaEl) {
       // ✅ Namespace-safe element detection (works with xs:, xsd:, or no prefix)
       const rootCandidates = Array.from(schemaEl.children).filter(
-        (el) => el.localName === "element"
+        (el) => el.localName === "element",
       );
 
       if (rootCandidates.length > 0) {
@@ -475,13 +538,13 @@ export function initXsdViewer(dropzone, yamlViewer, xsdViewer) {
 
           selector.addEventListener("change", (e) => {
             const chosen = rootCandidates.find(
-              (el) => el.getAttribute("name") === e.target.value
+              (el) => el.getAttribute("name") === e.target.value,
             );
             if (chosen) {
               rootEl = chosen;
               console.log(
                 "🔄 Root element changed to:",
-                rootEl.getAttribute("name")
+                rootEl.getAttribute("name"),
               );
               // Rebuild + re-render Redoc (same as before)
               const chosenName = rootEl.getAttribute("name");

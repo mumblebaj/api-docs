@@ -5,17 +5,82 @@
 function setStatus(msg, ok = true) {
   const el = document.getElementById("xmlStatus");
   el.textContent = msg || "";
-  el.style.color = ok ? "var(--ok-green, #28a745)" : "var(--error-red, #ff6b6b)";
+  el.style.color = ok
+    ? "var(--ok-green, #28a745)"
+    : "var(--error-red, #ff6b6b)";
 }
 
-function ensureReDocLoaded() {
-  if (window.Redoc) return Promise.resolve();
-  return new Promise((resolve) => {
+// function ensureReDocLoaded() {
+//   if (window.Redoc) return Promise.resolve();
+//   return new Promise((resolve) => {
+//     const s = document.createElement("script");
+//     s.src = "https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js";
+//     s.onload = resolve;
+//     document.head.appendChild(s);
+//   });
+// }
+
+function isTrustedScriptSrc(src) {
+  // allow same-origin absolute paths
+  if (src.startsWith("/")) return true;
+
+  // allow known CDNs only
+  return (
+    src.startsWith("https://cdn.jsdelivr.net/") ||
+    src.startsWith("https://cdnjs.cloudflare.com/") ||
+    src.startsWith("https://unpkg.com/")
+  );
+}
+
+function loadScript(src) {
+  return new Promise((resolve, reject) => {
+    if (!isTrustedScriptSrc(src)) {
+      reject(new Error(`[USS] Blocked untrusted script src: ${src}`));
+      return;
+    }
+
     const s = document.createElement("script");
-    s.src = "https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js";
+    s.src = src;
+    s.async = true;
     s.onload = resolve;
+    s.onerror = () => reject(new Error(`Failed: ${src}`));
     document.head.appendChild(s);
   });
+}
+
+async function ensureReDocLoaded() {
+  if (window.Redoc) return;
+
+  const cdn =
+    "https://cdn.jsdelivr.net/npm/redoc@2.1.3/bundles/redoc.standalone.min.js";
+
+  // ✅ No location-derived path building — just try both deployments
+  const localCandidates = [
+    "/vendor/redoc/redoc.standalone.min.js",          // custom domain
+    "/api-docs/vendor/redoc/redoc.standalone.min.js", // GitHub Pages
+  ];
+
+  try {
+    await loadScript(cdn);
+  } catch (err) {
+    console.warn("[USS] ReDoc CDN failed, trying local fallbacks...", err);
+
+    let lastErr = null;
+    for (const local of localCandidates) {
+      try {
+        await loadScript(local);
+        lastErr = null;
+        break;
+      } catch (e) {
+        lastErr = e;
+      }
+    }
+    if (lastErr) throw lastErr;
+  }
+
+  if (!window.Redoc) {
+    throw new Error("ReDoc failed to load from both CDN and local fallbacks.");
+  }
 }
 
 // --- Reliable XML→JSON converter for all fast-xml-parser builds ---
@@ -91,7 +156,7 @@ async function parseXmlToJson(xmlText) {
 
   throw new Error(
     "Unsupported fast-xml-parser global shape. Found keys: " +
-      Object.keys(fx).join(", ")
+      Object.keys(fx).join(", "),
   );
 }
 
@@ -99,11 +164,16 @@ async function parseXmlToJson(xmlText) {
 (function logFXPVariant() {
   const fxp = ensureFXP();
   if (!fxp) {
-    console.warn("fast-xml-parser not found. Ensure the script tag loads BEFORE xmlViewer.js.");
+    console.warn(
+      "fast-xml-parser not found. Ensure the script tag loads BEFORE xmlViewer.js.",
+    );
     return;
-    }
-  console.info("fast-xml-parser detected:", fxp.kind,
-    fxp.ns ? `(ns keys: ${Object.keys(fxp.ns).join(", ")})` : "");
+  }
+  console.info(
+    "fast-xml-parser detected:",
+    fxp.kind,
+    fxp.ns ? `(ns keys: ${Object.keys(fxp.ns).join(", ")})` : "",
+  );
 })();
 
 function getXmlFromInputs() {
@@ -236,14 +306,14 @@ function wireDropzone() {
       e.preventDefault();
       e.stopPropagation();
       dz.classList.add("dragover");
-    })
+    }),
   );
   ["dragleave", "drop"].forEach((ev) =>
     dz.addEventListener(ev, (e) => {
       e.preventDefault();
       e.stopPropagation();
       dz.classList.remove("dragover");
-    })
+    }),
   );
 
   // Drop handler
@@ -263,7 +333,8 @@ function wireThemeToggle() {
   const toggle = document.getElementById("themeToggle");
   toggle.addEventListener("click", () => {
     const html = document.documentElement;
-    const theme = html.getAttribute("data-theme") === "light" ? "dark" : "light";
+    const theme =
+      html.getAttribute("data-theme") === "light" ? "dark" : "light";
     html.setAttribute("data-theme", theme);
     toggle.textContent = theme === "light" ? "🌞 / 🌙" : "🌙 / 🌞";
   });
@@ -275,7 +346,9 @@ function init() {
   wireDropzone();
   wireThemeToggle();
   document.getElementById("viewBtn").addEventListener("click", handleView);
-  document.getElementById("downloadJsonBtn").addEventListener("click", handleDownloadJson);
+  document
+    .getElementById("downloadJsonBtn")
+    .addEventListener("click", handleDownloadJson);
   document.getElementById("clearBtn").addEventListener("click", resetInputs);
 }
 
