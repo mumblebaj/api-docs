@@ -27,6 +27,7 @@ on:
       - 'js/exporter/exportMarkdown.js'
       - 'js/schemaExport/**'
       - 'js/ui/**'
+      - 'vendor/redoc/redoc.standalone.min.js'
 
 jobs:
   build-and-deploy:
@@ -184,7 +185,13 @@ jobs:
       - name: Copy CNAME
         run: cp docs/CNAME public/CNAME
 
-      # 13. Deploy to GitHub Pages
+      # 13. Copy Vendor Files
+      - name: Copy CNAME
+        run: |
+          mkdir -p public/vendor/redoc
+          cp vendor/redoc/redoc.standalone.min.js public/vendor/redoc/redoc.standalone.min.js
+
+      # 14. Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:

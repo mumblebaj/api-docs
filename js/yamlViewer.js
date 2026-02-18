@@ -1,14 +1,77 @@
 // Created by mumblebaj
 
-async function ensureReDocLoaded() {
-  if (window.Redoc) return;
-  await new Promise((resolve, reject) => {
+// async function ensureReDocLoaded() {
+//   if (window.Redoc) return;
+//   await new Promise((resolve, reject) => {
+//     const s = document.createElement("script");
+//     s.src = "https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js";
+//     s.onload = resolve;
+//     s.onerror = reject;
+//     document.head.appendChild(s);
+//   });
+// }
+
+function isTrustedScriptSrc(src) {
+  // allow same-origin absolute paths
+  if (src.startsWith("/")) return true;
+
+  // allow known CDNs only
+  return (
+    src.startsWith("https://cdn.jsdelivr.net/") ||
+    src.startsWith("https://cdnjs.cloudflare.com/") ||
+    src.startsWith("https://unpkg.com/")
+  );
+}
+
+function loadScript(src) {
+  return new Promise((resolve, reject) => {
+    if (!isTrustedScriptSrc(src)) {
+      reject(new Error(`[USS] Blocked untrusted script src: ${src}`));
+      return;
+    }
+
     const s = document.createElement("script");
-    s.src = "https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js";
+    s.src = src;
+    s.async = true;
     s.onload = resolve;
-    s.onerror = reject;
+    s.onerror = () => reject(new Error(`Failed: ${src}`));
     document.head.appendChild(s);
   });
+}
+
+async function ensureReDocLoaded() {
+  if (window.Redoc) return;
+
+  const cdn =
+    "https://cdn.jsdelivr.net/npm/redoc@2.1.3/bundles/redoc.standalone.min.js";
+
+  // ✅ No location-derived path building — just try both deployments
+  const localCandidates = [
+    "/vendor/redoc/redoc.standalone.min.js",          // custom domain
+    "/api-docs/vendor/redoc/redoc.standalone.min.js", // GitHub Pages
+  ];
+
+  try {
+    await loadScript(cdn);
+  } catch (err) {
+    console.warn("[USS] ReDoc CDN failed, trying local fallbacks...", err);
+
+    let lastErr = null;
+    for (const local of localCandidates) {
+      try {
+        await loadScript(local);
+        lastErr = null;
+        break;
+      } catch (e) {
+        lastErr = e;
+      }
+    }
+    if (lastErr) throw lastErr;
+  }
+
+  if (!window.Redoc) {
+    throw new Error("ReDoc failed to load from both CDN and local fallbacks.");
+  }
 }
 
 /**
