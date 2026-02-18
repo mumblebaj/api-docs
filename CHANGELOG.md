@@ -1,5 +1,11 @@
 # Changelog
 
+## [v1.5.2] - 2026-02-18
+### Enhancements
+- Add localised CDN's and pin to specific versions
+- Update logic to check if CDN is available, if not use local.
+- Update branding
+
 ## [v1.0.2] - 2025-12-18
 ## Schema Export Architecture
 
