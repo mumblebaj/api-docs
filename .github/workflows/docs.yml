@@ -179,7 +179,7 @@ jobs:
       # 11. Copy favicons
       - name: Copy favicons
         run: |
-          cp docs/favicon.png public/favicon.png
+          cp docs/favicon_new.png public/favicon_new.png
 
       # 12. Copy CNAME
       - name: Copy CNAME
