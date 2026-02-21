@@ -1,0 +1,187 @@
+<!-- Created by mumblebaj -->
+<!-- Last updated 29/10/2025 -->
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Universal Schema Studio</title>
+    <link rel="stylesheet" href="css/openapiEditor.css?v=20260221T190248Z" />
+    <link rel="icon" type="image/png" href="./favicon_new.png" />
+    <!-- YAML Parser -->
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"
+      defer
+    ></script>
+    <!-- ReDoc -->
+    <script src="https://cdn.jsdelivr.net/npm/redoc@2.1.3/bundles/redoc.standalone.min.js"></script>
+    <!-- Swagger Client (must load BEFORE Monaco to avoid AMD trap) -->
+    <script
+      src="./js/swagger-client.browser.min.js?v=20260221T190248Z"
+      defer
+    ></script>
+    <!-- Monaco CDN -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/monaco-editor@0.44.0/min/vs/loader.js"
+      defer
+    ></script>
+  </head>
+  <body class="openapi-editor" data-theme="dark">
+    <div class="toolbar">
+      <button onclick="validateOpenAPI()">Validate</button>
+      <button onclick="exportYAML()">Export YAML</button>
+      <button onclick="exportJSON()">Export JSON</button>
+      <div class="export-container">
+        <button id="exportMenuBtn">📦 Export ▼</button>
+        <div id="exportDropdown" class="export-dropdown hidden">
+          <div class="export-option" data-export="markdown">Markdown (.md)</div>
+          <div class="export-option" data-export="wiki">
+            Confluence Wiki (.txt)
+          </div>
+          <div class="export-option" data-export="markdown-select">
+            Selective Markdown (.md)
+          </div>
+          <div class="export-option" data-export="wiki-select">
+            Selective Confluence (.txt)
+          </div>
+          <!-- Future formats will go here -->
+        </div>
+      </div>
+      <button
+        id="aiToggleBtn"
+        class="secondary-btn"
+        title="Generate OpenAPI with AI"
+      >
+        <span id="aiToggleText">✨ Ask AI</span>
+        <span id="aiBadge" class="ai-badge hidden" aria-label="AI draft ready"
+          >●</span
+        >
+      </button>
+
+      <!-- 🌓 Theme selector -->
+      <label for="themeSelect" style="margin-left: 1rem; font-weight: 500"
+        >Theme:</label
+      >
+      <select id="themeSelect">
+        <option value="vs">Visual Studio (Light)</option>
+        <option value="vs-dark">Visual Studio Dark</option>
+        <option value="hc-black">High Contrast Dark</option>
+      </select>
+
+      <span id="status" style="margin-left: auto"></span>
+    </div>
+    <!-- AI Draft Panel (protected by Cloudflare Access on /api/ai/*) -->
+    <div class="ai-panel ai-collapsed ai-gone" id="aiPanel">
+      <div class="ai-panel-inner">
+        <div class="ai-panel-header">
+          <strong>AI Draft</strong>
+          <span class="ai-panel-note">Uses your configured AI gateway</span>
+        </div>
+
+        <textarea
+          id="aiPrompt"
+          rows="6"
+          placeholder="Describe the OpenAPI YAML you want (e.g. endpoints, headers, auth, schemas)..."
+        ></textarea>
+
+        <div class="ai-actions">
+          <select
+            id="aiMode"
+            title="Generate a new document or patch the current one"
+          >
+            <option value="newDoc">New document</option>
+            <option value="patch">Patch current</option>
+          </select>
+
+          <button id="aiGenerateBtn" type="button">Generate</button>
+          <button id="aiApplyBtn" type="button" disabled>Apply</button>
+
+          <button
+            id="aiSettingsBtn"
+            type="button"
+            title="Configure AI gateway endpoint"
+          >
+            ⚙️
+          </button>
+        </div>
+
+        <div class="ai-hint">
+          Tip: set a custom gateway URL via
+          <code>localStorage.USS_AI_ENDPOINT</code>
+        </div>
+
+        <pre id="aiResult" class="ai-result"></pre>
+      </div>
+    </div>
+    <div class="editor-layout">
+      <div id="yamlEditor"></div>
+      <div id="dragbar"></div>
+      <div id="previewPane"></div>
+    </div>
+
+    <!-- Selective Schema Export Modal -->
+    <div id="schemaExportModal" class="schema-modal hidden">
+      <div class="schema-modal-content">
+        <h3>Select Schemas to Export</h3>
+        <div id="dependencySummary" class="dependency-summary hidden"></div>
+        <p style="font-size: 0.9rem; opacity: 0.8">
+          Choose which schemas you want included in the documentation export.
+        </p>
+
+        <div id="schemaCheckboxContainer" class="schema-checkbox-container">
+          <!-- checkboxes injected by JS -->
+        </div>
+
+        <div class="schema-modal-actions">
+          <button id="cancelSchemaExport" type="button">Cancel</button>
+          <button id="confirmSchemaExport" type="button">Export</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container"></div>
+
+    <script
+      type="module"
+      src="./js/openapiEditor.js?v=20260221T190248Z"
+      defer
+    ></script>
+
+    <script>
+      // --- Dragbar Resizing Logic with Persistence ---
+      const dragbar = document.getElementById("dragbar");
+      const leftPane = document.getElementById("yamlEditor");
+      let isDragging = false;
+
+      // Restore previous width from localStorage (default 50%)
+      const savedWidth = localStorage.getItem("editorPaneWidth");
+      if (savedWidth) {
+        leftPane.style.flex = `0 0 ${savedWidth}`;
+      } else {
+        leftPane.style.flex = "0 0 50%";
+      }
+
+      dragbar.addEventListener("mousedown", () => (isDragging = true));
+      document.addEventListener("mouseup", () => (isDragging = false));
+      document.addEventListener("mousemove", (e) => {
+        if (!isDragging) return;
+        const containerWidth = dragbar.parentNode.offsetWidth;
+        const newRatio = Math.min(
+          Math.max(e.clientX / containerWidth, 0.25),
+          0.75,
+        );
+        const newWidth = `${(newRatio * 100).toFixed(2)}%`;
+
+        leftPane.style.flex = `0 0 ${newWidth}`;
+
+        // Save the new width for persistence
+        localStorage.setItem("editorPaneWidth", newWidth);
+      });
+    </script>
+    <script src="./js/viewTracker.js?v=20260221T190248Z"></script>
+  </body>
+  <footer>
+    <script src="./js/buildVersion.js?v=20260221T190248Z" defer></script>
+  </footer>
+</html>

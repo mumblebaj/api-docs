@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>YAML Learning Hub</title>
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+
+    <!-- Libraries -->
+    <script src="https://unpkg.com/js-yaml@4/dist/js-yaml.min.js"></script>
+    <script src="https://unpkg.com/prettier@3.2.5/standalone.js"></script>
+    <script src="https://unpkg.com/prettier@3.2.5/plugins/yaml.js"></script>
+
+    <!-- Monaco Editor -->
+    <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.52.0/min/vs/loader.js"></script>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="./styles.css?v=0" />
+    <link rel="stylesheet" href="../css/style.css?v=0" />
+  </head>
+
+  <body>
+    <!-- Header / Theme / Controls -->
+    <header class="header uss-header">
+      <h2>Universal Schema Studio — YAML Tutor - Click the Lessons Button to get started -></h2>
+
+      <div class="uss-controls" style="display: flex; align-items: center; gap: 1rem">
+        <button id="doctorBtn" class="control-btn primary">🩺 YAML Doctor</button>
+        <button id="toggleLessonsBtn" class="control-btn primary">📚 Lessons</button>
+        <button id="theme-toggle" class="control-btn primary">🌙 Dark Mode</button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <!-- LEFT: Monaco Editor -->
+      <section id="leftPane" class="pane left">
+        <h2>YAML Input</h2>
+        <div class="editor-wrapper">
+          <div id="monacoContainer"></div>
+        </div>
+      </section>
+
+      <div id="dragbar"></div>
+
+      <!-- RIGHT: Tabs + Lessons + Tips -->
+      <section id="rightPane" class="pane right">
+        <div class="tabs">
+          <button class="tab active" data-tab="tips">Tips</button>
+          <button class="tab" data-tab="lessons">Lessons</button>
+        </div>
+
+        <div class="tab-content">
+          <!-- TIPS PANEL -->
+          <div id="tipsOutput" class="tab-pane active"></div>
+
+          <!-- CLEAN + CORRECT LESSONS PANEL -->
+          <div id="lessonsOutput" class="tab-pane">
+            <div class="lesson-view">
+              <aside id="lessonTOC" class="lesson-toc"></aside>
+              <div id="lessonContent" class="lesson-content"></div>
+            </div>
+          </div>
+
+          <!-- DOCTOR PANEL -->
+          <div id="doctorOutput" class="tab-panel" style="display:none">
+            <h2 style="margin-top:0">YAML Doctor</h2>
+            <div id="doctorContent"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer id="statusBar">Powered by MumbleBaj</footer>
+
+    <!-- Monaco Loader -->
+    <script>
+      require.config({
+        paths: { vs: "https://cdn.jsdelivr.net/npm/monaco-editor@0.52.0/min/vs" }
+      });
+    </script>
+
+    <!-- Sync Theme Before Load -->
+    <script>
+      const saved = localStorage.getItem("theme") || "light";
+      document.documentElement.dataset.theme = saved;
+    </script>
+
+    <!-- Tracker + Tutor -->
+    <script src="../js/viewTracker.js?v=0"></script>
+    <script type="module" src="js/tutor.js?v=0"></script>
+
+    <footer>
+      <script src="../js/buildVersion.js?v=0" defer></script>
+    </footer>
+  </body>
+</html>
