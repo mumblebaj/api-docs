@@ -2,8 +2,8 @@
 
 // js/ai/aiPanel.js
 import { draftOpenApi } from "./aiClient.js";
-import { getEditorText, setEditorText } from "./editor/editorApi.js";
-import { showToast } from "./ui/toast.js";
+import { getEditorText, setEditorText } from "../editor/editorApi.js";
+import { showToast } from "../ui/toast.js";
 import { setAiBadgeVisible } from "./aiBadge.js";
 
 export function initAiPanel() {
