@@ -1,4 +1,5 @@
 // Uses the toast module (showToast) which is already imported elsewhere.
+// Fixes required for path resolution
 
 // js/ai/aiPanel.js
 import { draftOpenApi } from "./aiClient.js";
