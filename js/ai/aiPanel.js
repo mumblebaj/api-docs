@@ -3,7 +3,7 @@
 // js/ai/aiPanel.js
 import { draftOpenApi } from "./aiClient.js";
 import { getEditorText, setEditorText } from "../editor/editorApi.js";
-import { showToast } from "../ui/toast.js?v=20260218T160142Z";
+import { showToast } from "../ui/toast.js?v=20260221T190248Z";
 import { setAiBadgeVisible } from "./aiBadge.js";
 
 export function initAiPanel() {
