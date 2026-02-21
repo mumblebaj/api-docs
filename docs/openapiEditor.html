@@ -1,7 +1,7 @@
 <!-- Created by mumblebaj -->
 <!-- Last updated 29/10/2025 -->
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -47,6 +47,16 @@
           <!-- Future formats will go here -->
         </div>
       </div>
+      <button
+        id="aiToggleBtn"
+        class="secondary-btn"
+        title="Generate OpenAPI with AI"
+      >
+        <span id="aiToggleText">✨ Ask AI</span>
+        <span id="aiBadge" class="ai-badge hidden" aria-label="AI draft ready"
+          >●</span
+        >
+      </button>
 
       <!-- 🌓 Theme selector -->
       <label for="themeSelect" style="margin-left: 1rem; font-weight: 500"
@@ -60,7 +70,49 @@
 
       <span id="status" style="margin-left: auto"></span>
     </div>
+    <!-- AI Draft Panel (protected by Cloudflare Access on /api/ai/*) -->
+    <div class="ai-panel ai-collapsed ai-gone" id="aiPanel">
+      <div class="ai-panel-inner">
+        <div class="ai-panel-header">
+          <strong>AI Draft</strong>
+          <span class="ai-panel-note">Uses your configured AI gateway</span>
+        </div>
 
+        <textarea
+          id="aiPrompt"
+          rows="6"
+          placeholder="Describe the OpenAPI YAML you want (e.g. endpoints, headers, auth, schemas)..."
+        ></textarea>
+
+        <div class="ai-actions">
+          <select
+            id="aiMode"
+            title="Generate a new document or patch the current one"
+          >
+            <option value="newDoc">New document</option>
+            <option value="patch">Patch current</option>
+          </select>
+
+          <button id="aiGenerateBtn" type="button">Generate</button>
+          <button id="aiApplyBtn" type="button" disabled>Apply</button>
+
+          <button
+            id="aiSettingsBtn"
+            type="button"
+            title="Configure AI gateway endpoint"
+          >
+            ⚙️
+          </button>
+        </div>
+
+        <div class="ai-hint">
+          Tip: set a custom gateway URL via
+          <code>localStorage.USS_AI_ENDPOINT</code>
+        </div>
+
+        <pre id="aiResult" class="ai-result"></pre>
+      </div>
+    </div>
     <div class="editor-layout">
       <div id="yamlEditor"></div>
       <div id="dragbar"></div>
@@ -90,7 +142,6 @@
     <!-- Toast Notification Container -->
     <div id="toast-container"></div>
 
-
     <script
       type="module"
       src="./js/openapiEditor.js?v=20260218T160142Z"
@@ -118,7 +169,7 @@
         const containerWidth = dragbar.parentNode.offsetWidth;
         const newRatio = Math.min(
           Math.max(e.clientX / containerWidth, 0.25),
-          0.75
+          0.75,
         );
         const newWidth = `${(newRatio * 100).toFixed(2)}%`;
 
