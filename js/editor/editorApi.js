@@ -7,7 +7,7 @@ let boundEditor = null;
 
 export function bindEditor(editor) {
   boundEditor = editor;
-  // global fallback in case this module is imported twice due to ?v= tags
+  // global fallback in case this module is imported twice due to ?v=20260221T205233Z tags
   window.__USS_MONACO_EDITOR__ = editor;
 }
 
