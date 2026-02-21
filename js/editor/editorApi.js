@@ -1,18 +1,28 @@
 // js/editor/editorApi.js
 // This binds Monaco without coupling AI code to Monaco internals.
 
-let _editor = null;
+// js/editor/editorApi.js
 
-export function bindEditor(editorInstance) {
-  _editor = editorInstance;
+let boundEditor = null;
+
+export function bindEditor(editor) {
+  boundEditor = editor;
+  // global fallback in case this module is imported twice due to ?v= tags
+  window.__USS_MONACO_EDITOR__ = editor;
 }
 
-export function getEditorText() {
-  if (!_editor) throw new Error("Editor not bound");
-  return _editor.getValue();
+function getEditor() {
+  return boundEditor || window.__USS_MONACO_EDITOR__ || null;
 }
 
 export function setEditorText(text) {
-  if (!_editor) throw new Error("Editor not bound");
-  _editor.setValue(text);
+  const editor = getEditor();
+  if (!editor) throw new Error("Editor not bound");
+  editor.setValue(text);
+}
+
+export function getEditorText() {
+  const editor = getEditor();
+  if (!editor) throw new Error("Editor not bound");
+  return editor.getValue();
 }
