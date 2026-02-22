@@ -1,20 +1,20 @@
 // openapiEditor.js — Created by mumblebaj
 
-import { buildDocModel } from "./exporter/docModel.js?v=20260222T102405Z";
-import { filterDocModelForSchemas } from "./exporter/docModel.js?v=20260222T102405Z";
-import { exportMarkdown } from "./exporter/exportMarkdown.js?v=20260222T102405Z";
-import { downloadMarkdownFile } from "./exporter/downloadUtils.js?v=20260222T102405Z";
-import { exportConfluence } from "./exporter/exportConfluence.js?v=20260222T102405Z";
-import { showToast } from "./ui/toast.js?v=20260222T102405Z";
-import { initExportDropdown } from "./ui/dropdown.js?v=20260222T102405Z";
+import { buildDocModel } from "./exporter/docModel.js?v=20260222T103346Z";
+import { filterDocModelForSchemas } from "./exporter/docModel.js?v=20260222T103346Z";
+import { exportMarkdown } from "./exporter/exportMarkdown.js?v=20260222T103346Z";
+import { downloadMarkdownFile } from "./exporter/downloadUtils.js?v=20260222T103346Z";
+import { exportConfluence } from "./exporter/exportConfluence.js?v=20260222T103346Z";
+import { showToast } from "./ui/toast.js?v=20260222T103346Z";
+import { initExportDropdown } from "./ui/dropdown.js?v=20260222T103346Z";
 import {
   createSelectionState,
   applyUserSelection,
   applyUserDeselection,
   getFinalSelection,
   getDependencyCount,
-} from "./schemaExport/selectionUtils.js?v=20260222T102405Z";
-import { buildSchemaDependencyMap } from "./schemaExport/dependencyResolver.js?v=20260222T102405Z";
+} from "./schemaExport/selectionUtils.js?v=20260222T103346Z";
+import { buildSchemaDependencyMap } from "./schemaExport/dependencyResolver.js?v=20260222T103346Z";
 import { initSchemaExportModal } from "./schemaExport/schemaExportModal.js";
 // AI Imports
 import { bindEditor } from "./editor/editorApi.js";
@@ -38,7 +38,7 @@ console.error = function (...args) {
   oldError.apply(console, args);
 };
 
-import defaultYamlTemplate from "./template.js?v=20260222T102405Z";
+import defaultYamlTemplate from "./template.js?v=20260222T103346Z";
 
 // Debounce helper (async-safe + immediate feedback)
 function debounce(fn, delay = 1200, statusEl) {
