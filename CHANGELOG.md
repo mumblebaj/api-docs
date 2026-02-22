@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.6.3]
+### Feature Release
+- Add LLM (Large Language Model) AI integration to Open API Editor
+- Users can now request an AI to draft an API spec document for them. 
+- Users need to ensure that their prompt contains at least a valid API keyword else the request is rejected.
+- Keywords include:
+    'openapi', 'swagger', 'spec', 'yaml',
+        'endpoint', 'endpoints', 'route', 'routes', 'path', 'paths',
+        'request', 'response', 'payload', 'body',
+        'schema', 'schemas', 'field', 'fields', 'properties',
+        'header', 'headers', 'x-request-id', 'x-correlation-id',
+        'auth', 'authentication', 'authorize', 'jwt', 'bearer', 'oauth',
+        'status code', '200', '400', '401', '404', '500',
+        'get ', 'post ', 'put ', 'delete ', 'patch '
+- General knowledge questions are also not allowed
+- Typical errors for non API related queries:
+  - This looks like a general question. Please describe an API you want to generate (endpoints/routes, request/response fields, headers, auth).
+  - Prompt does not mention API design concepts (endpoints, request/response, schemas, headers, auth).
+- Caters for corporates to provide their own AI gateways.
+
 ## [v1.5.2] - 2026-02-18
 ### Enhancements
 - Add localised CDN's and pin to specific versions
