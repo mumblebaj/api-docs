@@ -1,4 +1,5 @@
 // openapiEditor.js — Created by mumblebaj
+// Updated to add AI files
 
 import { buildDocModel } from "./exporter/docModel.js?v=20260218T160835Z";
 import { filterDocModelForSchemas } from "./exporter/docModel.js?v=20260218T160835Z";
