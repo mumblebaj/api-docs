@@ -1,5 +1,7 @@
 // js/ui/toast.js
 
+const DEFAULT_DURATION = 10000; // 10 seconds feels right
+
 export function showToast(message, type = "success") {
   const container = document.getElementById("toast-container");
 
@@ -18,5 +20,5 @@ export function showToast(message, type = "success") {
   setTimeout(() => {
     toast.classList.remove("show");
     setTimeout(() => container.removeChild(toast), 300);
-  }, 5000);
+  }, DEFAULT_DURATION);
 }
