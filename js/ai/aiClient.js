@@ -1,6 +1,6 @@
 // js/ai/aiClient.js
 // No API keys in browser. If a corporate gateway needs auth, they can enforce it via SSO/cookies or their own gateway rules.
-import { AI } from "./aiConfig.js?v=20260218T160835Z";
+import { AI } from "./aiConfig.js?v=20260222T104529Z";
 
 export async function draftOpenApi({ prompt, mode = "newDoc", currentYaml = "" }) {
   const endpoint = AI.getEndpoint();
