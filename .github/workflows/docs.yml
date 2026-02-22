@@ -6,29 +6,14 @@ on:
   push:
     branches:
       - main
+      - 'feature/**'
     paths:
-      - 'docs/index.html'
-      - 'docs/openapiEditor.html'
-      - 'docs/xmlViewer.html'
-      - 'docs/favicon.png'
-      - 'js/xsdViewer.js'
-      - 'js/yamlViewer.js'
-      - 'js/openapiEditor.js'
-      - 'js/xmlViewer.js'
-      - 'js/viewTracker.js'
-      - 'css/style.css'
-      - 'css/openapiEditor.css'
-      - 'js/template.js'
-      - 'js/buildVersion.js'
-      - 'build-info.json'
+      - 'docs/**'
+      - 'js/**'
+      - 'css/**'
       - 'tutor/**'
-      - 'js/exporter/docModel.js'
-      - 'js/exporter/downloadUtils.js'
-      - 'js/exporter/exportConfluence.js'
-      - 'js/exporter/exportMarkdown.js'
-      - 'js/schemaExport/**'
-      - 'js/ui/**'
-      - 'vendor/redoc/redoc.standalone.min.js'
+      - 'vendor/**'
+      - 'build-info.json'
 
 jobs:
   build-and-deploy:
@@ -98,7 +83,7 @@ jobs:
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          git add build-info.json docs/*.html js/*.js
+          git add build-info.json docs/*.html js/**/*.js css/*.css tutor/** vendor/redoc/*
           git commit -m "chore: bump build to $(jq -r '.version' build-info.json) [${{ steps.buildinfo.outputs.cache_tag }}]" || echo "No changes to commit"
           git push
 
@@ -129,10 +114,10 @@ jobs:
         run: cp build-info.json public/build-info.json
 
       # 9. Copy JS files
-      - name: Copy JS files
+      - name: Copy JS files (all)
         run: |
           mkdir -p public/js
-          cp js/*.js public/js/
+          rsync -a js/ public/js/
 
       # 9b. Copy Tutor JS
       - name: Copy Tutor JS files
@@ -146,24 +131,6 @@ jobs:
           mkdir -p public/tutor/lessons
           cp tutor/lessons/*.md public/tutor/lessons/
       
-      # 9d. Copy exporter JS
-      - name: Copy exporter JS files
-        run: |
-          mkdir -p public/js/exporter
-          cp js/exporter/*.js public/js/exporter/
-        
-      # 9e. Copy schemaExport JS
-      - name: Copy schemaExport JS files
-        run: |
-          mkdir -p public/js/schemaExport
-          cp js/schemaExport/*.js public/js/schemaExport/
-
-      # 9f. Copy ui JS
-      - name: Copy ui JS files
-        run: |
-          mkdir -p public/js/ui
-          cp js/ui/*.js public/js/ui/
-
       # 10. Copy CSS files
       - name: Copy CSS files
         run: |
@@ -197,3 +164,4 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./public
+          destination_dir: ${{ github.ref_name == 'main' && '' || format('previews/{0}', github.ref_name) }}

@@ -7,7 +7,8 @@ metadata (not user input). No innerHTML or unsafe sinks used.
 
 async function showBuildInfo() {
   try {
-    const response = await fetch("../build-info.json");
+    const buildInfoUrl = new URL("build-info.json", window.location.href).toString();
+    const response = await fetch(buildInfoUrl, { cache: "no-store" });
     if (!response.ok) throw new Error("Build info not found");
 
     const info = await response.json();

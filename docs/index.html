@@ -8,7 +8,7 @@
     />
     <title>Universal Schema Studio</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="css/style.css?v=20260218T160835Z" />
+    <link rel="stylesheet" href="css/style.css?v=20260222T080520Z" />
     <link rel="icon" type="image/png" href="./favicon_new.png" />
   </head>
 
@@ -74,8 +74,13 @@
     <div id="xsd-viewer" class="viewer"></div>
 
     <script type="module">
+<<<<<<< HEAD
       import { initYamlViewer } from "./js/yamlViewer.js?v=20260218T160835Z";
       import { initXsdViewer } from "./js/xsdViewer.js?v=20260218T160835Z";
+=======
+      import { initYamlViewer } from "./js/yamlViewer.js?v=20260222T080520Z";
+      import { initXsdViewer } from "./js/xsdViewer.js?v=20260222T080520Z";
+>>>>>>> feature/ai-draft-openapi
 
       const rootEl = document.documentElement;
       const themeBtn = document.getElementById("theme-toggle");
@@ -107,20 +112,6 @@
           modeIndicator.className = "mode-badge yaml";
         }
       }
-
-      // document
-      //   .getElementById("launchEditorBtn")
-      //   .addEventListener("click", () => {
-      //     window.open("./openapiEditor.html", "_blank");
-      //   });
-
-      // document.getElementById("xmlViewerBtn").addEventListener("click", () => {
-      //   window.open("./xmlViewer.html", "_blank");
-      // });
-
-      // document.getElementById("yamlTutorBtn").addEventListener("click", () => {
-      //   window.open("./tutor/index.html", "_blank");
-      // });
 
       const yamlViewer = document.getElementById("yaml-viewer");
       const xsdViewer = document.getElementById("xsd-viewer");
@@ -173,7 +164,11 @@
         activeHandler(updatedDropzone, yamlViewer, xsdViewer);
       });
     </script>
+<<<<<<< HEAD
     <script src="./js/viewTracker.js?v=20260218T160835Z"></script>
+=======
+    <script src="./js/viewTracker.js?v=20260222T080520Z"></script>
+>>>>>>> feature/ai-draft-openapi
   </body>
   <footer class="uss-footer">
     <span class="uss-footer-hint">
@@ -188,6 +183,10 @@
       or share feedback.
     </span>
 
+<<<<<<< HEAD
     <script src="./js/buildVersion.js?v=20260218T160835Z" defer></script>
+=======
+    <script src="./js/buildVersion.js?v=20260222T080520Z" defer></script>
+>>>>>>> feature/ai-draft-openapi
   </footer>
 </html>

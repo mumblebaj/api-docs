@@ -658,3 +658,61 @@ button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+/* Slide-style AI panel */
+.ai-panel {
+  margin: 10px;
+  border: 1px solid rgba(128, 128, 128, 0.35);
+  border-radius: 12px;
+  overflow: hidden;
+
+  /* Instead of max-height, we control presence via opacity/pointer events */
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 220ms ease, transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Inner provides the "drawer" slide feel */
+.ai-panel-inner {
+  padding: 10px;
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 240ms ease, transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ai-panel.ai-collapsed {
+  opacity: 0;
+  transform: translateY(-8px);
+  pointer-events: none;
+}
+
+.ai-panel.ai-collapsed .ai-panel-inner {
+  opacity: 0;
+  transform: translateY(-18px);
+}
+
+/* Keep your existing bits */
+.ai-panel textarea { width: 100%; resize: vertical; }
+.ai-actions { display: flex; gap: 8px; align-items: center; margin-top: 8px; }
+.ai-result { margin-top: 10px; max-height: 240px; overflow: auto; padding: 10px; border-radius: 10px; background: rgba(0, 0, 0, 0.06); }
+
+/* When fully closed, remove from layout */
+.ai-panel.ai-gone {
+  display: none;
+}
+
+.ai-panel-inner {
+  padding: 10px 10px 25px 10px; /* extra bottom room */
+}
+
+.ai-panel {
+  min-height: 40px; /* prevents final frame clipping */
+}
+
+.ai-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 10px;
+  margin-bottom: 6px; /* prevents edge clipping */
+}

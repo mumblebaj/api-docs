@@ -16,6 +16,10 @@ import {
 } from "./schemaExport/selectionUtils.js?v=20260218T160835Z";
 import { buildSchemaDependencyMap } from "./schemaExport/dependencyResolver.js?v=20260218T160835Z";
 import { initSchemaExportModal } from "./schemaExport/schemaExportModal.js";
+// AI Imports
+import { bindEditor } from "./editor/editorApi.js";
+import { initAiPanel } from "./ai/aiPanel.js";
+import { initAiToggle } from "./ai/aiToggle.js";
 
 // ensure a YAML global exists even if the library exports jsyaml
 window.YAML = window.YAML || window.jsyaml || {};
@@ -163,6 +167,10 @@ function initMonaco() {
     theme: currentTheme,
     automaticLayout: true,
   });
+
+  bindEditor(editor);
+  initAiPanel();
+  initAiToggle();
 
   const statusEl = document.getElementById("status");
   const model = editor.getModel();
