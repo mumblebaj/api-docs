@@ -17,9 +17,9 @@ import {
 import { buildSchemaDependencyMap } from "./schemaExport/dependencyResolver.js?v=20260218T160835Z";
 import { initSchemaExportModal } from "./schemaExport/schemaExportModal.js";
 // AI Imports
-import { bindEditor } from "./editor/editorApi.js";
-import { initAiPanel } from "./ai/aiPanel.js";
-import { initAiToggle } from "./ai/aiToggle.js";
+import { bindEditor } from "./editor/editorApi.js?v=20260218T160835Z";
+import { initAiPanel } from "./ai/aiPanel.js?v=20260218T160835Z";
+import { initAiToggle } from "./ai/aiToggle.js?v=20260218T160835Z";
 
 // ensure a YAML global exists even if the library exports jsyaml
 window.YAML = window.YAML || window.jsyaml || {};
