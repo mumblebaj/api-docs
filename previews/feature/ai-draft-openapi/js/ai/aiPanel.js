@@ -50,6 +50,9 @@ export function initAiPanel() {
   applyBtn.addEventListener("click", () => {
     if (!latestYaml) return;
     setEditorText(latestYaml);
+    // close panel after successful apply
+    const panel = document.querySelector(".ai-panel");
+    panel?.classList.add("ai-collapsed");
     applyBtn.disabled = true;
     setAiBadgeVisible(false);
     showToast("✅ Applied AI draft to editor");
