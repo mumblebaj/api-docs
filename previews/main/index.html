@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta
+      charset="UTF-8"
+      name="description"
+      content="View and convert OpenAPI, YAML, JSON, and XSD schemas directly in your browser. Privacy-first, offline-capable, and open source."
+    />
+    <title>Universal Schema Studio</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="css/style.css?v=20260222T102405Z" />
+    <link rel="icon" type="image/png" href="./favicon_new.png" />
+  </head>
+
+  <body>
+    <header>
+      <h2>Universal Schema Studio</h2>
+      <div style="display: flex; align-items: center; gap: 1rem">
+        <span id="mode-indicator" class="mode-badge">📂 YAML Mode</span>
+        <select id="viewer-mode">
+          <option value="yaml">YAML / JSON</option>
+          <option value="xsd">XSD / XML</option>
+        </select>
+        <button id="theme-toggle">🌙 Dark Mode</button>
+        <a
+          id="launchEditorBtn"
+          class="control-btn primary"
+          href="./openapiEditor.html"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Open the OpenAPI Editor in a new tab"
+        >
+          🚀 OpenAPI Editor
+        </a>
+
+        <a
+          id="xmlViewerBtn"
+          class="control-btn primary"
+          href="./xmlViewer.html"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Open the XML / XSD Viewer in a new tab"
+        >
+          🚀 XML Viewer
+        </a>
+
+        <a
+          id="yamlTutorBtn"
+          class="control-btn primary"
+          href="./tutor/index.html"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Open the YAML Tutor in a new tab"
+        >
+          📘 YAML Tutor
+        </a>
+      </div>
+    </header>
+    <header class="uss-landing">
+      <p class="uss-tagline">
+        View & convert OpenAPI, YAML, JSON, and XSD schemas · 100% in your
+        browser · No uploads · Privacy-first
+      </p>
+    </header>
+
+    <div id="dropzone">Drop your file here or click to browse</div>
+    <p class="hint" style="text-align: center">
+      Note: Uploaded files render locally in your browser and are not sent
+      anywhere.
+    </p>
+
+    <!-- Viewer containers -->
+    <div id="yaml-viewer" class="viewer"></div>
+    <div id="xsd-viewer" class="viewer"></div>
+
+    <script type="module">
+<<<<<<< HEAD
+      import { initYamlViewer } from "./js/yamlViewer.js?v=20260222T102405Z";
+      import { initXsdViewer } from "./js/xsdViewer.js?v=20260222T102405Z";
+=======
+      import { initYamlViewer } from "./js/yamlViewer.js?v=20260222T102405Z";
+      import { initXsdViewer } from "./js/xsdViewer.js?v=20260222T102405Z";
+>>>>>>> feature/ai-draft-openapi
+
+      const rootEl = document.documentElement;
+      const themeBtn = document.getElementById("theme-toggle");
+      const savedTheme = localStorage.getItem("theme") || "light";
+
+      // --- Theme Handling ---
+      rootEl.dataset.theme = savedTheme;
+      themeBtn.textContent =
+        savedTheme === "dark" ? "☀️ Light Mode" : "🌙 Dark Mode";
+
+      themeBtn.onclick = () => {
+        const next = rootEl.dataset.theme === "dark" ? "light" : "dark";
+        rootEl.dataset.theme = next;
+        localStorage.setItem("theme", next);
+        themeBtn.textContent =
+          next === "dark" ? "☀️ Light Mode" : "🌙 Dark Mode";
+      };
+
+      // --- View Handling ---
+      const modeSelect = document.getElementById("viewer-mode");
+      const modeIndicator = document.getElementById("mode-indicator");
+
+      function updateModeIndicator(mode) {
+        if (mode === "xsd") {
+          modeIndicator.textContent = "📘 XSD Mode";
+          modeIndicator.className = "mode-badge xsd";
+        } else {
+          modeIndicator.textContent = "📂 YAML Mode";
+          modeIndicator.className = "mode-badge yaml";
+        }
+      }
+
+      const yamlViewer = document.getElementById("yaml-viewer");
+      const xsdViewer = document.getElementById("xsd-viewer");
+      const dropzone = document.getElementById("dropzone");
+
+      let currentMode = modeSelect.value;
+      let activeHandler =
+        currentMode === "xsd" ? initXsdViewer : initYamlViewer;
+
+      // ✅ update indicator right here
+      updateModeIndicator(currentMode);
+
+      // Initialize default mode
+      activeHandler(dropzone, yamlViewer, xsdViewer);
+
+      // --- Switch logic ---
+      modeSelect.addEventListener("change", () => {
+        currentMode = modeSelect.value;
+
+        // Hide all viewers
+        document.querySelectorAll(".viewer").forEach((v) => {
+          v.style.display = "none";
+        });
+
+        // 🧹 Clear previous viewer content so it doesn't linger
+        yamlViewer.innerHTML = "";
+        xsdViewer.innerHTML = "";
+
+        // Update mode indicator (this line was inside your forEach earlier)
+        updateModeIndicator(currentMode);
+
+        // Reinitialize selected viewer
+        if (currentMode === "xsd") {
+          xsdViewer.style.display = "block";
+          activeHandler = initXsdViewer;
+        } else {
+          yamlViewer.style.display = "block";
+          activeHandler = initYamlViewer;
+        }
+
+        // Replace dropzone safely
+        const oldDrop = document.getElementById("dropzone");
+        const newDrop = oldDrop.cloneNode(true);
+        oldDrop.parentNode.replaceChild(newDrop, oldDrop);
+
+        // ✅ Reassign our reference!
+        const updatedDropzone = document.getElementById("dropzone");
+
+        // Bind the correct handler to the newly created element
+        activeHandler(updatedDropzone, yamlViewer, xsdViewer);
+      });
+    </script>
+<<<<<<< HEAD
+    <script src="./js/viewTracker.js?v=20260222T102405Z"></script>
+=======
+    <script src="./js/viewTracker.js?v=20260222T102405Z"></script>
+>>>>>>> feature/ai-draft-openapi
+  </body>
+  <footer class="uss-footer">
+    <span class="uss-footer-hint">
+      Using this at work?
+      <a
+        href="https://github.com/mumblebaj/api-docs"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        ⭐ Star on GitHub
+      </a>
+      or share feedback.
+    </span>
+
+<<<<<<< HEAD
+    <script src="./js/buildVersion.js?v=20260222T102405Z" defer></script>
+=======
+    <script src="./js/buildVersion.js?v=20260222T102405Z" defer></script>
+>>>>>>> feature/ai-draft-openapi
+  </footer>
+</html>
