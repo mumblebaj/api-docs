@@ -1,4 +1,4 @@
-const TIMEOUT_MS = 25000;
+const TIMEOUT_MS = 30000;
 
 export class AiAuthError extends Error {
   constructor(message = "Authentication required") {

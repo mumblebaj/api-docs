@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.6.4]
+## [1.6.5]
 ### AI Gateway Improvements
 
 - Added authentication-aware AI client with typed AiAuthError
