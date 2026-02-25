@@ -63,7 +63,7 @@ export function initAiPanel() {
   });
 
   // Panel not present on some pages -> safely no-op
-  if (!promptEl || !modeEl || !genBtn || !applyBtn) return;
+  if (!promptEl || !modeEl || !genBtn) return;
 
   let latestYaml = "";
 
