@@ -62,7 +62,7 @@ export function initAiPanel() {
     closeAiResultModal();
   });
 
-  // Panel not present on some pages -> safely no-op
+  // Panel not present on some pages -> safely no-op.
   if (!promptEl || !modeEl || !genBtn) return;
 
   let latestYaml = "";

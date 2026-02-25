@@ -1,6 +1,6 @@
 import { AI } from "./aiConfig.js?v=20260225T151357Z";
 
-const TIMEOUT_MS = 30000;
+const TIMEOUT_MS = 25000;
 
 export class AiAuthError extends Error {
   constructor(message = "Sign-in required", meta = {}) {
