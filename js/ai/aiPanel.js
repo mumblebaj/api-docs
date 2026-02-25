@@ -56,7 +56,7 @@ export function initAiPanel() {
     if (!yaml) return;
     setEditorText(yaml);
     // collapse panel after successful apply (same as you already do)
-    document.getElementById("aiPanel") || document.querySelector(".ai-panel");
+    const panel = document.getElementById("aiPanel") || document.querySelector(".ai-panel");
     panel?.classList.add("ai-collapsed", "ai-gone");
     setAiBadgeVisible(false);
     showToast("✅ Applied AI draft to editor");
@@ -130,7 +130,7 @@ export function initAiPanel() {
     setEditorText(latestYaml);
     // close panel after successful apply
     const panel =
-      document.getElementById("aiPanel") || document.querySelector(".ai-panel");
+    document.getElementById("aiPanel") || document.querySelector(".ai-panel");
     panel?.classList.add("ai-collapsed", "ai-gone");
     applyBtn.disabled = true;
     setAiBadgeVisible(false);
