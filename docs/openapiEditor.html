@@ -109,8 +109,6 @@
           Tip: set a custom gateway URL via
           <code>localStorage.USS_AI_ENDPOINT</code>
         </div>
-
-        <pre id="aiResult" class="ai-result"></pre>
       </div>
     </div>
     <div class="editor-layout">
@@ -135,6 +133,41 @@
         <div class="schema-modal-actions">
           <button id="cancelSchemaExport" type="button">Cancel</button>
           <button id="confirmSchemaExport" type="button">Export</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI Result Modal -->
+    <div id="aiResultModal" class="modal hidden" aria-hidden="true">
+      <div class="modal-backdrop" data-close="true"></div>
+
+      <div
+        class="modal-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="aiResultTitle"
+      >
+        <div class="modal-header">
+          <h3 id="aiResultTitle">AI Draft Result</h3>
+          <button
+            id="aiResultClose"
+            class="icon-btn"
+            type="button"
+            title="Close"
+          >
+            ✕
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <pre id="aiResultPre" class="code-block"></pre>
+        </div>
+
+        <div class="modal-footer">
+          <button id="aiResultCopy" class="btn" type="button">Copy</button>
+          <button id="aiResultApply" class="btn primary" type="button" disabled>
+            Apply to editor
+          </button>
         </div>
       </div>
     </div>

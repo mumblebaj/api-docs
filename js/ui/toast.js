@@ -7,7 +7,12 @@ export function showToast(message, type = "success") {
 
   const toast = document.createElement("div");
   toast.className = `toast ${type}`;
-  toast.textContent = message;
+  
+  if (typeof message === "string") {
+    toast.textContent = message;
+  } else {
+    toast.appendChild(message);
+  }
 
   container.appendChild(toast);
 

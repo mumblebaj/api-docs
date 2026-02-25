@@ -716,3 +716,76 @@ button:disabled {
   margin-top: 10px;
   margin-bottom: 6px; /* prevents edge clipping */
 }
+
+/* ================================
+   AI Result Modal (Option A)
+   ================================ */
+
+.modal.hidden { display: none; }
+
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+}
+
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.modal-card {
+  position: relative;
+  width: min(1100px, calc(100vw - 32px));
+  height: min(82vh, 860px);
+  margin: 8vh auto;
+  background: var(--theme, #111);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.modal-header, .modal-footer {
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.modal-header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.modal-footer {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  justify-content: flex-end;
+}
+
+.modal-body {
+  flex: 1;
+  overflow: auto;
+  padding: 12px;
+}
+
+.code-block {
+  margin: 0;
+  white-space: pre;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.icon-btn {
+  margin-left: auto;
+  background: transparent;
+  border: 0;
+  color: inherit;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.btn { padding: 8px 10px; }
+.btn.primary { font-weight: 600; }
