@@ -1,26 +1,26 @@
 // openapiEditor.js — Created by mumblebaj
 // Updated to add AI files
 
-import { buildDocModel } from "./exporter/docModel.js?v=20260225T151357Z";
-import { filterDocModelForSchemas } from "./exporter/docModel.js?v=20260225T151357Z";
-import { exportMarkdown } from "./exporter/exportMarkdown.js?v=20260225T151357Z";
-import { downloadMarkdownFile } from "./exporter/downloadUtils.js?v=20260225T151357Z";
-import { exportConfluence } from "./exporter/exportConfluence.js?v=20260225T151357Z";
-import { showToast } from "./ui/toast.js?v=20260225T151357Z";
-import { initExportDropdown } from "./ui/dropdown.js?v=20260225T151357Z";
+import { buildDocModel } from "./exporter/docModel.js?v=20260225T151839Z";
+import { filterDocModelForSchemas } from "./exporter/docModel.js?v=20260225T151839Z";
+import { exportMarkdown } from "./exporter/exportMarkdown.js?v=20260225T151839Z";
+import { downloadMarkdownFile } from "./exporter/downloadUtils.js?v=20260225T151839Z";
+import { exportConfluence } from "./exporter/exportConfluence.js?v=20260225T151839Z";
+import { showToast } from "./ui/toast.js?v=20260225T151839Z";
+import { initExportDropdown } from "./ui/dropdown.js?v=20260225T151839Z";
 import {
   createSelectionState,
   applyUserSelection,
   applyUserDeselection,
   getFinalSelection,
   getDependencyCount,
-} from "./schemaExport/selectionUtils.js?v=20260225T151357Z";
-import { buildSchemaDependencyMap } from "./schemaExport/dependencyResolver.js?v=20260225T151357Z";
+} from "./schemaExport/selectionUtils.js?v=20260225T151839Z";
+import { buildSchemaDependencyMap } from "./schemaExport/dependencyResolver.js?v=20260225T151839Z";
 import { initSchemaExportModal } from "./schemaExport/schemaExportModal.js";
 // AI Imports
-import { bindEditor } from "./editor/editorApi.js?v=20260225T151357Z";
-import { initAiPanel } from "./ai/aiPanel.js?v=20260225T151357Z";
-import { initAiToggle } from "./ai/aiToggle.js?v=20260225T151357Z";
+import { bindEditor } from "./editor/editorApi.js?v=20260225T151839Z";
+import { initAiPanel } from "./ai/aiPanel.js?v=20260225T151839Z";
+import { initAiToggle } from "./ai/aiToggle.js?v=20260225T151839Z";
 
 // ensure a YAML global exists even if the library exports jsyaml
 window.YAML = window.YAML || window.jsyaml || {};
@@ -39,7 +39,7 @@ console.error = function (...args) {
   oldError.apply(console, args);
 };
 
-import defaultYamlTemplate from "./template.js?v=20260225T151357Z";
+import defaultYamlTemplate from "./template.js?v=20260225T151839Z";
 
 // Debounce helper (async-safe + immediate feedback)
 function debounce(fn, delay = 1200, statusEl) {
