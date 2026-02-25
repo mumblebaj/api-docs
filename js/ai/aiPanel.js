@@ -2,13 +2,13 @@
 // Fixes required for path resolution
 
 // js/ai/aiPanel.js
-import { draftOpenApi, AiAuthError } from "./aiClient.js?v=20260225T155216Z";
+import { draftOpenApi, AiAuthError } from "./aiClient.js?v=20260225T160152Z";
 import {
   getEditorText,
   setEditorText,
-} from "../editor/editorApi.js?v=20260225T155216Z";
-import { showToast } from "../ui/toast.js?v=20260225T155216Z";
-import { setAiBadgeVisible } from "./aiBadge.js?v=20260225T155216Z";
+} from "../editor/editorApi.js?v=20260225T160152Z";
+import { showToast } from "../ui/toast.js?v=20260225T160152Z";
+import { setAiBadgeVisible } from "./aiBadge.js?v=20260225T160152Z";
 
 export function initAiPanel() {
   const promptEl = document.getElementById("aiPrompt");
@@ -56,7 +56,8 @@ export function initAiPanel() {
     if (!yaml) return;
     setEditorText(yaml);
     // collapse panel after successful apply (same as you already do)
-    document.querySelector(".ai-panel")?.classList.add("ai-collapsed");
+    document.getElementById("aiPanel") || document.querySelector(".ai-panel");
+    panel?.classList.add("ai-collapsed", "ai-gone");
     setAiBadgeVisible(false);
     showToast("✅ Applied AI draft to editor");
     closeAiResultModal();
