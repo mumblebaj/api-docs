@@ -16,14 +16,14 @@ export function initAiPanel() {
   const genBtn = document.getElementById("aiGenerateBtn");
   const applyBtn = document.getElementById("aiApplyBtn");
   const settingsBtn = document.getElementById("aiSettingsBtn");
-    // AI Result Modal elements
+  // AI Result Modal elements
   const modal = document.getElementById("aiResultModal");
   const modalPre = document.getElementById("aiResultPre");
   const modalClose = document.getElementById("aiResultClose");
   const modalCopy = document.getElementById("aiResultCopy");
   const modalApply = document.getElementById("aiResultApply");
 
-    function openAiResultModal(yaml) {
+  function openAiResultModal(yaml) {
     if (!modal || !modalPre || !modalApply) return;
     modalPre.textContent = yaml || "";
     modalApply.disabled = !yaml;
@@ -37,7 +37,7 @@ export function initAiPanel() {
     modal.setAttribute("aria-hidden", "true");
   }
 
-    modalClose?.addEventListener("click", closeAiResultModal);
+  modalClose?.addEventListener("click", closeAiResultModal);
   modal?.addEventListener("click", (e) => {
     if (e.target?.dataset?.close === "true") closeAiResultModal();
   });
@@ -109,18 +109,17 @@ export function initAiPanel() {
     try {
       const { yaml } = await draftOpenApi({ prompt, mode, currentYaml });
       latestYaml = yaml.trim();
-      
+
       // applyBtn.disabled = !latestYaml;
       setAiBadgeVisible(!!latestYaml);
-      openAiResultModal(latestYaml)
+      openAiResultModal(latestYaml);
       showToast("✅ Draft generated");
     } catch (e) {
       if (e?.name === "AiAuthError") {
-        
         showAuthToast(!!e.isCorporate);
         return;
       }
-      
+
       showToast(`❌ AI Draft failed: ${e.message || e}`, "error");
     }
   });
@@ -129,8 +128,9 @@ export function initAiPanel() {
     if (!latestYaml) return;
     setEditorText(latestYaml);
     // close panel after successful apply
-    const panel = document.querySelector(".ai-panel");
-    panel?.classList.add("ai-collapsed");
+    const panel =
+      document.getElementById("aiPanel") || document.querySelector(".ai-panel");
+    panel?.classList.add("ai-collapsed", "ai-gone");
     applyBtn.disabled = true;
     setAiBadgeVisible(false);
     showToast("✅ Applied AI draft to editor");
