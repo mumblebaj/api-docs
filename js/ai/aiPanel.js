@@ -2,13 +2,13 @@
 // Fixes required for path resolution
 
 // js/ai/aiPanel.js
-import { draftOpenApi, AiAuthError } from "./aiClient.js?v=20260225T161002Z";
+import { draftOpenApi, AiAuthError } from "./aiClient.js?v=20260225T174829Z";
 import {
   getEditorText,
   setEditorText,
-} from "../editor/editorApi.js?v=20260225T161002Z";
-import { showToast } from "../ui/toast.js?v=20260225T161002Z";
-import { setAiBadgeVisible } from "./aiBadge.js?v=20260225T161002Z";
+} from "../editor/editorApi.js?v=20260225T174829Z";
+import { showToast } from "../ui/toast.js?v=20260225T174829Z";
+import { setAiBadgeVisible } from "./aiBadge.js?v=20260225T174829Z";
 
 export function initAiPanel() {
   const promptEl = document.getElementById("aiPrompt");
@@ -61,6 +61,7 @@ export function initAiPanel() {
     setAiBadgeVisible(false);
     showToast("✅ Applied AI draft to editor");
     closeAiResultModal();
+    promptEl.value = "";
   });
 
   // Panel not present on some pages -> safely no-op.
@@ -135,6 +136,7 @@ export function initAiPanel() {
     applyBtn.disabled = true;
     setAiBadgeVisible(false);
     showToast("✅ Applied AI draft to editor");
+    promptEl.value = "";
   });
 
   if (settingsBtn) {
