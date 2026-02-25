@@ -1,5 +1,12 @@
 const TIMEOUT_MS = 25000;
 
+export class AiAuthError extends Error {
+  constructor(message = "Authentication required") {
+    super(message);
+    this.name = "AiAuthError";
+  }
+}
+
 export async function draftOpenApi({ prompt, mode = "newDoc", currentYaml = "" }) {
   const endpoint = AI.getEndpoint();
 

@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.6.4]
+### AI Gateway Improvements
+
+- Added authentication-aware AI client with typed AiAuthError
+- Implemented request timeout via AbortController
+- Added /docs/ai-access documentation page
+- Improved sign-in UX with clickable toast
+- Conditional credential handling for corporate AI gateway mode
+- Strengthened CORS and authentication flow
+- Toast library updated to support Node content
+
 ## [1.6.3]
 ### Feature Release
 - Add LLM (Large Language Model) AI integration to Open API Editor
