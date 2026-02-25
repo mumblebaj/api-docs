@@ -56,7 +56,8 @@ export function initAiPanel() {
     if (!yaml) return;
     setEditorText(yaml);
     // collapse panel after successful apply (same as you already do)
-    document.querySelector(".ai-panel")?.classList.add("ai-collapsed");
+    document.getElementById("aiPanel") || document.querySelector(".ai-panel");
+    panel?.classList.add("ai-collapsed", "ai-gone");
     setAiBadgeVisible(false);
     showToast("✅ Applied AI draft to editor");
     closeAiResultModal();
