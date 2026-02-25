@@ -61,6 +61,7 @@ export function initAiPanel() {
     setAiBadgeVisible(false);
     showToast("✅ Applied AI draft to editor");
     closeAiResultModal();
+    promptEl.value = "";
   });
 
   // Panel not present on some pages -> safely no-op.
@@ -135,6 +136,7 @@ export function initAiPanel() {
     applyBtn.disabled = true;
     setAiBadgeVisible(false);
     showToast("✅ Applied AI draft to editor");
+    promptEl.value = "";
   });
 
   if (settingsBtn) {
