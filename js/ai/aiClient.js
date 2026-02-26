@@ -1,4 +1,4 @@
-import { AI } from "./aiConfig.js?v=20260225T174829Z";
+import { AI } from "./aiConfig.js?v=20260226T145722Z";
 
 const TIMEOUT_MS = 25000;
 
@@ -11,7 +11,11 @@ export class AiAuthError extends Error {
   }
 }
 
-export async function draftOpenApi({ prompt, mode = "newDoc", currentYaml = "" }) {
+export async function draftOpenApi({
+  prompt,
+  mode = "newDoc",
+  currentYaml = "",
+}) {
   const endpoint = AI.getEndpoint();
 
   const url = new URL(endpoint, window.location.href);
@@ -28,10 +32,28 @@ export async function draftOpenApi({ prompt, mode = "newDoc", currentYaml = "" }
       credentials: sameOrigin ? "include" : "omit",
       body: JSON.stringify({ prompt, mode, currentYaml }),
       signal: controller.signal,
+      redirect: "manual", // ✅ prevent following Access login redirect (which triggers CORS)
     });
+    // If not signed in, Cloudflare Access returns a redirect to its login domain.
+    // With redirect:"manual" the browser returns an opaque redirect instead of following it.
+    if (sameOrigin && res.type === "opaqueredirect") {
+      throw new AiAuthError("Sign-in required", {
+        isCorporate: false,
+        status: 401,
+      });
+    }
   } catch (err) {
     if (err?.name === "AbortError") {
-      throw new Error(`AI request timed out after ${Math.round(TIMEOUT_MS / 1000)}s. Please try again.`);
+      throw new Error(
+        `AI request timed out after ${Math.round(TIMEOUT_MS / 1000)}s. Please try again.`,
+      );
+    }
+    if (err instanceof TypeError) {
+      // Browser blocked the response (CORS/network/auth redirect edge cases)
+      throw new AiAuthError("Sign-in required", {
+        isCorporate: !sameOrigin,
+        status: 0,
+      });
     }
     throw err;
   } finally {
