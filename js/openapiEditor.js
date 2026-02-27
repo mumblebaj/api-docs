@@ -143,6 +143,22 @@ function assertServerVariablesShape(spec) {
   });
 }
 
+async function fetchJsonWithFallbacks(candidates) {
+  let lastErr = null;
+
+  for (const url of candidates) {
+    try {
+      const res = await fetch(url, { cache: "no-store" });
+      if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+      return await res.json();
+    } catch (err) {
+      lastErr = new Error(`Failed to fetch ${url}: ${err.message || err}`);
+    }
+  }
+
+  throw lastErr || new Error("Failed to fetch JSON from all candidates");
+}
+
 let __ajvValidate = null;
 
 async function getAjvValidate() {
@@ -175,9 +191,15 @@ async function getAjvValidate() {
     // strictKeywords doesn't exist in v6; v6 is looser by default
   });
 
-  const draft4Meta = await fetch("/api-docs/vendor/ajv/json-schema-draft-04.json").then(
-    (r) => r.json(),
-  );
+  const draft4Meta = await fetchJsonWithFallbacks([
+    "/vendor/ajv/json-schema-draft-04.json", // custom domain deployment
+    "/api-docs/vendor/ajv/json-schema-draft-04.json", // GitHub Pages deployment
+  ]);
+  // ajv.addMetaSchema(draft4Meta);
+
+  // const draft4Meta = await fetch("/api-docs/vendor/ajv/json-schema-draft-04.json").then(
+  //   (r) => r.json(),
+  // );
   ajv.addMetaSchema(draft4Meta);
 
   __ajvValidate = ajv.compile(oas30);
