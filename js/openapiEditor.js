@@ -1,5 +1,4 @@
 // openapiEditor.js — Created by mumblebaj
-// Validation Engine overhauled
 
 import { buildDocModel } from "./exporter/docModel.js?v=20260218T160835Z";
 import { filterDocModelForSchemas } from "./exporter/docModel.js?v=20260218T160835Z";
