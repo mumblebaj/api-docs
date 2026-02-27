@@ -1,25 +1,25 @@
 // openapiEditor.js — Created by mumblebaj
 
-import { buildDocModel } from "./exporter/docModel.js?v=20260227T145448Z";
-import { filterDocModelForSchemas } from "./exporter/docModel.js?v=20260227T145448Z";
-import { exportMarkdown } from "./exporter/exportMarkdown.js?v=20260227T145448Z";
-import { downloadMarkdownFile } from "./exporter/downloadUtils.js?v=20260227T145448Z";
-import { exportConfluence } from "./exporter/exportConfluence.js?v=20260227T145448Z";
-import { showToast } from "./ui/toast.js?v=20260227T145448Z";
-import { initExportDropdown } from "./ui/dropdown.js?v=20260227T145448Z";
+import { buildDocModel } from "./exporter/docModel.js?v=20260227T151016Z";
+import { filterDocModelForSchemas } from "./exporter/docModel.js?v=20260227T151016Z";
+import { exportMarkdown } from "./exporter/exportMarkdown.js?v=20260227T151016Z";
+import { downloadMarkdownFile } from "./exporter/downloadUtils.js?v=20260227T151016Z";
+import { exportConfluence } from "./exporter/exportConfluence.js?v=20260227T151016Z";
+import { showToast } from "./ui/toast.js?v=20260227T151016Z";
+import { initExportDropdown } from "./ui/dropdown.js?v=20260227T151016Z";
 import {
   createSelectionState,
   applyUserSelection,
   applyUserDeselection,
   getFinalSelection,
   getDependencyCount,
-} from "./schemaExport/selectionUtils.js?v=20260227T145448Z";
-import { buildSchemaDependencyMap } from "./schemaExport/dependencyResolver.js?v=20260227T145448Z";
+} from "./schemaExport/selectionUtils.js?v=20260227T151016Z";
+import { buildSchemaDependencyMap } from "./schemaExport/dependencyResolver.js?v=20260227T151016Z";
 import { initSchemaExportModal } from "./schemaExport/schemaExportModal.js";
 // AI Imports
-import { bindEditor } from "./editor/editorApi.js?v=20260227T145448Z";
-import { initAiPanel } from "./ai/aiPanel.js?v=20260227T145448Z";
-import { initAiToggle } from "./ai/aiToggle.js?v=20260227T145448Z";
+import { bindEditor } from "./editor/editorApi.js?v=20260227T151016Z";
+import { initAiPanel } from "./ai/aiPanel.js?v=20260227T151016Z";
+import { initAiToggle } from "./ai/aiToggle.js?v=20260227T151016Z";
 
 // ensure a YAML global exists even if the library exports jsyaml
 window.YAML = window.YAML || window.jsyaml || {};
@@ -38,7 +38,7 @@ console.error = function (...args) {
   oldError.apply(console, args);
 };
 
-import defaultYamlTemplate from "./template.js?v=20260227T145448Z";
+import defaultYamlTemplate from "./template.js?v=20260227T151016Z";
 
 // Debounce helper (async-safe + immediate feedback)
 function debounce(fn, delay = 1200, statusEl) {
@@ -143,6 +143,22 @@ function assertServerVariablesShape(spec) {
   });
 }
 
+async function fetchJsonWithFallbacks(candidates) {
+  let lastErr = null;
+
+  for (const url of candidates) {
+    try {
+      const res = await fetch(url, { cache: "no-store" });
+      if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+      return await res.json();
+    } catch (err) {
+      lastErr = new Error(`Failed to fetch ${url}: ${err.message || err}`);
+    }
+  }
+
+  throw lastErr || new Error("Failed to fetch JSON from all candidates");
+}
+
 let __ajvValidate = null;
 
 async function getAjvValidate() {
@@ -175,9 +191,15 @@ async function getAjvValidate() {
     // strictKeywords doesn't exist in v6; v6 is looser by default
   });
 
-  const draft4Meta = await fetch("/api-docs/vendor/ajv/json-schema-draft-04.json").then(
-    (r) => r.json(),
-  );
+  const draft4Meta = await fetchJsonWithFallbacks([
+    "/vendor/ajv/json-schema-draft-04.json", // custom domain deployment
+    "/api-docs/vendor/ajv/json-schema-draft-04.json", // GitHub Pages deployment
+  ]);
+  // ajv.addMetaSchema(draft4Meta);
+
+  // const draft4Meta = await fetch("/api-docs/vendor/ajv/json-schema-draft-04.json").then(
+  //   (r) => r.json(),
+  // );
   ajv.addMetaSchema(draft4Meta);
 
   __ajvValidate = ajv.compile(oas30);
