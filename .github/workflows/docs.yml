@@ -156,7 +156,7 @@ jobs:
       - name: Copy Vendor assests
         run: |
           mkdir -p public/vendor
-          rsync -a vendor/public/vendor/
+          rsync -a vendor/ public/vendor/
       
       # 14. Deploy to GitHub Pages
       - name: Deploy to GitHub Pages

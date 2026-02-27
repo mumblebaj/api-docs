@@ -1,4 +1,4 @@
-// openapiEditor.js — Refactored drop-in (module-based validation + preview)
+// openapiEditor.js
 
 import {
   buildDocModel,
