@@ -1,5 +1,27 @@
 # Changelog
 
+## [1.7.8]
+### OpenAPI Validation Refactor
+Split the monolithic openapiEditor into more manageable pieces.
+
+#### Refactor goals
+1. One source of truth for validation (schema + semantic + refs + warnings)
+2. Keep Monaco integration stable (AMD/RequireJS remains unchanged)
+3. Separate concerns:
+  - validation engine
+  - resource loading (ReDoc, JSON meta schema fetch)
+  - preview rendering
+  - UI feedback (status/toasts/markers)
+  - editor lifecycle
+
+This now ensures that `openapiEditor.js` remains as the "boot" script Monaco call and all other logic is moved into manageable modules paving the way to the next big migration
+
+#### Next migration step
+- Migrate from `OpenAPI 3.0` ro `OpenAPI 3.1`
+- Migrate from `Ajv Draft-04` to `Ajv v8`
+- Use `JSON Schema 2020-12`
+- Switch schema source to `OAS 3.1`
+
 ## [1.7.4]
 ## Validation Engine Overhaul
 ### 🔥 OpenAPI Validation Engine Rewritten
