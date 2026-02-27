@@ -152,13 +152,18 @@ jobs:
       - name: Copy CNAME
         run: cp docs/CNAME public/CNAME
 
-      # 13. Copy Vendor Files
+      # 13. Copy Vendor Redoc Files
       - name: Copy Vendor files
         run: |
           mkdir -p public/vendor/redoc
           cp vendor/redoc/redoc.standalone.min.js public/vendor/redoc/redoc.standalone.min.js
+      # 14. Copy Vendor ajv Files
+      - name: Copy Vendor files
+        run: |
+          mkdir -p public/vendor/ajv
+          cp vendor/ajv/json-schema-draft-04.js public/vendor/ajv/json-schema-draft-04.js
 
-      # 14. Deploy to GitHub Pages
+      # 15. Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
