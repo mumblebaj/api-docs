@@ -14,18 +14,19 @@ info:
 servers:
     - url: https://example-{environment}.com:{port}
       variables: 
-        default: dev
-        enum:
-          - dev
-          - int
-          - qa
-          - stress
-          - prod
-      port:
-        default: 123
-        enum:
-          - 123
-          - 1234
+        environment:
+          default: dev
+          enum:
+            - dev
+            - int
+            - qa
+            - stress
+            - prod
+        port:
+          default: "123"
+          enum:
+            - "123"
+            - "1234"
       description: Server Details
 security:
   - Authorization: []

@@ -1,5 +1,71 @@
 # Changelog
 
+## [1.7.4]
+## Validation Engine Overhaul
+### 🔥 OpenAPI Validation Engine Rewritten
+
+Universal Schema Studio now uses a fully deterministic, browser-native OpenAPI validation engine.
+
+This release replaces all legacy validation mechanisms and establishes a stable, spec-correct foundation for future features.
+
+### 🧠 What Changed
+#### ❌ Removed
+
+- SwaggerClient-based validation fallback
+- Experimental browser usage of swagger-parser
+- Regex-based $ref detection logic
+- Mixed validation responsibilities inside UI layer
+
+#### ✅ Introduced
+
+- Ajv v6 validation engine (Draft-04 compatible)
+- Official OpenAPI 3.0 schema validation
+- Locally vendored Draft-04 meta schema
+- Unified validateOpenApiSpec() pipeline
+- Structured validation result model (errors[], warnings[])
+- Cached compiled schema for performance
+
+#### 🎯 Validation Improvements
+
+- Full OpenAPI 3.0 schema compliance checks
+- Deterministic behavior across browsers
+- Proper Draft-04 meta-schema support
+- Clean separation of:
+  - YAML parsing
+  - Schema validation
+  - USS semantic validation
+  - Preview rendering
+- Preview rendering gated strictly on zero errors
+- Monaco markers with precise line-level highlighting
+
+#### 🛡️ Added Semantic Safeguards
+
+- Missing securitySchemes detection
+- Invalid server variable validation
+- Unresolved internal $ref detection
+- External $ref warnings (offline-safe policy)
+
+#### 🏗 Architectural Impact
+
+This refactor establishes:
+
+- A stable browser-only validation core
+- GitHub Pages compatibility without Node dependencies
+- A foundation for:
+  - Strict mode
+  - OpenAPI 3.1 support
+  - Advanced rule configuration
+  - Validation rule extensions
+
+#### 📌 Result
+
+USS validation is now:
+
+- Deterministic
+- Spec-correct
+- Extensible
+- Professional-grade
+
 ## [1.7.1]
 ### AI Gateway Improvements
 
