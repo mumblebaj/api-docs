@@ -3,20 +3,20 @@
 import {
   buildDocModel,
   filterDocModelForSchemas,
-} from "./exporter/docModel.js?v=20260228T130524Z";
-import { exportMarkdown } from "./exporter/exportMarkdown.js?v=20260228T130524Z";
-import { downloadMarkdownFile } from "./exporter/downloadUtils.js?v=20260228T130524Z";
-import { exportConfluence } from "./exporter/exportConfluence.js?v=20260228T130524Z";
+} from "./exporter/docModel.js?v=20260228T133848Z";
+import { exportMarkdown } from "./exporter/exportMarkdown.js?v=20260228T133848Z";
+import { downloadMarkdownFile } from "./exporter/downloadUtils.js?v=20260228T133848Z";
+import { exportConfluence } from "./exporter/exportConfluence.js?v=20260228T133848Z";
 
-import { showToast } from "./ui/toast.js?v=20260228T130524Z";
-import { initExportDropdown } from "./ui/dropdown.js?v=20260228T130524Z";
+import { showToast } from "./ui/toast.js?v=20260228T133848Z";
+import { initExportDropdown } from "./ui/dropdown.js?v=20260228T133848Z";
 
 import { initSchemaExportModal } from "./schemaExport/schemaExportModal.js";
 
 // AI Imports
-import { bindEditor } from "./editor/editorApi.js?v=20260228T130524Z";
-import { initAiPanel } from "./ai/aiPanel.js?v=20260228T130524Z";
-import { initAiToggle } from "./ai/aiToggle.js?v=20260228T130524Z";
+import { bindEditor } from "./editor/editorApi.js?v=20260228T133848Z";
+import { initAiPanel } from "./ai/aiPanel.js?v=20260228T133848Z";
+import { initAiToggle } from "./ai/aiToggle.js?v=20260228T133848Z";
 
 // ✅ New refactor module imports
 import { debounce } from "./utils/debounce.js";
@@ -25,7 +25,7 @@ import { getMarkersFromValidationResult } from "./openapi/markers.js";
 import { renderRedocPreview } from "./preview/redoc.js";
 // console.log("[USS] renderRedocPreview imported:", renderRedocPreview);
 
-import defaultYamlTemplate from "./template.js?v=20260228T130524Z";
+import defaultYamlTemplate from "./template.js?v=20260228T133848Z";
 
 // -------------------------------------------------------
 // YAML global shim (js-yaml vs YAML)

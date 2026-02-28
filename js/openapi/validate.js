@@ -52,12 +52,12 @@ function normalizeAjvError(e) {
 // We normalize URIs by stripping trailing ".html" before mapping/resolution.
 //
 const PINNED = {
-  "3.1": {
+  3.1: {
     schemaBase: "https://spec.openapis.org/oas/3.1/schema-base/2025-11-23.html",
     schema: "https://spec.openapis.org/oas/3.1/schema/2025-11-23.html",
     dialect: "https://spec.openapis.org/oas/3.1/dialect/2024-11-10.html",
   },
-  "3.2": {
+  3.2: {
     schemaBase: "https://spec.openapis.org/oas/3.2/schema-base/2025-11-23.html",
     schema: "https://spec.openapis.org/oas/3.2/schema/2025-11-23.html",
     // schema-base pins dialect const to 2025-09-17 (per your snippet)
@@ -69,7 +69,7 @@ const PINNED = {
 // Vendored local paths (recommended)
 // -------------------------
 const VENDORED = {
-  "3.1": {
+  3.1: {
     schemaBase: [
       "/vendor/openapi/oas-3.1.schema-base.json",
       "/api-docs/vendor/openapi/oas-3.1.schema-base.json",
@@ -83,7 +83,7 @@ const VENDORED = {
       "/api-docs/vendor/openapi/oas-3.1.dialect.json",
     ],
   },
-  "3.2": {
+  3.2: {
     schemaBase: [
       "/vendor/openapi/oas-3.2.schema-base.json",
       "/api-docs/vendor/openapi/oas-3.2.schema-base.json",
@@ -121,14 +121,11 @@ function buildUrlToVendoredMap(version) {
 async function getAjvValidateOas30() {
   if (__ajvValidate30) return __ajvValidate30;
 
-  const AjvMod = await import(
-    "https://esm.sh/ajv@6.12.6?bundle&target=es2022"
-  );
+  const AjvMod = await import("https://esm.sh/ajv@6.12.6?bundle&target=es2022");
   const Ajv = AjvMod.default ?? AjvMod;
 
-  const SchemasMod = await import(
-    "https://esm.sh/@apidevtools/openapi-schemas@2.1.0?bundle&target=es2022"
-  );
+  const SchemasMod =
+    await import("https://esm.sh/@apidevtools/openapi-schemas@2.1.0?bundle&target=es2022");
   const schemas = SchemasMod.default ?? SchemasMod;
 
   const oas30 =
@@ -147,6 +144,18 @@ async function getAjvValidateOas30() {
     schemaId: "auto",
     jsonPointers: true,
   });
+
+  function withTimeout(promise, ms, label) {
+    return Promise.race([
+      promise,
+      new Promise((_, reject) =>
+        setTimeout(
+          () => reject(new Error(`${label} timed out after ${ms}ms`)),
+          ms,
+        ),
+      ),
+    ]);
+  }
 
   const draft4Meta = await fetchJsonWithFallbacks([
     "/vendor/ajv/json-schema-draft-04.json",
@@ -208,8 +217,14 @@ async function buildAjv8ValidatorFor(version) {
     },
   });
 
+  return withTimeout(
+    ajv.compileAsync(schemaBase),
+    8000,
+    `Ajv compileAsync(${version})`,
+  );
+
   // compileAsync resolves $refs via loadSchema
-  return ajv.compileAsync(schemaBase);
+  // return ajv.compileAsync(schemaBase);
 }
 
 async function getAjvValidateOas31() {
@@ -304,10 +319,10 @@ function runRefChecks(spec, result, options) {
       severity: "warning",
       message: offline
         ? `External $ref(s) present: ${externalRefs.join(
-            ", "
+            ", ",
           )} — offline mode: not fetched.`
         : `External $ref(s) present: ${externalRefs.join(
-            ", "
+            ", ",
           )}. Browser fetch may fail due to CORS.`,
       refs: externalRefs,
     });
@@ -334,7 +349,7 @@ export async function validateOpenApiSpec(spec, options = {}) {
 
   if (strict && result.errors.length) {
     const agg = new Error(
-      `[OpenAPI validation failed] ${result.errors.length} error(s).`
+      `[OpenAPI validation failed] ${result.errors.length} error(s).`,
     );
     agg.validationResult = result;
     throw agg;
