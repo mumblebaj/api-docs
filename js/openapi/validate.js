@@ -338,19 +338,173 @@ function runRefChecks(spec, result, options) {
 // Public API — preserved contract
 // -------------------------
 export async function validateOpenApiSpec(spec, options = {}) {
-  const { strict = false } = options;
+  const { strict = false, offline = true } = options;
 
-  const version = detectOasMajorMinor(spec);
   const result = { errors: [], warnings: [] };
 
-  // 1) Schema validation
-  await validateAgainstSchema(spec, version, result);
+  const openapi = typeof spec?.openapi === "string" ? spec.openapi.trim() : "";
+  const is30 = openapi.startsWith("3.0.");
+  const is31 = openapi.startsWith("3.1.");
+  const is32 = openapi.startsWith("3.2.");
 
-  // 2) Semantic checks
-  runSemanticChecks(spec, result, version);
+  // -------------------------------------------------------
+  // 0) Version routing
+  // -------------------------------------------------------
+  if (!openapi) {
+    result.errors.push({
+      code: "MISSING_OPENAPI_VERSION",
+      message: `Missing required 'openapi' field (expected '3.0.x' or '3.1.x').`,
+      path: "/openapi",
+    });
+  } else if (is32) {
+    // ✅ Remove 3.2 entirely for now
+    result.errors.push({
+      code: "UNSUPPORTED_OPENAPI_VERSION",
+      message:
+        "OpenAPI 3.2.x is not supported in USS yet. Please use OpenAPI 3.1.x or 3.0.x.",
+      path: "/openapi",
+    });
+  } else if (!is30 && !is31) {
+    result.errors.push({
+      code: "UNSUPPORTED_OPENAPI_VERSION",
+      message: `Unsupported OpenAPI version '${openapi}'. USS supports 3.0.x and 3.1.x.`,
+      path: "/openapi",
+    });
+  }
 
-  // 3) Ref checks
-  runRefChecks(spec, result, options);
+  // -------------------------------------------------------
+  // 1) Schema validation (ONLY for 3.0.x)
+  // -------------------------------------------------------
+  if (is30) {
+    try {
+      const validate = await getAjvValidate();
+      const ok = validate(spec);
+
+      if (!ok && validate.errors?.length) {
+        for (const e of validate.errors) {
+          result.errors.push({
+            code: e.keyword || "AJV_ERROR",
+            message: e.message || "Schema validation error",
+            path: e.instancePath || "/",
+            details: e,
+          });
+        }
+      }
+    } catch (err) {
+      result.errors.push({
+        code: "SCHEMA_VALIDATOR_FAILED",
+        message: err.message || String(err),
+      });
+    }
+  }
+
+  // -------------------------------------------------------
+  // 2) Best-effort fast validation for 3.1.x (no AJV meta-schema)
+  // -------------------------------------------------------
+  if (is31) {
+    // Basic required structure checks (fast + high-signal)
+    if (!spec || typeof spec !== "object") {
+      result.errors.push({
+        code: "INVALID_DOCUMENT",
+        message: "OpenAPI document must be an object.",
+        path: "/",
+      });
+    } else {
+      if (!spec.info || typeof spec.info !== "object") {
+        result.errors.push({
+          code: "MISSING_INFO",
+          message: "Missing required object: info",
+          path: "/info",
+        });
+      } else {
+        if (!spec.info.title) {
+          result.errors.push({
+            code: "MISSING_INFO_TITLE",
+            message: "Missing required field: info.title",
+            path: "/info/title",
+          });
+        }
+        if (!spec.info.version) {
+          result.errors.push({
+            code: "MISSING_INFO_VERSION",
+            message: "Missing required field: info.version",
+            path: "/info/version",
+          });
+        }
+      }
+
+      if (spec.paths == null || typeof spec.paths !== "object") {
+        result.errors.push({
+          code: "MISSING_PATHS",
+          message: "Missing required object: paths",
+          path: "/paths",
+        });
+      }
+    }
+
+    // Tell the user what’s going on (keeps UX honest)
+    result.warnings.push({
+      code: "OAS31_FAST_VALIDATION",
+      severity: "warning",
+      message:
+        "OpenAPI 3.1 validation is running in fast mode (semantic + ref checks). Full 3.1 meta-schema validation is disabled for performance in the browser.",
+      path: "/openapi",
+    });
+  }
+
+  // -------------------------------------------------------
+  // 3) USS semantic checks (apply to 3.0 + 3.1)
+  // -------------------------------------------------------
+  // Only run if the version is supported enough to inspect shape
+  if (is30 || is31) {
+    try {
+      assertSecuritySchemesDefined(spec);
+    } catch (err) {
+      result.errors.push({
+        code: "MISSING_SECURITY_SCHEMES",
+        message: err.message,
+        path: "/security",
+      });
+    }
+
+    try {
+      assertServerVariablesShape(spec);
+    } catch (err) {
+      result.errors.push({
+        code: "INVALID_SERVER_VARIABLES",
+        message: err.message,
+        path: "/servers",
+      });
+    }
+
+    // 4) Unresolved internal refs
+    const unresolvedInternal = collectUnresolvedInternalRefs(spec);
+    for (const ref of unresolvedInternal) {
+      result.errors.push({
+        code: "UNRESOLVED_INTERNAL_REF",
+        message: `Unresolved internal $ref: ${ref}`,
+        ref,
+        path: "/",
+      });
+    }
+
+    // 5) External refs policy
+    const externalRefs = collectExternalRefs(spec);
+    if (externalRefs.length) {
+      result.warnings.push({
+        code: offline ? "EXTERNAL_REFS_OFFLINE" : "EXTERNAL_REFS",
+        severity: "warning",
+        message: offline
+          ? `External $ref(s) present: ${externalRefs.join(
+              ", ",
+            )} — offline mode: not fetched.`
+          : `External $ref(s) present: ${externalRefs.join(
+              ", ",
+            )}. Browser fetch may fail due to CORS.`,
+        refs: externalRefs,
+      });
+    }
+  }
 
   if (strict && result.errors.length) {
     const agg = new Error(
