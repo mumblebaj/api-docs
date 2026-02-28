@@ -1,9 +1,25 @@
 # Changelog
 
+## [1.9.0]
+### Add local validation for OpenAPI 3.1.x
+Exprienced a compile issue with the latest libraries for v3.1.x and 3.2.x. Had to remove the OpenAPI validations as it eats too much memory taking away from the snappy USS workflow.
+
+Polishing the validations for 3.1.x local.
+
+<details>
+
+<summary>[1.8.0] Add Support for OpenAPI v3.1 and v3.2</summary>
+
 ## [1.8.0]
 ### Add Support for OpenAPI v3.1 and v3.2
 - Added support for OpenAPI v3.1 and OpenApi v3.2
 - Vendored the required validations and schemas as well as dialects
+
+</details>
+
+<details>
+
+<sumary>[1.7.8] OpenAPI Validation Refactor</summary>
 
 ## [1.7.8]
 ### OpenAPI Validation Refactor
@@ -26,6 +42,12 @@ This now ensures that `openapiEditor.js` remains as the "boot" script Monaco cal
 - Migrate from `Ajv Draft-04` to `Ajv v8`
 - Use `JSON Schema 2020-12`
 - Switch schema source to `OAS 3.1`
+
+</details>
+
+<details>
+
+<summary>[1.7.4] Validation Engine Overhaul </summary>
 
 ## [1.7.4]
 ## Validation Engine Overhaul
@@ -93,6 +115,12 @@ USS validation is now:
 - Extensible
 - Professional-grade
 
+</details>
+
+<details>
+
+<summary>[1.7.1] AI Gateway Improvements</summary>
+
 ## [1.7.1]
 ### AI Gateway Improvements
 
@@ -103,6 +131,12 @@ USS validation is now:
 - Conditional credential handling for corporate AI gateway mode
 - Strengthened CORS and authentication flow
 - Toast library updated to support Node content
+
+</details>
+
+<details>
+
+<summary>[1.6.3] Feature Release - Add LLM (Large Language Model) AI integration to Open API Editor</summary>
 
 ## [1.6.3]
 ### Feature Release
@@ -123,6 +157,12 @@ USS validation is now:
   - This looks like a general question. Please describe an API you want to generate (endpoints/routes, request/response fields, headers, auth).
   - Prompt does not mention API design concepts (endpoints, request/response, schemas, headers, auth).
 - Caters for corporates to provide their own AI gateways.
+
+</details>
+
+<details>
+
+<summary>All previous releases</summary>
 
 ## [v1.5.2] - 2026-02-18
 ### Enhancements
@@ -192,4 +232,6 @@ Refactored via multi-pass extraction to avoid regressions.
 ### 🏷️ Notes
 This release marks the **first stable UI version** of the OpenAPI Editor with fully integrated Monaco + ReDoc theming.  
 Future iterations may include synchronized light/dark switching for ReDoc and subtle hover animations for schema elements.
+
+</details>
 
