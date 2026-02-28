@@ -103,13 +103,7 @@ function waitForRedocGlobal(timeoutMs = 2000) {
 
 export async function renderRedocPreview(spec, parentEl) {
   const v = String(spec?.openapi || "").trim();
-  const is32 = v.startsWith("3.2");
-
-  // ReDoc (2.1.3) does not support OAS 3.2.x
-  // Strategy:
-  //  - Default: disable preview for 3.2 with a friendly message
-  //  - Optional: best-effort preview by coercing openapi: 3.1.0 (commented below)
-  if (is32) {
+  if (v.startsWith("3.2")) {
     parentEl.innerHTML = `
       <div style="padding:12px; border:1px solid rgba(255,255,255,.12); border-radius:10px;">
         <div style="font-weight:600; margin-bottom:6px;">Preview unavailable for OpenAPI ${v}</div>
