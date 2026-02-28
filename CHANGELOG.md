@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.8.0]
+### Add Support for OpenAPI v3.1 and v3.2
+- Added support for OpenAPI v3.1 and OpenApi v3.2
+- Vendored the required validations and schemas as well as dialects
+
 ## [1.7.8]
 ### OpenAPI Validation Refactor
 Split the monolithic openapiEditor into more manageable pieces.
