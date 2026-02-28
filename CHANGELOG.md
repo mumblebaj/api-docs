@@ -19,7 +19,7 @@ Polishing the validations for 3.1.x local.
 
 <details>
 
-<sumary>[1.7.8] OpenAPI Validation Refactor</summary>
+<summary>[1.7.8] OpenAPI Validation Refactor</summary>
 
 ## [1.7.8]
 ### OpenAPI Validation Refactor
