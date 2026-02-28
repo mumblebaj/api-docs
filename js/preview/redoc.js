@@ -102,6 +102,31 @@ function waitForRedocGlobal(timeoutMs = 2000) {
 }
 
 export async function renderRedocPreview(spec, parentEl) {
+  const v = String(spec?.openapi || "").trim();
+  const is32 = v.startsWith("3.2");
+
+  // ReDoc (2.1.3) does not support OAS 3.2.x
+  // Strategy:
+  //  - Default: disable preview for 3.2 with a friendly message
+  //  - Optional: best-effort preview by coercing openapi: 3.1.0 (commented below)
+  if (is32) {
+    parentEl.innerHTML = `
+      <div style="padding:12px; border:1px solid rgba(255,255,255,.12); border-radius:10px;">
+        <div style="font-weight:600; margin-bottom:6px;">Preview unavailable for OpenAPI ${v}</div>
+        <div style="opacity:.85; line-height:1.4;">
+          Your document validates, but ReDoc does not support OpenAPI 3.2 yet.
+          Switch to <code>openapi: 3.1.0</code> for preview, or export and view in a different renderer.
+        </div>
+      </div>
+    `;
+    return;
+
+    // --- Optional best-effort preview (uncomment if you want it) ---
+    // const coerced = structuredClone(spec);
+    // coerced.openapi = "3.1.0";
+    // spec = coerced;
+  }
+
   await ensureReDocLoaded();
 
   const newContainer = document.createElement("div");
@@ -122,7 +147,7 @@ export async function renderRedocPreview(spec, parentEl) {
       newContainer,
     );
 
-    // ✅ cleanup old containers (FIXED spread operator)
+    // cleanup old containers
     setTimeout(() => {
       [...parentEl.children].forEach((child) => {
         if (child !== newContainer) parentEl.removeChild(child);

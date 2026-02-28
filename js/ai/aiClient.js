@@ -1,4 +1,4 @@
-import { AI } from "./aiConfig.js?v=20260228T162240Z";
+import { AI } from "./aiConfig.js?v=20260228T182737Z";
 
 const TIMEOUT_MS = 25000;
 
