@@ -377,7 +377,7 @@ export async function validateOpenApiSpec(spec, options = {}) {
   // -------------------------------------------------------
   if (is30) {
     try {
-      const validate = await getAjvValidate();
+      const validate = await getAjvValidateOas30();
       const ok = validate(spec);
 
       if (!ok && validate.errors?.length) {
