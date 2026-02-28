@@ -190,6 +190,8 @@ async function buildAjv8ValidatorFor(version) {
     allErrors: true,
     strict: false, // Phase 1: don't break users; Phase 3 can enable strict mode
     messages: true,
+    meta: false,
+    validateSchema: false,
     loadSchema: async (uri) => {
       const normalized = stripHtml(uri);
 
