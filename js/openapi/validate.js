@@ -145,6 +145,16 @@ async function getAjvValidateOas30() {
     jsonPointers: true,
   });
 
+  const draft4Meta = await fetchJsonWithFallbacks([
+    "/vendor/ajv/json-schema-draft-04.json",
+    "/api-docs/vendor/ajv/json-schema-draft-04.json",
+  ]);
+  ajv.addMetaSchema(draft4Meta);
+
+  __ajvValidate30 = ajv.compile(oas30);
+  return __ajvValidate30;
+}
+
   function withTimeout(promise, ms, label) {
     return Promise.race([
       promise,
@@ -156,16 +166,6 @@ async function getAjvValidateOas30() {
       ),
     ]);
   }
-
-  const draft4Meta = await fetchJsonWithFallbacks([
-    "/vendor/ajv/json-schema-draft-04.json",
-    "/api-docs/vendor/ajv/json-schema-draft-04.json",
-  ]);
-  ajv.addMetaSchema(draft4Meta);
-
-  __ajvValidate30 = ajv.compile(oas30);
-  return __ajvValidate30;
-}
 
 // -------------------------
 // OpenAPI 3.1 / 3.2 validators (Ajv v8) — pinned schema-base + loadSchema
