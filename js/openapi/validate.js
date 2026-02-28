@@ -155,24 +155,27 @@ async function getAjvValidateOas30() {
   return __ajvValidate30;
 }
 
-  function withTimeout(promise, ms, label) {
-    return Promise.race([
-      promise,
-      new Promise((_, reject) =>
-        setTimeout(
-          () => reject(new Error(`${label} timed out after ${ms}ms`)),
-          ms,
-        ),
+function withTimeout(promise, ms, label) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) =>
+      setTimeout(
+        () => reject(new Error(`${label} timed out after ${ms}ms`)),
+        ms,
       ),
-    ]);
-  }
+    ),
+  ]);
+}
 
 // -------------------------
 // OpenAPI 3.1 / 3.2 validators (Ajv v8) — pinned schema-base + loadSchema
 // -------------------------
 async function buildAjv8ValidatorFor(version) {
-  const AjvMod = await import("https://esm.sh/ajv@8?bundle&target=es2022");
-  const Ajv = AjvMod.default ?? AjvMod;
+  const Ajv = window.Ajv2020;
+  if (!Ajv)
+    throw new Error(
+      "Ajv2020 not loaded. Ensure /vendor/ajv8/ajv2020.iife.min.js is included.",
+    );
 
   const urlToVendored = buildUrlToVendoredMap(version);
   const refCache = new Map();
