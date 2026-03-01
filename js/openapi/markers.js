@@ -18,7 +18,12 @@ function findYamlLocationForJsonPointer(yamlText, pointer) {
   return null;
 }
 
-export function getMarkersFromValidationResult(validationResult, yamlText, model, monaco) {
+export function getMarkersFromValidationResult(
+  validationResult,
+  yamlText,
+  model,
+  monaco,
+) {
   const markers = [];
 
   for (const e of [
@@ -36,19 +41,30 @@ export function getMarkersFromValidationResult(validationResult, yamlText, model
       const tokenMatch = yamlText.indexOf(
         e.ref && typeof e.ref === "string"
           ? e.ref
-          : String(e.message || "").split(/\s+/).slice(0, 5).join(" "),
+          : String(e.message || "")
+              .split(/\s+/)
+              .slice(0, 5)
+              .join(" "),
       );
       startIndex = tokenMatch >= 0 ? tokenMatch : null;
     }
 
     const severity =
-      e.severity === "warning"
-        ? monaco.MarkerSeverity.Warning
-        : monaco.MarkerSeverity.Error;
+      e.severity === "error"
+        ? monaco.MarkerSeverity.Error
+        : e.severity === "warning"
+          ? monaco.MarkerSeverity.Warning
+          : monaco.MarkerSeverity.Info;
 
     if (startIndex !== null && startIndex >= 0) {
       const startPos = model.getPositionAt(startIndex);
-      const endPos = model.getPositionAt(startIndex + 1 + (e.ref ? String(e.ref).length : 1));
+      const tokenLen = e.ref
+        ? String(e.ref).length
+        : pointer
+          ? String(pointer).length
+          : 1;
+
+      const endPos = model.getPositionAt(startIndex + 1 + tokenLen);
       markers.push({
         startLineNumber: startPos.lineNumber,
         startColumn: startPos.column,
