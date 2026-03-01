@@ -103,6 +103,15 @@ function validateParametersArray({
   allowRef = true,
   trackDuplicates = true,
 }) {
+  // Missing/undefined/null parameters is VALID in OAS
+  if (params == null) {
+    return {
+      byKey: new Map(),
+      entries: [],
+    };
+  }
+
+  // If present, it must be an array
   if (!Array.isArray(params)) {
     pushErr(
       result,
