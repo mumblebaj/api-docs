@@ -1,10 +1,21 @@
 # Changelog
 
+## [1.9.1]
+### Split OpenAPI v3.1x validations
+- Split validation for OpenAPI v3.1.x intoit's own validation spec
+- Add more validations to make it a little more robust.
+
+<details>
+
+<summary>[1.9.0] Add local validation for OpenAPI 3.1.x</summary>
+
 ## [1.9.0]
 ### Add local validation for OpenAPI 3.1.x
 Exprienced a compile issue with the latest libraries for v3.1.x and 3.2.x. Had to remove the OpenAPI validations as it eats too much memory taking away from the snappy USS workflow.
 
 Polishing the validations for 3.1.x local.
+
+</details>
 
 <details>
 

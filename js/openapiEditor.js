@@ -283,11 +283,24 @@ function initMonaco() {
           return; // no preview
         }
 
-        if (validationResult.warnings?.length) {
-          statusEl.textContent = `⚠️ Valid with ${validationResult.warnings.length} warning(s)`;
+        const warnings = validationResult.warnings || [];
+        const warningCount = warnings.filter(
+          (w) => w?.severity !== "info",
+        ).length;
+        const infoCount = warnings.filter((w) => w?.severity === "info").length;
+
+        if (warningCount > 0) {
+          statusEl.textContent =
+            infoCount > 0
+              ? `⚠️ Valid with ${warningCount} warning(s) (+${infoCount} info)`
+              : `⚠️ Valid with ${warningCount} warning(s)`;
           statusEl.style.color = "orange";
         } else {
-          statusEl.textContent = "✅ Valid OpenAPI document";
+          // Only info (or no warnings at all) -> treat as valid
+          statusEl.textContent =
+            infoCount > 0
+              ? `✅ Valid OpenAPI document (+${infoCount} info)`
+              : "✅ Valid OpenAPI document";
           statusEl.style.color = "#0f0";
         }
 
@@ -374,20 +387,42 @@ function initMonaco() {
         return;
       }
 
-      if (validationResult.warnings?.length) {
-        statusEl.textContent = `⚠️ Valid with ${validationResult.warnings.length} warning(s)`;
+      const warnings = validationResult.warnings || [];
+      const warningCount = warnings.filter(
+        (w) => w?.severity !== "info",
+      ).length;
+      const infoCount = warnings.filter((w) => w?.severity === "info").length;
+
+      if (warningCount > 0) {
+        statusEl.textContent =
+          infoCount > 0
+            ? `⚠️ Valid with ${warningCount} warning(s) (+${infoCount} info)`
+            : `⚠️ Valid with ${warningCount} warning(s)`;
         statusEl.style.color = "orange";
 
         showToast(
-          `⚠️ Validation warnings:\n\n${validationResult.warnings
+          `⚠️ Validation warnings:\n\n${warnings
+            .filter((w) => w?.severity !== "info")
             .map((w) => `• ${w.message}`)
             .join("\n")}`,
         );
-        return;
-      }
+      } else {
+        statusEl.textContent =
+          infoCount > 0
+            ? `✅ Valid OpenAPI document (+${infoCount} info)`
+            : "✅ Valid OpenAPI document";
+        statusEl.style.color = "#00ff7f";
 
-      statusEl.textContent = "✅ Valid OpenAPI document";
-      statusEl.style.color = "#00ff7f";
+        if (infoCount > 0) {
+          showToast(
+            `ℹ️ Validation info:\n\n${warnings
+              .filter((w) => w?.severity === "info")
+              .map((w) => `• ${w.message}`)
+              .join("\n")}`,
+          );
+        }
+      }
+      // NOTE: Do not return here—manual validation should not block preview on warnings/info.
     } catch (err) {
       const msg = err?.message || "Validation failed";
       statusEl.textContent = "❌ " + msg;
