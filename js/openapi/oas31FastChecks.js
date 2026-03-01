@@ -375,20 +375,6 @@ function walkForRefHygiene(
             ptr,
           );
         }
-
-        // components target exists warning
-        // if (isComponentRef(node.$ref)) {
-        //   const target = resolveInternalPointer(spec, node.$ref);
-        //   if (!seenUnresolvedComponentRefs.has(node.$ref)) {
-        //     seenUnresolvedComponentRefs.add(node.$ref);
-        //     pushWarn(
-        //       result,
-        //       "UNRESOLVED_COMPONENT_REF",
-        //       `Component $ref target does not exist: ${node.$ref}`,
-        //       refPtr,
-        //     );
-        //   }
-        // }
       }
     }
 
@@ -635,14 +621,6 @@ export function runOas31FastChecks(spec, result) {
                     `${mtPtr}/schema`,
                   );
                 }
-                if (isObj(media.schema) && hasRefSiblings(media.schema)) {
-                  pushWarn(
-                    result,
-                    "REF_WITH_SIBLINGS",
-                    "Schema objects with $ref should not have sibling keywords (best practice).",
-                    `${mtPtr}/schema`,
-                  );
-                }
               }
             }
           }
@@ -708,9 +686,6 @@ export function runOas31FastChecks(spec, result) {
           );
         }
       }
-
-      // NOTE: Removed duplicate operation.parameters validation block here.
-      // enforcePathParameters() already validates op.parameters via validateParametersArray().
     }
   }
 
