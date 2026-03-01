@@ -346,7 +346,12 @@ function enforcePathParameters({
   }
 }
 
-function walkForRefHygiene(node, ptr, result, spec) {
+function walkForRefHygiene(
+  node,
+  ptr,
+  result,
+  spec,
+) {
   if (!isObj(node) && !Array.isArray(node)) return;
 
   if (isObj(node)) {
@@ -372,17 +377,18 @@ function walkForRefHygiene(node, ptr, result, spec) {
         }
 
         // components target exists warning
-        if (isComponentRef(node.$ref)) {
-          const target = resolveInternalPointer(spec, node.$ref);
-          if (target === undefined) {
-            pushWarn(
-              result,
-              "UNRESOLVED_COMPONENT_REF",
-              `Component $ref target does not exist: ${node.$ref}`,
-              refPtr,
-            );
-          }
-        }
+        // if (isComponentRef(node.$ref)) {
+        //   const target = resolveInternalPointer(spec, node.$ref);
+        //   if (!seenUnresolvedComponentRefs.has(node.$ref)) {
+        //     seenUnresolvedComponentRefs.add(node.$ref);
+        //     pushWarn(
+        //       result,
+        //       "UNRESOLVED_COMPONENT_REF",
+        //       `Component $ref target does not exist: ${node.$ref}`,
+        //       refPtr,
+        //     );
+        //   }
+        // }
       }
     }
 
