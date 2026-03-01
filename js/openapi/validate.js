@@ -292,18 +292,18 @@ function runSemanticChecks(spec, result, version) {
 
   // Phase 1: lightweight nullable detection for 3.1+
   // (Phase 2: walk schemas and emit precise pointers)
-  if (version !== "3.0") {
-    const raw = JSON.stringify(spec);
-    if (raw.includes('"nullable":true') || raw.includes('"nullable": true')) {
-      result.warnings.push({
-        code: "DEPRECATED_NULLABLE",
-        severity: "warning",
-        message:
-          "OpenAPI 3.1+ deprecates 'nullable'. Prefer JSON Schema unions, e.g. type: ['string','null'].",
-        path: "/",
-      });
-    }
-  }
+  // if (version !== "3.0") {
+  //   const raw = JSON.stringify(spec);
+  //   if (raw.includes('"nullable":true') || raw.includes('"nullable": true')) {
+  //     result.warnings.push({
+  //       code: "DEPRECATED_NULLABLE",
+  //       severity: "warning",
+  //       message:
+  //         "OpenAPI 3.1+ deprecates 'nullable'. Prefer JSON Schema unions, e.g. type: ['string','null'].",
+  //       path: "/",
+  //     });
+  //   }
+  // }
 }
 
 function runRefChecks(spec, result, options) {
