@@ -613,3 +613,109 @@ export function buildDocModel(spec) {
 
   return model;
 }
+
+// ------------------------------------------------------------
+// Export: Filter doc model by selected schema names
+// Compatible with both:
+// - old model: ep.requestSchema (string) + ep.responseSchemas (array)
+// - new model: ep.requestSchemas (array) + ep.responseSchemas (array) + ep.parametersSchemas (array)
+// ------------------------------------------------------------
+export function filterDocModelForSchemas(model, selectedNames) {
+  const selected = new Set(selectedNames || []);
+
+  const stripRef = (ref) => {
+    if (!ref || typeof ref !== "string") return ref;
+    return ref.replace(/^#\/components\/schemas\//, "");
+  };
+
+  // ----------------------------
+  // Filter Schemas / Enums
+  // ----------------------------
+  const filteredSchemas = (model.schemas || []).filter((s) => selected.has(s.name));
+  const filteredEnums = (model.enums || []).filter((e) => selected.has(e.name));
+
+  // ----------------------------
+  // Filter Endpoints that reference selected schemas
+  // ----------------------------
+  const filteredEndpoints = (model.endpoints || []).filter((ep) => {
+    // OLD: requestSchema (single)
+    if (ep.requestSchema) {
+      const n = stripRef(ep.requestSchema);
+      if (selected.has(n)) return true;
+    }
+
+    // NEW: requestSchemas (array)
+    if (Array.isArray(ep.requestSchemas)) {
+      for (const r of ep.requestSchemas) {
+        const n = stripRef(r);
+        if (selected.has(n)) return true;
+      }
+    }
+
+    // OLD/NEW: responseSchemas (array)
+    if (Array.isArray(ep.responseSchemas)) {
+      for (const r of ep.responseSchemas) {
+        const n = stripRef(r);
+        if (selected.has(n)) return true;
+      }
+    }
+
+    // NEW: parametersSchemas (array)
+    if (Array.isArray(ep.parametersSchemas)) {
+      for (const p of ep.parametersSchemas) {
+        const n = stripRef(p);
+        if (selected.has(n)) return true;
+      }
+    }
+
+    return false;
+  });
+
+  // ----------------------------
+  // Build filtered model
+  // ----------------------------
+  const filtered = {
+    ...model,
+    endpoints: filteredEndpoints,
+    schemas: filteredSchemas,
+    enums: filteredEnums,
+    meta: { ...(model.meta || {}) },
+  };
+
+  // ----------------------------
+  // Rebuild overview (keep other counters if present)
+  // ----------------------------
+  filtered.overview = {
+    ...(model.overview || {}),
+    totalSchemas: filteredSchemas.length,
+    totalEndpoints: filteredEndpoints.length,
+    totalEnums: filteredEnums.length,
+  };
+
+  // ----------------------------
+  // Rebuild ToC if you use it
+  // ----------------------------
+  if (model.toc && model.toc.sections) {
+    filtered.toc = {
+      sections: [
+        { title: "Overview" },
+        {
+          title: "Endpoints",
+          children: filteredEndpoints.map((ep) => ({
+            title: `${String(ep.method || "").toUpperCase()} ${ep.path || ""}`,
+          })),
+        },
+        {
+          title: "Schemas",
+          children: filteredSchemas.map((s) => ({ title: s.name })),
+        },
+        {
+          title: "Enums",
+          children: filteredEnums.map((e) => ({ title: e.name })),
+        },
+      ],
+    };
+  }
+
+  return filtered;
+}
