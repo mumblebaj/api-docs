@@ -20,16 +20,6 @@ export function exportConfluence(doc) {
   lines.push("h2. Table of Contents");
   lines.push("");
 
-  doc.toc.sections.forEach((sec) => {
-    lines.push(`* ${sec.title}`);
-    if (sec.children && sec.children.length) {
-      sec.children.forEach((child) => {
-        lines.push(`** ${child.title}`);
-      });
-    }
-  });
-  lines.push("");
-
   lines.push(`h1. ${meta.title}`);
   lines.push("");
   if (meta.description) lines.push(meta.description, "");
