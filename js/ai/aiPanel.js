@@ -2,13 +2,13 @@
 // Fixes required for path resolution
 
 // js/ai/aiPanel.js
-import { draftOpenApi, AiAuthError } from "./aiClient.js?v=20260305T145045Z";
+import { draftOpenApi, AiAuthError } from "./aiClient.js?v=20260305T150808Z";
 import {
   getEditorText,
   setEditorText,
-} from "../editor/editorApi.js?v=20260305T145045Z";
-import { showToast } from "../ui/toast.js?v=20260305T145045Z";
-import { setAiBadgeVisible } from "./aiBadge.js?v=20260305T145045Z";
+} from "../editor/editorApi.js?v=20260305T150808Z";
+import { showToast } from "../ui/toast.js?v=20260305T150808Z";
+import { setAiBadgeVisible } from "./aiBadge.js?v=20260305T150808Z";
 
 export function initAiPanel() {
   const promptEl = document.getElementById("aiPrompt");
