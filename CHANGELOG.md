@@ -1,5 +1,9 @@
 # Changelog
 
+# [v1.10.2]
+## Enhance Confluence Exporter
+- Enhance the Confluence exporter for user experience and compatibility
+
 ## [1.9.1]
 ### Split OpenAPI v3.1x validations
 - Split validation for OpenAPI v3.1.x intoit's own validation spec

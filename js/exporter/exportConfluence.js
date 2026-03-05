@@ -1,7 +1,7 @@
 // js/exporter/exportConfluence.js
 // Drop-in Confluence exporter for USS docModel
 // - Uses {code}...{code} for any text containing { } placeholders (servers, paths, etc.)
-// - Adds anchors + endpoint index (GROUPED BY TAG)
+// - Adds anchors + endpoint index (GROUPED BY TAG, TABLE FORMAT)
 // - Uses {expand} blocks for request/response examples (and optional headers)
 
 function cfSafe(text) {
@@ -289,7 +289,7 @@ export function exportConfluence(doc) {
     if (groups.has("Untagged")) orderedTags.push("Untagged");
 
     // ==============================
-    // Endpoint Index (Grouped)
+    // Endpoint Index (Grouped, TABLE)
     // ==============================
     lines.push("h3. Endpoint Index (by tag)");
     lines.push("");
@@ -300,13 +300,22 @@ export function exportConfluence(doc) {
 
       lines.push(`h4. ${tagName}`);
       lines.push("");
+      lines.push("|| Method || Path || Summary ||");
 
       eps.forEach((ep) => {
         const method = String(ep.method || "").toUpperCase();
         const path = String(ep.path || "");
         const anchor = makeEndpointAnchor(method, path, usedAnchors);
-        const label = `${method} ${path}`;
-        lines.push(`* [${cfLinkLabel(label)}|#${anchor}]${ep.summary ? ` — ${ep.summary}` : ""}`);
+
+        // Link text should be simple and safe (no { } / no {code} inside link text)
+        const methodLabel = cfLinkLabel(method);
+        const pathLabel = cfLinkLabel(path);
+
+        const methodLink = `[${methodLabel}|#${anchor}]`;
+        const pathLink = `[${pathLabel}|#${anchor}]`;
+        const summary = ep.summary ? String(ep.summary) : "";
+
+        lines.push(`| ${methodLink} | ${pathLink} | ${summary} |`);
       });
 
       lines.push("");
