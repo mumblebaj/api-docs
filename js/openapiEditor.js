@@ -3,29 +3,29 @@
 import {
   buildDocModel,
   filterDocModelForSchemas,
-} from "./exporter/docModel.js?v=20260305T145045Z";
-import { exportMarkdown } from "./exporter/exportMarkdown.js?v=20260305T145045Z";
-import { downloadMarkdownFile } from "./exporter/downloadUtils.js?v=20260305T145045Z";
-import { exportConfluence } from "./exporter/exportConfluence.js?v=20260305T145045Z";
+} from "./exporter/docModel.js?v=20260305T150808Z";
+import { exportMarkdown } from "./exporter/exportMarkdown.js?v=20260305T150808Z";
+import { downloadMarkdownFile } from "./exporter/downloadUtils.js?v=20260305T150808Z";
+import { exportConfluence } from "./exporter/exportConfluence.js?v=20260305T150808Z";
 
-import { showToast } from "./ui/toast.js?v=20260305T145045Z";
-import { initExportDropdown } from "./ui/dropdown.js?v=20260305T145045Z";
+import { showToast } from "./ui/toast.js?v=20260305T150808Z";
+import { initExportDropdown } from "./ui/dropdown.js?v=20260305T150808Z";
 
-import { initSchemaExportModal } from "./schemaExport/schemaExportModal.js?v=20260305T145045Z";
+import { initSchemaExportModal } from "./schemaExport/schemaExportModal.js?v=20260305T150808Z";
 
 // AI Imports
-import { bindEditor } from "./editor/editorApi.js?v=20260305T145045Z";
-import { initAiPanel } from "./ai/aiPanel.js?v=20260305T145045Z";
-import { initAiToggle } from "./ai/aiToggle.js?v=20260305T145045Z";
+import { bindEditor } from "./editor/editorApi.js?v=20260305T150808Z";
+import { initAiPanel } from "./ai/aiPanel.js?v=20260305T150808Z";
+import { initAiToggle } from "./ai/aiToggle.js?v=20260305T150808Z";
 
 // ✅ New refactor module imports
-import { debounce } from "./utils/debounce.js?v=20260305T145045Z";
-import { validateOpenApiSpec } from "./openapi/validate.js?v=20260305T145045Z";
-import { getMarkersFromValidationResult } from "./openapi/markers.js?v=20260305T145045Z";
-import { renderRedocPreview } from "./preview/redoc.js?v=20260305T145045Z";
+import { debounce } from "./utils/debounce.js?v=20260305T150808Z";
+import { validateOpenApiSpec } from "./openapi/validate.js?v=20260305T150808Z";
+import { getMarkersFromValidationResult } from "./openapi/markers.js?v=20260305T150808Z";
+import { renderRedocPreview } from "./preview/redoc.js?v=20260305T150808Z";
 // console.log("[USS] renderRedocPreview imported:", renderRedocPreview);
 
-import defaultYamlTemplate from "./template.js?v=20260305T145045Z";
+import defaultYamlTemplate from "./template.js?v=20260305T150808Z";
 
 // -------------------------------------------------------
 // YAML global shim (js-yaml vs YAML)
