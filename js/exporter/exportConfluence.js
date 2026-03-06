@@ -11,6 +11,61 @@ function cfSafe(text) {
   return s;
 }
 
+// Convert markdown-style headings in prose blocks:
+// ### Title ###  -> h3. Title
+// ## Title ##    -> h2. Title
+// # Title #      -> h1. Title
+function cfConvertMarkdownHeadings(text) {
+  const s = String(text ?? "");
+  if (!s) return "";
+
+  return s.replace(/^(#{1,6})\s*(.*?)\s*#*\s*$/gm, (_, hashes, title) => {
+    const level = Math.min(hashes.length, 6);
+    return `h${level}. ${title.trim()}`;
+  });
+}
+
+function cfMonoQuotes(text) {
+  let s = String(text ?? "");
+  if (!s) return "";
+
+  // Backticks: `text`
+  s = s.replace(/`([^`\n]+?)`/g, (_, inner) => `{{${inner.trim()}}}`);
+
+  // Double quotes: "text"
+  s = s.replace(/"([^"\n]+?)"/g, (_, inner) => `{{${inner.trim()}}}`);
+
+  // Single quotes: 'text'
+  // Avoid contractions like don't / it's
+  s = s.replace(
+    /(^|[\s(])'([^'\n]+?)'(?=[\s).,;:]|$)/g,
+    (_, pre, inner) => `${pre}{{${inner.trim()}}}`,
+  );
+
+  return s;
+}
+
+// Protect only the risky embedded tokens inside normal prose,
+// not the whole paragraph.
+function cfRichText(text) {
+  let s = String(text ?? "");
+  if (!s) return "";
+
+  // 1) Convert markdown headings
+  s = cfConvertMarkdownHeadings(s);
+
+  // 2) Wrap embedded path/URL tokens containing {...}
+  s = s.replace(
+    /(https?:\/\/[^\s]*\{[^}\n]+\}[^\s]*|\/[^\s,;:()]*\{[^}\n]+\}[^\s,;:()]*)/g,
+    (match) => `{code}${match}{code}`,
+  );
+
+  // 3) Convert quoted text to Confluence monospace
+  s = cfMonoQuotes(s);
+
+  return s;
+}
+
 // Monospace only for safe tokens (no braces)
 function cfMono(text) {
   const s = String(text ?? "");
@@ -23,7 +78,9 @@ function cfMono(text) {
 // We keep placeholders visible-ish but avoid brace parsing by stripping braces.
 // (Heading below still shows the real path via cfSafe.)
 function cfLinkLabel(text) {
-  return String(text ?? "").replaceAll("{", "").replaceAll("}", "");
+  return String(text ?? "")
+    .replaceAll("{", "")
+    .replaceAll("}", "");
 }
 
 // Build stable anchor IDs like: get-payments-uetr-cancellation
@@ -45,7 +102,9 @@ function makeEndpointAnchor(method, path, used) {
 
 // Collapsible section
 function cfExpand(title, innerLines) {
-  const safeTitle = String(title ?? "Details").replaceAll("\n", " ").trim();
+  const safeTitle = String(title ?? "Details")
+    .replaceAll("\n", " ")
+    .trim();
   return [`{expand:title=${safeTitle}}`, ...innerLines, "{expand}"];
 }
 
@@ -86,14 +145,14 @@ export function exportConfluence(doc) {
   lines.push("");
 
   if (meta?.description) {
-    lines.push(meta.description);
+    lines.push(cfRichText(meta.description));
     lines.push("");
   }
 
-  if (meta?.termsOfService) lines.push(`*Terms of Service:* ${meta.termsOfService}`);
+  if (meta?.termsOfService)
+    lines.push(`*Terms of Service:* ${cfRichText(meta.termsOfService)}`);
   if (meta?.contact) lines.push(`*Contact:* ${formatInlineObj(meta.contact)}`);
   if (meta?.license) lines.push(`*License:* ${formatInlineObj(meta.license)}`);
-  if (meta?.termsOfService || meta?.contact || meta?.license) lines.push("");
 
   // ==============================
   // Overview
@@ -104,13 +163,13 @@ export function exportConfluence(doc) {
   lines.push(`* Schemas: ${overview?.totalSchemas ?? schemas.length}`);
   lines.push(`* Enums: ${overview?.totalEnums ?? enums.length}`);
   lines.push(
-    `* Security Schemes: ${overview?.totalSecuritySchemes ?? (security?.schemes?.length || 0)}`
+    `* Security Schemes: ${overview?.totalSecuritySchemes ?? (security?.schemes?.length || 0)}`,
   );
   lines.push(
-    `* Component Parameters: ${overview?.totalParameters ?? (doc?.components?.parameters?.length || 0)}`
+    `* Component Parameters: ${overview?.totalParameters ?? (doc?.components?.parameters?.length || 0)}`,
   );
   lines.push(
-    `* Component Headers: ${overview?.totalHeaders ?? (doc?.components?.headers?.length || 0)}`
+    `* Component Headers: ${overview?.totalHeaders ?? (doc?.components?.headers?.length || 0)}`,
   );
   lines.push("");
 
@@ -129,12 +188,14 @@ export function exportConfluence(doc) {
       if (Array.isArray(s.variables) && s.variables.length) {
         lines.push("** Variables");
         s.variables.forEach((v) => {
-          const enumTxt = Array.isArray(v.enum) ? ` (enum: ${v.enum.join(", ")})` : "";
+          const enumTxt = Array.isArray(v.enum)
+            ? ` (enum: ${v.enum.join(", ")})`
+            : "";
           const def = v.default ?? "";
           lines.push(
             `*** ${cfMono(v.name)} default: ${cfMono(def)}${enumTxt}${
               v.description ? ` — ${v.description}` : ""
-            }`
+            }`,
           );
         });
       }
@@ -166,7 +227,7 @@ export function exportConfluence(doc) {
         .join(", ");
 
       lines.push(
-        `| ${s.name || ""} | ${s.type || ""} | ${details || ""} | ${s.description || ""} |`
+        `| ${s.name || ""} | ${s.type || ""} | ${details || ""} | ${s.description || ""} |`,
       );
 
       if (Array.isArray(s.oauth2) && s.oauth2.length) {
@@ -174,11 +235,14 @@ export function exportConfluence(doc) {
         lines.push(`*OAuth2 flows for ${s.name}:*`);
         s.oauth2.forEach((f) => {
           lines.push(`* ${cfMono(f.flow)}`);
-          if (f.authorizationUrl) lines.push(`** authorizationUrl: ${f.authorizationUrl}`);
+          if (f.authorizationUrl)
+            lines.push(`** authorizationUrl: ${f.authorizationUrl}`);
           if (f.tokenUrl) lines.push(`** tokenUrl: ${f.tokenUrl}`);
           if (f.refreshUrl) lines.push(`** refreshUrl: ${f.refreshUrl}`);
           if (Array.isArray(f.scopes) && f.scopes.length) {
-            lines.push(`** scopes: ${f.scopes.map((x) => cfMono(x)).join(", ")}`);
+            lines.push(
+              `** scopes: ${f.scopes.map((x) => cfMono(x)).join(", ")}`,
+            );
           }
         });
         lines.push("");
@@ -193,7 +257,9 @@ export function exportConfluence(doc) {
     lines.push("h3. Global Security Requirements");
     lines.push("");
     globalReqs.forEach((r) => {
-      const scopes = r.scopes?.length ? ` (scopes: ${r.scopes.join(", ")})` : "";
+      const scopes = r.scopes?.length
+        ? ` (scopes: ${r.scopes.join(", ")})`
+        : "";
       lines.push(`* ${cfMono(r.scheme)}${scopes}`);
     });
     lines.push("");
@@ -209,16 +275,22 @@ export function exportConfluence(doc) {
     lines.push("h2. Tags");
     lines.push("");
     tags.forEach((t) =>
-      lines.push(`* *${t.name || ""}*${t.description ? ` — ${t.description}` : ""}`)
+      lines.push(
+        `* *${t.name || ""}*${t.description ? ` — ${cfRichText(t.description)}` : ""}`,
+      ),
     );
     lines.push("");
   }
-
+  // lines.push(`* *${t.name || ""}*${t.description ? ` — ${t.description}` : ""}`);
   if (externalDocs?.url) {
     lines.push("h2. External Documentation");
     lines.push("");
     lines.push(
-      `* ${externalDocs.url}${externalDocs.description ? ` — ${externalDocs.description}` : ""}`
+      `* ${externalDocs.url}${
+        externalDocs.description
+          ? ` — ${cfRichText(externalDocs.description)}`
+          : ""
+      }`,
     );
     lines.push("");
   }
@@ -335,14 +407,16 @@ export function exportConfluence(doc) {
       lines.push(`{anchor:${anchor}}`);
       lines.push(`h3. ${method} ${cfSafe(path)}`);
 
-      if (ep.summary) lines.push(`*Summary:* ${ep.summary}`);
+      if (ep.summary) lines.push(`*Summary:* ${cfRichText(ep.summary)}`);
 
       // Long descriptions are nicer collapsed
       if (ep.description) {
         if (String(ep.description).length > 400) {
-          lines.push(...cfExpand("Description", [String(ep.description)]));
+          lines.push(
+            ...cfExpand("Description", [cfRichText(String(ep.description))]),
+          );
         } else {
-          lines.push(`*Description:* ${ep.description}`);
+          lines.push(`*Description:* ${cfRichText(ep.description)}`);
         }
       }
 
@@ -354,7 +428,9 @@ export function exportConfluence(doc) {
         lines.push("h4. Servers (override)");
         lines.push("");
         ep.servers.forEach((s) =>
-          lines.push(`* ${cfSafe(s.url || "")}${s.description ? ` — ${s.description}` : ""}`)
+          lines.push(
+            `* ${cfSafe(s.url || "")}${s.description ? ` — ${s.description}` : ""}`,
+          ),
         );
         lines.push("");
       }
@@ -363,7 +439,9 @@ export function exportConfluence(doc) {
         lines.push("h4. Security (override)");
         lines.push("");
         ep.security.forEach((r) => {
-          const scopes = r.scopes?.length ? ` (scopes: ${r.scopes.join(", ")})` : "";
+          const scopes = r.scopes?.length
+            ? ` (scopes: ${r.scopes.join(", ")})`
+            : "";
           lines.push(`* ${cfMono(r.scheme)}${scopes}`);
         });
         lines.push("");
@@ -380,7 +458,7 @@ export function exportConfluence(doc) {
           lines.push(
             `| ${p.name || ""} | ${p.in || ""} | ${p.required ? "yes" : "no"} | ${cfSafe(type)} | ${
               p.description || ""
-            } |`
+            } |`,
           );
         });
         lines.push("");
@@ -390,27 +468,43 @@ export function exportConfluence(doc) {
       const rb = ep.requestBody || {};
       const reqMedia = Array.isArray(rb.mediaTypes) ? rb.mediaTypes : [];
 
-      if (rb.required != null || rb.description || reqMedia.length || ep.requestBodyExample) {
+      if (
+        rb.required != null ||
+        rb.description ||
+        reqMedia.length ||
+        ep.requestBodyExample
+      ) {
         lines.push("h4. Request");
         lines.push("");
 
-        if (rb.required != null) lines.push(`*Required:* ${rb.required ? "yes" : "no"}`);
+        if (rb.required != null)
+          lines.push(`*Required:* ${rb.required ? "yes" : "no"}`);
         if (rb.description) lines.push(`*Description:* ${rb.description}`);
-        if (reqMedia.length) lines.push(`*Media Types:* ${reqMedia.map((m) => cfMono(m)).join(", ")}`);
+        if (reqMedia.length)
+          lines.push(
+            `*Media Types:* ${reqMedia.map((m) => cfMono(m)).join(", ")}`,
+          );
 
         const keysByMedia = rb.exampleKeysByMedia || {};
         const mts = Object.keys(keysByMedia);
         if (mts.length) {
           lines.push("*Examples available:*");
           mts.forEach((mt) => {
-            lines.push(`* ${cfMono(mt)}: ${keysByMedia[mt].map((k) => cfMono(k)).join(", ")}`);
+            lines.push(
+              `* ${cfMono(mt)}: ${keysByMedia[mt].map((k) => cfMono(k)).join(", ")}`,
+            );
           });
         }
         lines.push("");
 
         if (ep.requestBodyExample) {
           lines.push("h5. Example Request");
-          lines.push(...cfExpand("Example Request (JSON)", cfCodeJson(ep.requestBodyExample)));
+          lines.push(
+            ...cfExpand(
+              "Example Request (JSON)",
+              cfCodeJson(ep.requestBodyExample),
+            ),
+          );
           lines.push("");
         }
       }
@@ -421,17 +515,24 @@ export function exportConfluence(doc) {
         lines.push("");
 
         ep.responses.forEach((r) => {
-          lines.push(`h5. ${r.status}${r.description ? ` — ${r.description}` : ""}`);
+          lines.push(
+            `h5. ${r.status}${r.description ? ` — ${r.description}` : ""}`,
+          );
 
           const mts = Array.isArray(r.mediaTypes) ? r.mediaTypes : [];
-          if (mts.length) lines.push(`*Media Types:* ${mts.map((m) => cfMono(m)).join(", ")}`);
+          if (mts.length)
+            lines.push(
+              `*Media Types:* ${mts.map((m) => cfMono(m)).join(", ")}`,
+            );
 
           const keysByMedia = r.exampleKeysByMedia || {};
           const mtKeys = Object.keys(keysByMedia);
           if (mtKeys.length) {
             lines.push("*Examples available:*");
             mtKeys.forEach((mt) => {
-              lines.push(`* ${cfMono(mt)}: ${keysByMedia[mt].map((k) => cfMono(k)).join(", ")}`);
+              lines.push(
+                `* ${cfMono(mt)}: ${keysByMedia[mt].map((k) => cfMono(k)).join(", ")}`,
+              );
             });
           }
 
@@ -441,7 +542,9 @@ export function exportConfluence(doc) {
             headerLines.push("|| Name || Type || Description ||");
             r.headers.forEach((h) => {
               const t = h?.schema?.ref || h?.schema?.type || "";
-              headerLines.push(`| ${h.name || ""} | ${cfSafe(t)} | ${h.description || ""} |`);
+              headerLines.push(
+                `| ${h.name || ""} | ${cfSafe(t)} | ${h.description || ""} |`,
+              );
             });
             lines.push("");
             lines.push(...cfExpand("Headers", headerLines));
@@ -451,7 +554,9 @@ export function exportConfluence(doc) {
           if (r.example) {
             const mtLabel = mts?.[0] ? ` (${mts[0]})` : "";
             lines.push("");
-            lines.push(...cfExpand(`Example Response${mtLabel}`, cfCodeJson(r.example)));
+            lines.push(
+              ...cfExpand(`Example Response${mtLabel}`, cfCodeJson(r.example)),
+            );
           }
 
           lines.push("");
@@ -460,11 +565,19 @@ export function exportConfluence(doc) {
 
       // Schema refs
       const reqRefs = Array.isArray(ep.requestSchemas) ? ep.requestSchemas : [];
-      const respRefs = Array.isArray(ep.responseSchemas) ? ep.responseSchemas : [];
-      const paramRefs = Array.isArray(ep.parametersSchemas) ? ep.parametersSchemas : [];
-      const allRefs = Array.from(new Set([...reqRefs, ...respRefs, ...paramRefs]));
+      const respRefs = Array.isArray(ep.responseSchemas)
+        ? ep.responseSchemas
+        : [];
+      const paramRefs = Array.isArray(ep.parametersSchemas)
+        ? ep.parametersSchemas
+        : [];
+      const allRefs = Array.from(
+        new Set([...reqRefs, ...respRefs, ...paramRefs]),
+      );
       if (allRefs.length) {
-        lines.push(`*Referenced Schemas:* ${allRefs.map((x) => cfMono(x)).join(", ")}`);
+        lines.push(
+          `*Referenced Schemas:* ${allRefs.map((x) => cfMono(x)).join(", ")}`,
+        );
         lines.push("");
       }
 
@@ -481,7 +594,7 @@ export function exportConfluence(doc) {
 
   schemas.forEach((s) => {
     lines.push(`h3. ${s.name}`);
-    if (s.description) lines.push(s.description);
+    if (s.description) lines.push(cfRichText(s.description));
     if (s.schemaDialect) lines.push(`*$schema:* ${s.schemaDialect}`);
     lines.push("");
 
@@ -490,7 +603,7 @@ export function exportConfluence(doc) {
       s.properties.forEach((p) => {
         const t = p.ref || p.type || "";
         lines.push(
-          `| ${p.name} | ${cfSafe(t)} | ${p.required ? "yes" : "no"} | ${p.description || ""} |`
+          `| ${p.name} | ${cfSafe(t)} | ${p.required ? "yes" : "no"} | ${p.description || ""} |`,
         );
       });
       lines.push("");
@@ -511,7 +624,7 @@ export function exportConfluence(doc) {
   } else {
     enums.forEach((en) => {
       lines.push(`h3. ${en.name}`);
-      if (en.description) lines.push(en.description);
+      if (en.description) lines.push(cfRichText(en.description));
       lines.push("");
       (en.values || []).forEach((v) => lines.push(`* ${cfMono(v.value)}`));
       lines.push("");
