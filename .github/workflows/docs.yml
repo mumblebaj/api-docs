@@ -99,9 +99,9 @@ jobs:
       - name: Copy openapiEditor page
         run: cp docs/openapiEditor.html public/openapiEditor.html
 
-      # 7. Copy xmlViewer.html page
-      - name: Copy xmlViewer.html page
-        run: cp docs/xmlViewer.html public/xsdStudio.html
+      # 7. Copy xsdStudio.html page
+      - name: Copy xsdStudio.html page
+        run: cp docs/xsdStudio.html public/xsdStudio.html
 
       # 7b. Copy Tutor page
       - name: Copy tutor/index.html
