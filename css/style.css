@@ -99,7 +99,7 @@ header {
 #theme-toggle,
 #launchEditorBtn,
 #themeToggle,
-#xmlViewerBtn,
+#xsdStudioBtn,
 #yamlTutorBtn {
   background: var(--accent);
   color: #fff;

@@ -1,65 +1,60 @@
-<!-- xmlViewer.html — Created by mumblebaj + GPT-5 -->
-
-<!DOCTYPE html>
-<html lang="en" data-theme="light">
+<!doctype html>
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>USS - XML Message Viewer</title>
+    <title>USS XSD Studio</title>
 
-    <!-- Your shared styles -->
-    <link rel="stylesheet" href="css/style.css?v=20260324T194239Z" />
+    <link rel="stylesheet" href="css/style.css?v=20260324T200539Z" />
+    <link rel="stylesheet" href="css/xsdStudio.css?v=20260324T200539Z" />
     <link rel="icon" type="image/png" href="./favicon_new.png" />
 
-    <!-- ReDoc -->
-    <script src="https://cdn.jsdelivr.net/npm/redoc@2.1.3/bundles/redoc.standalone.min.js"></script>
-
-    <!-- fast-xml-parser UMD (browser) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fast-xml-parser/5.2.5/fxparser.min.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.52.2/min/vs/loader.min.js"></script>
   </head>
+  <body class="xsd-studio-page">
+    <div id="xsdStudioApp">
+      <header id="xsdStudioHeader" class="studio-header">
+        <div class="studio-header__title">
+          <h1>USS XSD Studio</h1>
+          <p>Design XSD schemas and test XML instances side by side.</p>
+        </div>
+        <div id="xsdStudioHeaderActions" class="studio-header__actions"></div>
+      </header>
 
-  <body>
-    <header class="app-header">
-      <h2 class="app-title">XML Message Viewer</h2>
-      <button id="themeToggle" class="theme-toggle btn btn-outline">🌞 / 🌙</button>
-    </header>
+      <section id="xsdStudioToolbar" class="studio-toolbar"></section>
 
-    <main class="container">
-      <!-- Dropzone (matches schema viewer look & feel) -->
-      <section class="card">
-        <h3 class="card-title">Upload / Drag-Drop / Paste XML</h3>
-
-        <div id="xmlDropzone" class="dropzone" tabindex="0" role="button" aria-label="XML Dropzone">
-          <input id="xmlFileInput" type="file" accept=".xml" class="dropzone-input" />
-          <div class="dropzone-inner">
-            <div class="dz-icon">⬆</div>
-            <div class="dz-text">
-              <strong>Drop your XML here</strong> or <span class="dz-link">click to choose a file</span>
-            </div>
-            <div class="dz-subtext">You can also paste XML in the box below</div>
+      <main id="xsdStudioWorkspace" class="studio-workspace">
+        <section class="studio-pane">
+          <div class="studio-pane__header">
+            <span>XSD Schema Editor</span>
+            <span id="xsdFileName" class="studio-pane__meta">schema.xsd</span>
           </div>
+          <div id="xsdEditorPane" class="studio-editor-host"></div>
+        </section>
+
+        <section class="studio-pane">
+          <div class="studio-pane__header">
+            <span>XML Instance Editor</span>
+            <span id="xmlFileName" class="studio-pane__meta">sample.xml</span>
+          </div>
+          <div id="xmlEditorPane" class="studio-editor-host"></div>
+        </section>
+      </main>
+
+      <section id="xsdStudioBottomPanel" class="studio-bottom-panel">
+        <div id="xsdStudioTabs" class="studio-tabs"></div>
+
+        <div id="xsdStudioPanelContent" class="studio-panel-content">
+          <div id="validationResultsPanel" class="studio-panel-view"></div>
+          <div id="warningsPanel" class="studio-panel-view" hidden></div>
+          <div id="schemaTreePanel" class="studio-panel-view" hidden></div>
         </div>
-
-        <label for="xmlTextarea" class="sr-only">Paste XML</label>
-        <textarea id="xmlTextarea" class="code-input" placeholder="Paste XML here..."></textarea>
-
-        <div class="button-row">
-          <button id="viewBtn" class="btn btn-primary">View</button>
-          <button id="downloadJsonBtn" class="btn btn-outline">Download JSON</button>
-          <button id="clearBtn" class="btn btn-outline">Clear</button>
-        </div>
-
-        <div id="xmlStatus" class="status-line" aria-live="polite"></div>
       </section>
 
-      <section id="xmlPreview" class="redoc-container card"></section>
-    </main>
+      <footer id="xsdStudioStatusBar" class="studio-status-bar"></footer>
+    </div>
 
-    <script src="./js/xmlViewer.js?v=20260324T194239Z"></script>
-    <script src="./js/viewTracker.js?v=20260324T194239Z"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uss-xsd-engine@latest/dist/uss-xsd-engine.esm.min.js"></script>
+    <script type="module" src="./js/xsdStudio.js?v=20260324T200539Z"></script>
   </body>
-  <footer>
-    <script src="./js/buildVersion.js?v=20260324T194239Z" defer></script>
-  </footer>
 </html>
