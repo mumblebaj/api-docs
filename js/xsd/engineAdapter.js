@@ -1,3 +1,4 @@
+// Ensure engineAdapter loads window.UssXsdEngine
 function getEngine() {
   const engine =
     window.UssXsdEngine || window.ussXsdEngine || window.USSXsdEngine || null;
