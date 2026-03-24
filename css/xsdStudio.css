@@ -1,0 +1,258 @@
+.xsd-studio-page {
+  margin: 0;
+  background: #0f172a;
+  color: #e5e7eb;
+  font-family: Arial, sans-serif;
+}
+
+#xsdStudioApp {
+  display: grid;
+  grid-template-rows: auto auto 1fr auto auto;
+  height: 100vh;
+  min-height: 100vh;
+}
+
+.studio-header,
+.studio-toolbar,
+.studio-bottom-panel,
+.studio-status-bar {
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.studio-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.studio-header__title h1 {
+  margin: 0 0 4px;
+  font-size: 24px;
+}
+
+.studio-header__title p {
+  margin: 0;
+  color: #94a3b8;
+}
+
+.studio-workspace {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding: 12px 16px;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.studio-pane {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  min-height: 0;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  overflow: hidden;
+  background: #111827;
+}
+
+.studio-pane__header {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 12px;
+  background: #1f2937;
+  font-weight: 600;
+}
+
+.studio-pane__meta {
+  color: #94a3b8;
+  font-size: 12px;
+}
+
+.studio-editor-host {
+  min-height: 0;
+  height: 100%;
+}
+
+.studio-tabs {
+  margin-bottom: 12px;
+}
+
+.toolbar-group,
+.tabs-group,
+.studio-status-bar {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+button {
+  background: #2563eb;
+  border: none;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+button.is-active {
+  background: #1d4ed8;
+}
+
+.studio-panel-content {
+  min-height: 160px;
+  background: #111827;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 12px;
+  overflow: auto;
+}
+
+.studio-panel-view[hidden] {
+  display: none !important;
+}
+
+.result-item {
+  display: grid;
+  grid-template-columns: auto auto 1fr auto;
+  gap: 10px;
+  width: 100%;
+  text-align: left;
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #e5e7eb;
+}
+
+.result-item:not(.is-static):hover {
+  border-color: rgba(96, 165, 250, 0.5);
+  background: rgba(37, 99, 235, 0.08);
+}
+
+.result-item--error {
+  background: rgba(220, 38, 38, 0.15);
+}
+
+.result-item--warning {
+  background: rgba(245, 158, 11, 0.15);
+}
+
+.result-item__badge {
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.03em;
+}
+
+.result-item__target,
+.result-item__location {
+  color: #cbd5e1;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.result-item__message {
+  min-width: 0;
+}
+
+.results-empty,
+.results-ok {
+  color: #94a3b8;
+  padding: 8px 4px;
+}
+
+.status-bar__item {
+  color: #cbd5e1;
+}
+
+@media (max-width: 980px) {
+  .studio-workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .result-item {
+    grid-template-columns: 1fr;
+  }
+}
+
+.schema-tree-node {
+  padding: 6px 8px;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.schema-tree-node:hover {
+  background: rgba(59,130,246,0.15);
+}
+
+.schema-tree-kind {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: #94a3b8;
+  margin-right: 6px;
+}
+
+.schema-tree-label {
+  font-weight: 500;
+}
+
+.schema-tree-node {
+  padding-top: 6px;
+  padding-bottom: 6px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.schema-tree-node:hover {
+  background: rgba(59, 130, 246, 0.15);
+}
+
+.schema-tree-kind {
+  display: inline-block;
+  min-width: 56px;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: #94a3b8;
+  margin-right: 8px;
+}
+
+.schema-tree-label {
+  font-weight: 500;
+}
+
+/* Bottom panel should not grow over the workspace */
+#xsdStudioBottomPanel {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  min-height: 0;
+}
+
+/* Keep the content area fixed and scrollable */
+#xsdStudioPanelContent {
+  min-height: 0;
+  max-height: calc(3 * 3.25rem); /* about 3 result rows */
+  overflow-y: auto;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+/* Each tab panel should stay inside the scroll area */
+#xsdStudioPanelContent .studio-panel-view {
+  min-height: 0;
+  box-sizing: border-box;
+}
+
+/* Optional: make result rows a bit more compact/predictable */
+.result-item,
+.result-item.is-static {
+  box-sizing: border-box;
+  min-height: 3rem;
+}
+
+#xsdStudioPanelContent {
+  min-height: 0;
+  max-height: 10rem;
+  overflow-y: auto;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
