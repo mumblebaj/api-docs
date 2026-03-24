@@ -1,13 +1,6 @@
+import * as engine from "https://unpkg.com/uss-xsd-engine@latest/dist/uss-xsd-engine.esm.min.js";
+
 function getEngine() {
-  const engine =
-    window.UssXsdEngine || window.ussXsdEngine || window.USSXsdEngine || null;
-
-  if (!engine) {
-    throw new Error(
-      "uss-xsd-engine is not loaded. Make sure the standalone CDN script is included before xsdStudio.js.",
-    );
-  }
-
   return engine;
 }
 
