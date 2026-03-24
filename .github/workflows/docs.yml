@@ -101,7 +101,7 @@ jobs:
 
       # 7. Copy xmlViewer.html page
       - name: Copy xmlViewer.html page
-        run: cp docs/xmlViewer.html public/xmlViewer.html
+        run: cp docs/xmlViewer.html public/xsdStudio.html
 
       # 7b. Copy Tutor page
       - name: Copy tutor/index.html
