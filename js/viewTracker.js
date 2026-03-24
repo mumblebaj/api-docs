@@ -22,7 +22,7 @@
     "tutor-index": "tutor",
     "docs-index": "uss",
     "openapiEditor-index": "openapi-editor",
-    "xmlViewer-index": "xml-viewer",
+    "xsdStudio-index": "xsd-studio",
   };
 
   slug = friendly[slug] || slug;
