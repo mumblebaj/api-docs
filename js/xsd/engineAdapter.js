@@ -1,4 +1,4 @@
-import * as engine from "https://unpkg.com/uss-xsd-engine@0.1.0-beta.5/dist/uss-xsd-engine.esm.min.js";
+import * as engine from "https://unpkg.com/uss-xsd-engine@latest/dist/uss-xsd-engine.standalone.js";
 
 function getEngine() {
   return engine;
