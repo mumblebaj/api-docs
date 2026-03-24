@@ -1,3 +1,3 @@
-import { bootstrapXsdStudio } from "./xsd/studio/bootstrap.js";
+import { bootstrapXsdStudio } from "./xsd/studio/bootstrap.js?v=2";
 
 bootstrapXsdStudio();
