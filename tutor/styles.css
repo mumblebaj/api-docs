@@ -517,4 +517,22 @@ textarea {
   height: 100%;
 }
 
+/* =========================================================
+   🟩 Footer styling
+   ========================================================= */
 
+.tutor-footer {
+  text-align: center;
+  padding: 0.75rem 0.5rem 1rem;
+  font-size: 0.8rem;
+  opacity: 0.6;
+}
+
+.tutor-footer-hint a {
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.tutor-footer-hint a:hover {
+  text-decoration: underline;
+}
