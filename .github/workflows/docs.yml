@@ -36,19 +36,17 @@ jobs:
           fi
 
           VERSION=$(jq -r '.version' "$FILE")
-          MAJOR=$(echo $VERSION | cut -d. -f1)
-          MINOR=$(echo $VERSION | cut -d. -f2)
-          PATCH=$(echo $VERSION | cut -d. -f3)
+          MAJOR=$(echo "$VERSION" | cut -d. -f1)
+          MINOR=$(echo "$VERSION" | cut -d. -f2)
+          PATCH=$(echo "$VERSION" | cut -d. -f3)
 
-          # Increment PATCH and roll over every 10 builds
           PATCH=$((PATCH + 1))
-          if [ $PATCH -ge 10 ]; then
+          if [ "$PATCH" -ge 10 ]; then
             PATCH=0
             MINOR=$((MINOR + 1))
           fi
 
           NEW_VERSION="${MAJOR}.${MINOR}.${PATCH}"
-
           CACHE_TAG=$(date -u +'%Y%m%dT%H%M%SZ')
 
           echo "{
@@ -58,23 +56,18 @@ jobs:
             \"cacheTag\": \"${CACHE_TAG}\"
           }" > "$FILE"
 
-          echo "cache_tag=${CACHE_TAG}" >> $GITHUB_OUTPUT
+          echo "cache_tag=${CACHE_TAG}" >> "$GITHUB_OUTPUT"
           echo "✅ Bumped version to $NEW_VERSION with cacheTag ${CACHE_TAG}"
-
 
       # 2b. Inject cache-busting version strings
       - name: Inject cache-busting version strings
+        env:
+          VERSION_TAG: ${{ steps.buildinfo.outputs.cache_tag }}
         run: |
-          VERSION_TAG=${{ steps.buildinfo.outputs.cache_tag }}
           echo "Injecting cache-busting tag: $VERSION_TAG"
 
-          # --- Update HTML query strings ---
-          find docs -name "*.html" -type f -exec \
-            sed -i "s#?v=[0-9a-zA-ZT:-]*#?v=${VERSION_TAG}#g" {} +
-
-          # --- Update JS 'const version = "...";' lines ---
-          find js -name "*.js" -type f -exec \
-            sed -i "s#?v=[0-9a-zA-ZT:-]*#?v=${VERSION_TAG}#g" {} +
+          find . -type f \( -name "*.html" -o -name "*.js" \) -exec \
+            sed -i "s#?v=[0-9A-Za-zT:-]*#?v=${VERSION_TAG}#g" {} +
 
           echo "✅ Updated HTML + JS with cache-busting version"
 
@@ -83,7 +76,7 @@ jobs:
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          git add build-info.json docs/*.html js/**/*.js css/*.css tutor/** vendor/**
+          git add build-info.json docs tutor js css vendor
           git commit -m "chore: bump build to $(jq -r '.version' build-info.json) [${{ steps.buildinfo.outputs.cache_tag }}]" || echo "No changes to commit"
           git push
 
@@ -125,12 +118,12 @@ jobs:
           mkdir -p public/tutor/js
           cp tutor/js/*.js public/tutor/js/
 
-      # 9c. Copy Tutor Lessons
+      # 9c. Copy Tutor lesson files
       - name: Copy Tutor lesson files
         run: |
           mkdir -p public/tutor/lessons
           cp tutor/lessons/*.md public/tutor/lessons/
-      
+
       # 10. Copy CSS files
       - name: Copy CSS files
         run: |
@@ -138,9 +131,9 @@ jobs:
           cp css/*.css public/css/
 
       # 10b. Copy Tutor CSS
-      - name: Copy Tutor CSS files
+      - name: Copy Tutor CSS
         run: |
-          mkdir -p public/tutor/css
+          mkdir -p public/tutor
           cp tutor/styles.css public/tutor/styles.css
 
       # 11. Copy favicons
@@ -152,12 +145,12 @@ jobs:
       - name: Copy CNAME
         run: cp docs/CNAME public/CNAME
 
-      # 13. Copy Vendor assests (all)
-      - name: Copy Vendor assests
+      # 13. Copy Vendor assets (all)
+      - name: Copy Vendor assets
         run: |
           mkdir -p public/vendor
           rsync -a vendor/ public/vendor/
-      
+
       # 14. Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
