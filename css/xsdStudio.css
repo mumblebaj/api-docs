@@ -256,3 +256,67 @@ button.is-active {
   overflow-x: hidden;
   box-sizing: border-box;
 }
+
+.toolbar-external-xsd-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  min-height: 32px;
+}
+
+.toolbar-external-xsd-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  width: 100%;
+}
+
+.toolbar-external-xsd-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 260px;
+  padding: 4px 8px;
+  border: 1px solid var(--border-color, #444);
+  border-radius: 999px;
+  background: var(--panel-bg, #1e1e1e);
+  line-height: 1;
+}
+
+.toolbar-external-xsd-chip__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+}
+
+.toolbar-external-xsd-chip__remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 0, 0, 0.15);
+  color: #ff4d4f;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.toolbar-external-xsd-chip__remove:hover {
+  background: rgba(255, 0, 0, 0.3);
+  transform: scale(1.05);
+}
+
+.toolbar-external-xsd-chip__remove:active {
+  transform: scale(0.95);
+}
+
+.toolbar-external-xsd-chip__remove:hover {
+  background: rgba(255, 255, 255, 0.12);
+}

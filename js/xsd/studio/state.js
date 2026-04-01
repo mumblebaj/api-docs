@@ -38,6 +38,7 @@ export function createStudioState() {
       xsd: DEFAULT_XSD,
       xml: DEFAULT_XML
     },
+    externalDocuments: {},
     validation: {
       diagnostics: [],
       errors: [],

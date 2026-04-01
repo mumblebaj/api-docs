@@ -9,7 +9,7 @@ import {
 } from "../engineAdapter.js";
 
 export function registerStudioActions(ctx) {
-  const { toolbar } = ctx;
+  const { toolbar, state } = ctx;
 
   toolbar.onValidateXsd(() => runValidateXsdOnly(ctx));
   toolbar.onValidateXml(() => runValidateXmlOnly(ctx));
@@ -18,16 +18,62 @@ export function registerStudioActions(ctx) {
   toolbar.onDownloadXsd(() => downloadXsd(ctx));
   toolbar.onDownloadXml(() => downloadXml(ctx));
   toolbar.onGenerateXml(() => runGenerateXmlAction(ctx));
+
+  toolbar.onAddExternalXsd(async (fileList) => {
+    await addExternalXsdFiles(ctx, fileList);
+  });
+
+  toolbar.onRemoveExternalXsd((name) => {
+    delete state.externalDocuments[name];
+    toolbar.renderExternalDocuments(state.externalDocuments);
+  });
+
+  toolbar.onClearExternalXsd(() => {
+    state.externalDocuments = {};
+    toolbar.renderExternalDocuments(state.externalDocuments);
+  });
+
+  toolbar.renderExternalDocuments(state.externalDocuments);
+}
+
+function getExternalOptions(ctx) {
+  return {
+    includeWarnings: true,
+    includeFeatureSummary: true,
+    includeRoots: true,
+    externalDocuments: { ...(ctx.state.externalDocuments || {}) }
+  };
+}
+
+async function addExternalXsdFiles(ctx, fileList) {
+  const { toolbar, state } = ctx;
+  const files = Array.from(fileList || []);
+
+  if (!files.length) return;
+
+  const loadedDocs = {};
+
+  for (const file of files) {
+    const text = await file.text();
+    loadedDocs[file.name] = text;
+  }
+
+  state.externalDocuments = {
+    ...state.externalDocuments,
+    ...loadedDocs
+  };
+
+  toolbar.renderExternalDocuments(state.externalDocuments);
 }
 
 function runValidateXsdOnly(ctx) {
-  const { editors, resultsPanel, statusBar, state, layout } = ctx;
+  const { editors, statusBar, state, layout } = ctx;
   const xsdText = editors.xsd.getValue();
 
   let diagnostics = [];
 
   try {
-    diagnostics = runXsdDiagnostics(xsdText);
+    diagnostics = runXsdDiagnostics(xsdText, getExternalOptions(ctx));
   } catch (error) {
     diagnostics = [
       {
@@ -62,18 +108,19 @@ function runValidateXmlOnly(ctx) {
   const { editors, statusBar, state, layout } = ctx;
   const xsdText = editors.xsd.getValue();
   const xmlText = editors.xml.getValue();
+  const options = getExternalOptions(ctx);
 
   let xsdDiagnostics = [];
   let xmlDiagnostics = [];
   let diagnostics = [];
 
   try {
-    xsdDiagnostics = runXsdDiagnostics(xsdText);
+    xsdDiagnostics = runXsdDiagnostics(xsdText, options);
 
     if (xsdDiagnostics.some((d) => d.severity === "error")) {
       diagnostics = xsdDiagnostics;
     } else {
-      xmlDiagnostics = runEngineValidateXml(xsdText, xmlText);
+      xmlDiagnostics = runEngineValidateXml(xsdText, xmlText, options);
       diagnostics = [...xsdDiagnostics, ...xmlDiagnostics];
     }
   } catch (error) {
@@ -218,7 +265,7 @@ function runGenerateXmlAction(ctx) {
   const { editors, resultsPanel, statusBar, state, layout } = ctx;
 
   try {
-    const xml = runGenerateXml(editors.xsd.getValue());
+    const xml = runGenerateXml(editors.xsd.getValue(), getExternalOptions(ctx));
 
     editors.xml.setValue(xml);
 
@@ -236,7 +283,7 @@ function runGenerateXmlAction(ctx) {
     statusBar.render({
       xsdStatus: "OK",
       xmlStatus: "Generated",
-      summary: "Sample XML generated from schema"
+      summary: "Sample XML generated from schema set"
     });
   } catch (error) {
     const diagnostic = {
@@ -281,7 +328,6 @@ function escapeHtml(value) {
   return String(value)
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#39;");

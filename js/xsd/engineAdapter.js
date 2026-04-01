@@ -253,8 +253,9 @@ function callEngine(methodName, objectArgs, positionalArgs = []) {
   );
 }
 
-export function runXsdDiagnostics(xsdText) {
-  const result = callEngine("getSchemaDiagnostics", { xsdText }, [xsdText]);
+export function runXsdDiagnostics(xsdText, options = {}) {
+  console.log(options)
+  const result = callEngine("getSchemaDiagnostics", { xsdText, options }, [xsdText, options]);
   
   return collectDiagnostics(result, "xsd");
 }
@@ -284,10 +285,11 @@ export function runGenerateXml(xsdText, options = {}) {
   throw new Error("Engine did not return XML output.");
 }
 
-export function runValidateXml(xsdText, xmlText) {
-  const result = callEngine("validateXml", { xsdText, xmlText }, [
+export function runValidateXml(xsdText, xmlText, options = {}) {
+  const result = callEngine("validateXml", { xsdText, xmlText, options }, [
     xsdText,
     xmlText,
+    options
   ]);
 
   return collectDiagnostics(result, "xml");
