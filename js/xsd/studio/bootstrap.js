@@ -43,6 +43,9 @@ export async function bootstrapXsdStudio() {
     statusBar,
   };
 
+  ctx.showBottomTab = (tabName) => setActiveBottomTab(ctx, tabName);
+  ctx.hideBottomPanel = () => hideBottomPanel(ctx);
+
   schemaTreePanel.onSelect((node) => {
     const editor = ctx.editors.xsd;
     const line = Number(node.line) || 1;
@@ -69,11 +72,13 @@ export async function bootstrapXsdStudio() {
   });
 
   registerStudioActions(ctx);
+  wireSidebarToggle(ctx);
+  wireBottomPanelClose(ctx);
 
   resultsPanel.renderEmpty();
   renderWarningsPanel(layout.warningsPanel, []);
 
-  setActiveBottomTab(ctx, state.ui.activeTab);
+  hideBottomPanel(ctx);
 
   statusBar.render({
     xsdStatus: "Ready",
@@ -82,9 +87,62 @@ export async function bootstrapXsdStudio() {
   });
 }
 
+function wireBottomPanelClose(ctx) {
+  const { layout } = ctx;
+
+  if (!layout.bottomPanelClose) return;
+
+  layout.bottomPanelClose.addEventListener("click", () => {
+    hideBottomPanel(ctx);
+  });
+}
+
+function wireSidebarToggle(ctx) {
+  const { layout, editors } = ctx;
+  const sidebar = layout.sidebarHost;
+  const toggle = layout.sidebarToggle;
+
+  if (!sidebar || !toggle) return;
+
+  const storageKey = "xsdStudio.sidebarCollapsed";
+  const storedValue = window.localStorage?.getItem(storageKey);
+  const initialCollapsed = storedValue === "true";
+
+  applySidebarState(sidebar, toggle, initialCollapsed);
+
+  toggle.addEventListener("click", () => {
+    const isCollapsed = !sidebar.classList.contains("is-collapsed");
+    applySidebarState(sidebar, toggle, isCollapsed);
+    window.localStorage?.setItem(storageKey, String(isCollapsed));
+
+    window.requestAnimationFrame(() => {
+      editors.xsd.layout();
+      editors.xml.layout();
+    });
+  });
+}
+
+function applySidebarState(sidebar, toggle, isCollapsed) {
+  sidebar.classList.toggle("is-collapsed", isCollapsed);
+  toggle.setAttribute("aria-expanded", String(!isCollapsed));
+  toggle.setAttribute(
+    "aria-label",
+    isCollapsed ? "Expand XSD Studio sidebar" : "Collapse XSD Studio sidebar"
+  );
+  toggle.title = isCollapsed ? "Expand sidebar" : "Collapse sidebar";
+  toggle.querySelector("span").textContent = isCollapsed ? ">>" : "<<";
+}
+
 function setActiveBottomTab(ctx, tabName) {
   const { layout, tabs, state, schemaTreePanel } = ctx;
 
+  state.ui.activeTab = tabName;
+
+  if (layout.bottomPanel) {
+    layout.bottomPanel.hidden = false;
+  }
+
+  layout.tabsHost.hidden = tabName === "schema-tree";
   tabs.setActive(tabName);
 
   layout.validationResultsPanel.hidden = tabName !== "results";
@@ -104,6 +162,14 @@ function setActiveBottomTab(ctx, tabName) {
         <div class="results-empty">${escapeHtml(error.message || "Failed to build schema tree.")}</div>
       `;
     }
+  }
+}
+
+function hideBottomPanel(ctx) {
+  const { layout } = ctx;
+
+  if (layout.bottomPanel) {
+    layout.bottomPanel.hidden = true;
   }
 }
 
