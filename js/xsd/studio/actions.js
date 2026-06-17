@@ -15,6 +15,9 @@ export function registerStudioActions(ctx) {
   toolbar.onValidateXml(() => runValidateXmlOnly(ctx));
   toolbar.onFormatXsd(() => runFormatXsd(ctx));
   toolbar.onFormatXml(() => runFormatXml(ctx));
+  toolbar.onShowSchemaTree(() => {
+    ctx.showBottomTab?.("schema-tree");
+  });
   toolbar.onDownloadXsd(() => downloadXsd(ctx));
   toolbar.onDownloadXml(() => downloadXml(ctx));
   toolbar.onGenerateXml(() => runGenerateXmlAction(ctx));
@@ -91,9 +94,8 @@ function runValidateXsdOnly(ctx) {
   const errors = diagnostics.filter((d) => d.severity === "error");
   const warnings = diagnostics.filter((d) => d.severity === "warning");
 
-  if (state.ui.activeTab === "warnings") {
-    renderWarnings(layout.warningsPanel, warnings);
-  }
+  renderWarnings(layout.warningsPanel, warnings);
+  updateValidationPanelVisibility(ctx, diagnostics);
 
   statusBar.render({
     xsdStatus: errors.length ? "Invalid" : "OK",
@@ -140,9 +142,8 @@ function runValidateXmlOnly(ctx) {
   const errors = diagnostics.filter((d) => d.severity === "error");
   const warnings = diagnostics.filter((d) => d.severity === "warning");
 
-  if (state.ui.activeTab === "warnings") {
-    renderWarnings(layout.warningsPanel, warnings);
-  }
+  renderWarnings(layout.warningsPanel, warnings);
+  updateValidationPanelVisibility(ctx, diagnostics);
 
   statusBar.render({
     xsdStatus: xsdDiagnostics.some((d) => d.severity === "error") ? "Invalid" : "OK",
@@ -166,6 +167,15 @@ function applyDiagnostics(ctx, diagnostics) {
   clearAllMarkers(editors);
   mapDiagnosticsToMarkers(editors, diagnostics);
   resultsPanel.renderDiagnostics(diagnostics);
+}
+
+function updateValidationPanelVisibility(ctx, diagnostics) {
+  if (diagnostics.length) {
+    ctx.showBottomTab?.("results");
+    return;
+  }
+
+  ctx.hideBottomPanel?.();
 }
 
 function renderWarnings(host, warnings) {
@@ -193,6 +203,7 @@ function runFormatXsd(ctx) {
     editors.xsd.setValue(formatted);
 
     resultsPanel.renderDiagnostics([]);
+    ctx.hideBottomPanel?.();
     statusBar.render({
       xsdStatus: "Formatted",
       xmlStatus: "Ready",
@@ -214,6 +225,7 @@ function runFormatXsd(ctx) {
     clearAllMarkers(editors);
     mapDiagnosticsToMarkers(editors, [diagnostic]);
     resultsPanel.renderDiagnostics([diagnostic]);
+    ctx.hideBottomPanel?.();
 
     statusBar.render({
       xsdStatus: "Format failed",
@@ -231,6 +243,7 @@ function runFormatXml(ctx) {
     editors.xml.setValue(formatted);
 
     resultsPanel.renderDiagnostics([]);
+    ctx.hideBottomPanel?.();
     statusBar.render({
       xsdStatus: "Ready",
       xmlStatus: "Formatted",
@@ -252,6 +265,7 @@ function runFormatXml(ctx) {
     clearAllMarkers(editors);
     mapDiagnosticsToMarkers(editors, [diagnostic]);
     resultsPanel.renderDiagnostics([diagnostic]);
+    ctx.hideBottomPanel?.();
 
     statusBar.render({
       xsdStatus: "Ready",
@@ -275,6 +289,7 @@ function runGenerateXmlAction(ctx) {
 
     clearAllMarkers(editors);
     resultsPanel.renderDiagnostics([]);
+    ctx.hideBottomPanel?.();
 
     if (layout?.warningsPanel) {
       layout.warningsPanel.innerHTML = `<div class="results-empty">No warnings.</div>`;
@@ -301,6 +316,7 @@ function runGenerateXmlAction(ctx) {
     clearAllMarkers(editors);
     mapDiagnosticsToMarkers(editors, [diagnostic]);
     resultsPanel.renderDiagnostics([diagnostic]);
+    ctx.hideBottomPanel?.();
 
     if (layout?.warningsPanel) {
       layout.warningsPanel.innerHTML = `<div class="results-empty">No warnings.</div>`;

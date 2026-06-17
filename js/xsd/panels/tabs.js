@@ -1,7 +1,6 @@
 const TAB_DEFS = [
   { name: "results", label: "Results" },
-  { name: "warnings", label: "Warnings" },
-  { name: "schema-tree", label: "Schema Tree" }
+  { name: "warnings", label: "Warnings" }
 ];
 
 export function createTabs(host) {

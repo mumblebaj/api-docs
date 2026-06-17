@@ -1,18 +1,20 @@
 export function createToolbar(host) {
   host.innerHTML = `
     <div class="toolbar-group">
-      <button data-action="validate-xsd">Validate XSD</button>
-      <button data-action="validate-xml">Validate XML</button>
-      <button data-action="generate-xml">Generate XML</button>
-      <button data-action="format-xsd">Format XSD</button>
-      <button data-action="format-xml">Format XML</button>
-      <button data-action="download-xsd">Download XSD</button>
-      <button data-action="download-xml">Download XML</button>
+      <button type="button" data-action="validate-xsd">Validate XSD</button>
+      <button type="button" data-action="validate-xml">Validate XML</button>
+      <button type="button" data-action="generate-xml">Generate XML</button>
+      <button type="button" data-action="format-xsd">Format XSD</button>
+      <button type="button" data-action="format-xml">Format XML</button>
+      <button type="button" data-action="show-schema-tree">Schema Tree</button>
+      <button type="button" data-action="download-xsd">Download XSD</button>
+      <button type="button" data-action="download-xml">Download XML</button>
       <button type="button" data-action="add-external-xsd">Add External XSD(s)</button>
       <button type="button" data-action="clear-external-xsd">Clear External XSD(s)</button>
     </div>
 
     <div class="toolbar-group toolbar-group--external-xsd">
+      <h2 class="toolbar-group__title">External XSDs</h2>
       <input
         type="file"
         data-action="external-xsd-input"
@@ -27,37 +29,37 @@ export function createToolbar(host) {
   const externalInput = host.querySelector('[data-action="external-xsd-input"]');
   const externalList = host.querySelector('[data-role="external-xsd-list"]');
 
-function renderExternalDocuments(documents = {}) {
-  const names = Object.keys(documents).sort((a, b) => a.localeCompare(b));
+  function renderExternalDocuments(documents = {}) {
+    const names = Object.keys(documents).sort((a, b) => a.localeCompare(b));
 
-  if (!names.length) {
-    externalList.innerHTML = `<div class="toolbar-external-xsd-empty">No external XSDs loaded.</div>`;
-    return;
+    if (!names.length) {
+      externalList.innerHTML = `<div class="toolbar-external-xsd-empty">No external XSDs loaded.</div>`;
+      return;
+    }
+
+    externalList.innerHTML = `
+      <div class="toolbar-external-xsd-chips">
+        ${names
+          .map(
+            (name) => `
+              <div class="toolbar-external-xsd-chip" title="${escapeHtml(name)}">
+                <span class="toolbar-external-xsd-chip__name">${escapeHtml(name)}</span>
+                <button
+                  type="button"
+                  class="toolbar-external-xsd-chip__remove"
+                  data-remove-external-xsd="${escapeHtmlAttr(name)}"
+                  aria-label="Remove ${escapeHtmlAttr(name)}"
+                  title="Remove ${escapeHtmlAttr(name)}"
+                >
+                  x
+                </button>
+              </div>
+            `
+          )
+          .join("")}
+      </div>
+    `;
   }
-
-  externalList.innerHTML = `
-    <div class="toolbar-external-xsd-chips">
-      ${names
-        .map(
-          (name) => `
-            <div class="toolbar-external-xsd-chip" title="${escapeHtml(name)}">
-              <span class="toolbar-external-xsd-chip__name">${escapeHtml(name)}</span>
-              <button
-                type="button"
-                class="toolbar-external-xsd-chip__remove"
-                data-remove-external-xsd="${escapeHtmlAttr(name)}"
-                aria-label="Remove ${escapeHtmlAttr(name)}"
-                title="Remove ${escapeHtmlAttr(name)}"
-              >
-                ×
-              </button>
-            </div>
-          `
-        )
-        .join("")}
-    </div>
-  `;
-}
 
   host.addEventListener("click", (event) => {
     const removeName = event.target?.getAttribute?.("data-remove-external-xsd");
@@ -87,6 +89,10 @@ function renderExternalDocuments(documents = {}) {
 
     onFormatXml(fn) {
       host.querySelector('[data-action="format-xml"]').onclick = fn;
+    },
+
+    onShowSchemaTree(fn) {
+      host.querySelector('[data-action="show-schema-tree"]').onclick = fn;
     },
 
     onDownloadXsd(fn) {

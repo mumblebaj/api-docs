@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>USS XSD Studio</title>
 
-    <link rel="stylesheet" href="css/style.css?v=20260405T115919Z" />
-    <link rel="stylesheet" href="css/xsdStudio.css?v=20260405T115919Z" />
+    <link rel="stylesheet" href="css/style.css?v=20260617T163611Z" />
+    <link rel="stylesheet" href="css/xsdStudio.css?v=20260617T163611Z" />
     <link rel="icon" type="image/png" href="./favicon_new.png" />
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.52.2/min/vs/loader.min.js"></script>
@@ -20,41 +20,68 @@
         </div>
         <div id="xsdStudioHeaderActions" class="studio-header__actions"></div>
       </header>
+      <div id="xsdStudioBody" class="studio-body">
+        <aside id="xsdStudioSidebar" class="studio-sidebar" aria-label="XSD Studio tools">
+          <button
+            id="xsdStudioSidebarToggle"
+            class="studio-sidebar__toggle"
+            type="button"
+            aria-label="Collapse XSD Studio sidebar"
+            aria-controls="xsdStudioToolbar"
+            aria-expanded="true"
+            title="Collapse sidebar"
+          >
+            <span aria-hidden="true"><<</span>
+          </button>
+          <section id="xsdStudioToolbar" class="studio-toolbar"></section>
+        </aside>
 
-      <section id="xsdStudioToolbar" class="studio-toolbar"></section>
+        <div class="studio-main">
+          <main id="xsdStudioWorkspace" class="studio-workspace">
+            <section class="studio-pane">
+              <div class="studio-pane__header">
+                <span>XSD Schema Editor</span>
+                <span id="xsdFileName" class="studio-pane__meta">schema.xsd</span>
+              </div>
+              <div id="xsdEditorPane" class="studio-editor-host"></div>
+            </section>
 
-      <main id="xsdStudioWorkspace" class="studio-workspace">
-        <section class="studio-pane">
-          <div class="studio-pane__header">
-            <span>XSD Schema Editor</span>
-            <span id="xsdFileName" class="studio-pane__meta">schema.xsd</span>
-          </div>
-          <div id="xsdEditorPane" class="studio-editor-host"></div>
-        </section>
+            <section class="studio-pane">
+              <div class="studio-pane__header">
+                <span>XML Instance Editor</span>
+                <span id="xmlFileName" class="studio-pane__meta">sample.xml</span>
+              </div>
+              <div id="xmlEditorPane" class="studio-editor-host"></div>
+            </section>
+          </main>
 
-        <section class="studio-pane">
-          <div class="studio-pane__header">
-            <span>XML Instance Editor</span>
-            <span id="xmlFileName" class="studio-pane__meta">sample.xml</span>
-          </div>
-          <div id="xmlEditorPane" class="studio-editor-host"></div>
-        </section>
-      </main>
+          <section id="xsdStudioBottomPanel" class="studio-bottom-panel" hidden>
+            <div class="studio-bottom-panel__header">
+              <div id="xsdStudioTabs" class="studio-tabs"></div>
+              <button
+                id="xsdStudioBottomPanelClose"
+                class="studio-bottom-panel__close"
+                type="button"
+                aria-label="Hide bottom panel"
+                title="Hide bottom panel"
+              >
+                x
+              </button>
+            </div>
 
-      <section id="xsdStudioBottomPanel" class="studio-bottom-panel">
-        <div id="xsdStudioTabs" class="studio-tabs"></div>
-
-        <div id="xsdStudioPanelContent" class="studio-panel-content">
-          <div id="validationResultsPanel" class="studio-panel-view"></div>
-          <div id="warningsPanel" class="studio-panel-view" hidden></div>
-          <div id="schemaTreePanel" class="studio-panel-view" hidden></div>
+            <div id="xsdStudioPanelContent" class="studio-panel-content">
+              <div id="validationResultsPanel" class="studio-panel-view"></div>
+              <div id="warningsPanel" class="studio-panel-view" hidden></div>
+              <div id="schemaTreePanel" class="studio-panel-view" hidden></div>
+            </div>
+          </section>
         </div>
-      </section>
+      </div>
 
       <footer id="xsdStudioStatusBar" class="studio-status-bar"></footer>
     </div>
     <!-- <script src="../js/uss-xsd-engine.standalone.js"></script> -->
     <script src="https://unpkg.com/uss-xsd-engine@latest/dist/uss-xsd-engine.standalone.js"></script>
-    <script type="module" src="./js/xsdStudio.js?v=20260405T115919Z"></script>
+    <script type="module" src="./js/xsdStudio.js?v=20260617T163611Z"></script>
   </body>
 </html>
