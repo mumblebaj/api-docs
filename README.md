@@ -32,7 +32,7 @@ changes will be clearly communicated in advance.
 
 👉 [View on GitHub Pages](https://mumblebaj.github.io/api-docs/)
 
-or use my custom domain: [schema.mumblebaj.xyz](https://schema.mumblebaj.xyz)
+or use my custom domain: [schema.mumbleb.com](https://schema.mumbleb.com)
 
 ---
 
