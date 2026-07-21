@@ -1,6 +1,6 @@
 # Changelog
 
-# [v1.10.3]
+# [v1.13.2]
 Update to the latest version of uss-xsd-engine for enhanced validation and streaming api functionality
 
 # [v1.10.2]
