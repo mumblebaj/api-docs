@@ -1,16 +1,16 @@
 // tutor.js — Main Entry Point (ES Module)
 
-import { initMonaco } from "./monaco-setup.js?v=20260721T154612Z";
-import { runYamlDoctor } from "./yaml-doctor.js?v=20260721T154612Z";
+import { initMonaco } from "./monaco-setup.js?v=20260721T162354Z";
+import { runYamlDoctor } from "./yaml-doctor.js?v=20260721T162354Z";
 import {
   applyTeachingMarkers,
   clearTeachingMarkers,
-} from "./teaching-markers.js?v=20260721T154612Z";
-import { detectTeachingIssues } from "./teaching-rules.js?v=20260721T154612Z";
-import { renderMarkdown } from "./yaml-utils.js?v=20260721T154612Z";
-import { lessonPacks } from "./lessons.js?v=20260721T154612Z";
-import { scrollToRefInEditor } from "./refs.js?v=20260721T154612Z";
-import { getYamlHierarchy } from "./yaml-utils.js?v=20260721T154612Z";
+} from "./teaching-markers.js?v=20260721T162354Z";
+import { detectTeachingIssues } from "./teaching-rules.js?v=20260721T162354Z";
+import { renderMarkdown } from "./yaml-utils.js?v=20260721T162354Z";
+import { lessonPacks } from "./lessons.js?v=20260721T162354Z";
+import { scrollToRefInEditor } from "./refs.js?v=20260721T162354Z";
+import { getYamlHierarchy } from "./yaml-utils.js?v=20260721T162354Z";
 
 // Flatten lesson packs into single ordered list
 export const lessons = lessonPacks.flatMap((pack) => pack.lessons);
