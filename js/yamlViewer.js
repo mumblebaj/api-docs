@@ -43,7 +43,7 @@ async function ensureReDocLoaded() {
   if (window.Redoc) return;
 
   const cdn =
-    "https://cdn.jsdelivr.net/npm/redoc@2.1.3/bundles/redoc.standalone.min.js";
+    "https://cdn.jsdelivr.net/npm/redoc@2.5.3/bundles/redoc.standalone.min.js";
 
   // ✅ No location-derived path building — just try both deployments
   const localCandidates = [
@@ -129,14 +129,20 @@ export function initYamlViewer(dropzone, yamlViewer, xsdViewer) {
 
     // Load js-yaml if needed
     if (typeof window.jsyaml === "undefined") {
-      await new Promise((resolve, reject) => {
-        const s = document.createElement("script");
-        s.src =
-          "https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js";
-        s.onload = resolve;
-        s.onerror = reject;
-        document.head.appendChild(s);
-      });
+      const mod = await import("https://esm.sh/js-yaml@5.2.1?bundle");
+      const jsyaml = mod.default ?? { ...mod };
+      window.jsyaml = jsyaml;
+      const yamlGlobal = (window.YAML && typeof window.YAML === "object")
+        ? window.YAML
+        : {};
+      Object.assign(yamlGlobal, jsyaml);
+      window.YAML = yamlGlobal;
+      if (typeof window.YAML.parse !== "function" && typeof jsyaml.load === "function") {
+        window.YAML.parse = jsyaml.load;
+      }
+      if (typeof window.YAML.stringify !== "function" && typeof jsyaml.dump === "function") {
+        window.YAML.stringify = jsyaml.dump;
+      }
     }
 
     // Parse YAML or JSON

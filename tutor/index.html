@@ -9,16 +9,31 @@
     <link rel="icon" type="image/png" href="../favicon_new.png" />
 
     <!-- Libraries -->
-    <script src="https://unpkg.com/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
-    <script src="https://unpkg.com/prettier@3.2.5/standalone.js"></script>
-    <script src="https://unpkg.com/prettier@3.2.5/plugins/yaml.js"></script>
+    <script type="module">
+      import * as jsYamlModule from "https://esm.sh/js-yaml@5.2.1?bundle";
+      const jsyaml = jsYamlModule.default ?? { ...jsYamlModule };
+      window.jsyaml = jsyaml;
+      const yamlGlobal = (window.YAML && typeof window.YAML === "object")
+        ? window.YAML
+        : {};
+      Object.assign(yamlGlobal, jsyaml);
+      window.YAML = yamlGlobal;
+      if (typeof window.YAML.parse !== "function" && typeof jsyaml.load === "function") {
+        window.YAML.parse = jsyaml.load;
+      }
+      if (typeof window.YAML.stringify !== "function" && typeof jsyaml.dump === "function") {
+        window.YAML.stringify = jsyaml.dump;
+      }
+    </script>
+    <script src="https://unpkg.com/prettier@3.9.5/standalone.js"></script>
+    <script src="https://unpkg.com/prettier@3.9.5/plugins/yaml.js"></script>
 
     <!-- Monaco Editor -->
-    <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.52.0/min/vs/loader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.55.1/min/vs/loader.js"></script>
 
     <!-- Styles -->
-    <link rel="stylesheet" href="./styles.css?v=20260721T162354Z" />
-    <link rel="stylesheet" href="../css/style.css?v=20260721T162354Z" />
+    <link rel="stylesheet" href="./styles.css?v=20260725T154846Z" />
+    <link rel="stylesheet" href="../css/style.css?v=20260725T154846Z" />
   </head>
 
   <body>
@@ -90,7 +105,7 @@
     <!-- Monaco Loader -->
     <script>
       require.config({
-        paths: { vs: "https://cdn.jsdelivr.net/npm/monaco-editor@0.52.0/min/vs" }
+        paths: { vs: "https://cdn.jsdelivr.net/npm/monaco-editor@0.55.1/min/vs" }
       });
     </script>
 
@@ -101,11 +116,11 @@
     </script>
 
     <!-- Tracker + Tutor -->
-    <script src="../js/viewTracker.js?v=20260721T162354Z"></script>
-    <script type="module" src="js/tutor.js?v=20260721T162354Z"></script>
+    <script src="../js/viewTracker.js?v=20260725T154846Z"></script>
+    <script type="module" src="js/tutor.js?v=20260725T154846Z"></script>
 
     <footer>
-      <script src="../js/buildVersion.js?v=20260721T162354Z" defer></script>
+      <script src="../js/buildVersion.js?v=20260725T154846Z" defer></script>
     </footer>
   </body>
 </html>
