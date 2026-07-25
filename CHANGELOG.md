@@ -1,5 +1,15 @@
 # Changelog
 
+# [v1.13.3]
+## CDN and Runtime Upgrade Rollup (Phases 1-4)
+- Upgrade ReDoc to `2.5.3` for viewer/rendering paths.
+- Update vendored local ReDoc fallback bundle to `2.5.3`.
+- Upgrade Monaco Editor to `0.55.1` across OpenAPI Editor, Tutor, and XSD Studio.
+- Harden Monaco AMD loader bootstrap in XSD Studio to prevent `window.require` initialization failures.
+- Migrate js-yaml to `5.2.1` using an ESM-based compatibility shim that preserves `window.jsyaml` and `window.YAML.parse/stringify` behavior.
+- Upgrade Prettier and YAML plugin in Tutor to `3.9.5`.
+- Update XSD Studio shell references (asset paths and `uss-xsd-engine` CDN pin) to align with current runtime layout.
+
 # [v1.13.2]
 Update to the latest version of uss-xsd-engine for enhanced validation and streaming api functionality
 

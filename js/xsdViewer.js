@@ -44,7 +44,7 @@ async function ensureReDocLoaded() {
   if (window.Redoc) return;
 
   const cdn =
-    "https://cdn.jsdelivr.net/npm/redoc@2.1.3/bundles/redoc.standalone.min.js";
+    "https://cdn.jsdelivr.net/npm/redoc@2.5.3/bundles/redoc.standalone.min.js";
 
   // ✅ No location-derived path building — just try both deployments
   const localCandidates = [
