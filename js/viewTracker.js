@@ -30,7 +30,7 @@
   // ---------------------------------------------
   // 🔗 Build API URL
   // ---------------------------------------------
-  const apiUrl = `https://api.mumblebaj.xyz/increment/${app}/${slug}`;
+  const apiUrl = `https://api.mumbleb.com/increment/${app}/${slug}`;
 
   // ---------------------------------------------
   // 🧠 Avoid double-counting per tab/session

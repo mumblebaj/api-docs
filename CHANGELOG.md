@@ -1,5 +1,8 @@
 # Changelog
 
+# [v1.13.4]
+- Update viewTracker api url.
+
 # [v1.13.3]
 ## CDN and Runtime Upgrade Rollup (Phases 1-4)
 - Upgrade ReDoc to `2.5.3` for viewer/rendering paths.
